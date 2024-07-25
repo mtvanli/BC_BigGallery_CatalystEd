@@ -13,6 +13,8 @@ import { LoginForm } from './_components/login-form';
 import { ResetPasswordForm } from './_components/reset-password-form';
 import { ResetPasswordFormFragment } from './_components/reset-password-form/fragment';
 
+import { BcImage } from '~/components/bc-image';
+
 export const metadata = {
   title: 'Login',
 };
@@ -80,13 +82,18 @@ export default async function Login({ params: { locale }, searchParams }: Props)
   }
 
   return (
-    <div className="mx-auto my-6 max-w-4xl">
-      <h2 className="text-h2 mb-8 text-4xl font-black lg:text-5xl">{t('heading')}</h2>
-      <div className="mb-12 grid grid-cols-1 lg:grid-cols-2 lg:gap-x-8">
+    // using arbitrary values for margins - not great, but does the job! :)
+    // https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values
+    <div className="xl:mx-[250px] lg:mx-[150px] my-6 px-8"> 
+    
+      <h1 className="text-h2 mb-8  my-24 text-center lg:mx-20 text-4xl font-black lg:text-5xl">Big Gallery</h1>
+      <h3 className="text-h2 mb-8  text-center lg:mx-20 text-2xl font-black lg:text-3xl">{t('heading')} </h3>
+      <div className="mb-12 lg:mx-20 grid grid-cols-1  lg:gap-x-8">
         <NextIntlClientProvider locale={locale} messages={{ Account }}>
           <LoginForm />
+        
         </NextIntlClientProvider>
-        <div className="flex flex-col gap-4 bg-gray-100 p-8">
+    {/*<div className="flex flex-col gap-4 bg-gray-100 p-8">
           <h3 className="text-h5 mb-3">{t('CreateAccount.heading')}</h3>
           <p className="text-base font-semibold">{t('CreateAccount.accountBenefits')}</p>
           <ul className="list-disc ps-4">
@@ -99,7 +106,7 @@ export default async function Login({ params: { locale }, searchParams }: Props)
           <Button asChild className="w-fit items-center px-8 py-2 hover:text-white">
             <Link href="/login/register-customer">{t('CreateAccount.createLink')}</Link>
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

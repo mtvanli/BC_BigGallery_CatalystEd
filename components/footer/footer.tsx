@@ -51,7 +51,7 @@ interface Props {
 export const Footer = ({ data }: Props) => {
   return (
     <ComponentsFooter>
-      <FooterSection className="flex flex-col gap-8 py-10 md:flex-row lg:gap-4">
+      {/* <FooterSection className="flex flex-col gap-8 py-10 md:flex-row lg:gap-4">
         <nav className="grid flex-auto auto-cols-fr gap-8 sm:grid-flow-col">
           <CategoryFooterMenu data={data.categoryTree} />
           <BrandFooterMenu data={data.brands} />
@@ -67,10 +67,10 @@ export const Footer = ({ data }: Props) => {
           {data.settings && <ContactInformation data={data.settings} />}
           {data.settings && <SocialIcons data={data.settings} />}
         </div>
-      </FooterSection>
+      </FooterSection> */}
 
       <FooterSection className="flex flex-col justify-between gap-10 sm:flex-row sm:gap-8 sm:py-6">
-        <PaymentMethods />
+        {/* <PaymentMethods /> */}
 
         {data.settings && <Copyright data={data.settings} />}
       </FooterSection>

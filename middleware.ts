@@ -1,8 +1,10 @@
 import { composeMiddlewares } from './middlewares/compose-middlewares';
 import { withAuth } from './middlewares/with-auth';
 import { withRoutes } from './middlewares/with-routes';
+import { withUserLogin } from './middlewares/with-user-login';
 
-export const middleware = composeMiddlewares(withAuth, withRoutes);
+
+export const middleware = composeMiddlewares( withUserLogin, withAuth, withRoutes);
 
 export const config = {
   matcher: [
