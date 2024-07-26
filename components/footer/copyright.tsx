@@ -13,7 +13,8 @@ interface Props {
 export const Copyright = ({ data }: Props) => {
   return (
     <p className="text-gray-500 sm:order-first">
-      © {new Date().getFullYear()} {data.storeName} – Powered by BigCommerce
+      {/* © {new Date().getFullYear()} {data.storeName} – Powered by BigCommerce */}
+      © {new Date().getFullYear()} BigGallery – Powered by BigCommerce
     </p>
   );
 };

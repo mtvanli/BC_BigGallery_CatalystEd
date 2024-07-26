@@ -37,14 +37,14 @@ export async function generateMetadata(): Promise<Metadata> {
     fetchOptions: { next: { revalidate } },
   });
 
-  const title = data.site.settings?.storeName ?? 'Catalyst Store';
+  const title = data.site.settings?.storeName ?? 'BigGallery';
 
   return {
     title: {
       template: `${title} - %s`,
       default: title,
     },
-    description: 'Example store built with Catalyst',
+    description: 'BigGallery - Catalyst Edition',
     other: {
       platform: 'bigcommerce.catalyst',
       build_sha: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ?? '',

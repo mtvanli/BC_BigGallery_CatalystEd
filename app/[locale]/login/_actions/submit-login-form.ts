@@ -14,7 +14,7 @@ export const submitLoginForm = async (_previousState: unknown, formData: FormDat
     await signIn('credentials', {
       ...credentials,
       // TODO: Redirect to previous page
-      redirectTo: '/account',
+      redirectTo: '/',
     });
   } catch (error: unknown) {
     // We need to throw this error to trigger the redirect as Next.js uses error boundaries to redirect.

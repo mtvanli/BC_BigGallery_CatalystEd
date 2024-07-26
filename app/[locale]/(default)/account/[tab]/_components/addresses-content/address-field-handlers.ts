@@ -3,7 +3,7 @@ import { ChangeEvent } from 'react';
 import {
   createFieldName,
   FieldNameToFieldId,
-} from '~/app/[locale]/(default)/login/register-customer/_components/register-customer-form/fields';
+} from '~/app/[locale]/login/register-customer/_components/register-customer-form/fields';
 
 import { Countries } from './add-address';
 
