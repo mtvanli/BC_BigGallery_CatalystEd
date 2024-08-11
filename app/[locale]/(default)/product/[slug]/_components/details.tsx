@@ -8,6 +8,9 @@ import { ProductFormFragment } from '~/components/product-form/fragment';
 import { ProductSchema, ProductSchemaFragment } from './product-schema';
 import { ReviewSummary, ReviewSummaryFragment } from './review-summary';
 
+import  Link  from 'next/link';
+import { OpenInNewIcon } from 'components/custom-icons/open-in-new'
+
 export const DetailsFragment = graphql(
   `
     fragment DetailsFragment on Product {
@@ -86,12 +89,19 @@ export const Details = ({ product }: Props) => {
       {product.brand && (
         <p className="mb-2 font-semibold uppercase text-gray-500">{product.brand.name}</p>
       )}
-
+      <div className='flex flew-row'>
       <h1 className="mb-4 text-4xl font-black lg:text-5xl">{product.name}</h1>
+      {
+            customFields.map((customField) => (
+              <div key={customField.entityId} className='pl-2 pt-3.5'>
+                {customField.name == 'Store'? <Link href={customField.value} target="_blank"> <OpenInNewIcon height={30} width={30} /> </Link>: null } 
+                {/* {customField.name == 'Store'? <p>{customField.value}</p>: null } */}
+              </div>
+      ))} 
+      </div>
+      {/* <ReviewSummary data={product} /> */}
 
-      <ReviewSummary data={product} />
-
-      {product.prices && (
+     {/*  {product.prices && (
         <div className="my-6 text-2xl font-bold lg:text-3xl">
           {showPriceRange ? (
             <span>
@@ -153,14 +163,14 @@ export const Details = ({ product }: Props) => {
             </>
           )}
         </div>
-      )}
+      )} */}
 
-      <ProductForm data={product} />
+      {/* <ProductForm data={product} /> */}
 
       <div className="my-12">
-        <h2 className="mb-4 text-xl font-bold md:text-2xl">{t('additionalDetails')}</h2>
+        {/* <h2 className="mb-4 text-xl font-bold md:text-2xl">{t('additionalDetails')}</h2> */}
         <div className="grid gap-3 sm:grid-cols-2">
-          {Boolean(product.sku) && (
+         {/*  {Boolean(product.sku) && (
             <div>
               <h3 className="font-semibold">{t('sku')}</h3>
               <p>{product.sku}</p>
@@ -203,13 +213,15 @@ export const Details = ({ product }: Props) => {
                 {product.weight?.value} {product.weight?.unit}
               </p>
             </div>
-          )}
+          )} */}
           {Boolean(customFields) &&
             customFields.map((customField) => (
+              customField.name != 'Store' && customField.value !== 'na' && customField.value !== 'na_'    ?  
+  
               <div key={customField.entityId}>
                 <h3 className="font-semibold">{customField.name}</h3>
                 <p>{customField.value}</p>
-              </div>
+              </div>: null
             ))}
         </div>
       </div>

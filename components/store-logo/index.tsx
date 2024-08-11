@@ -1,6 +1,7 @@
 import { FragmentOf, graphql } from '~/client/graphql';
 
 import { BcImage } from '../bc-image';
+import Logo from '~/components/custom-icons/custom_logo';
 
 export const StoreLogoFragment = graphql(`
   fragment StoreLogoFragment on Settings {
@@ -32,13 +33,15 @@ export const StoreLogo = ({ data }: Props) => {
   }
 
   return (
-    <BcImage
+/*     <BcImage
       alt={logo.image.altText ? logo.image.altText : storeName}
       className="max-h-16 object-contain"
-      height={32}
+      height={50}
       priority
       src={logo.image.url}
-      width={155}
-    />
+      width={200}
+    />  */
+    
+    <Logo width="180" height="70" />
   );
 };

@@ -21,6 +21,9 @@ import { AddToCart } from './add-to-cart';
 import { AddToCartFragment } from './add-to-cart/fragment';
 import { Compare } from './compare';
 
+import { OpenInNewIcon } from 'components/custom-icons/open-in-new';
+
+
 export const ProductCardFragment = graphql(
   `
     fragment ProductCardFragment on Product {
@@ -41,10 +44,21 @@ export const ProductCardFragment = graphql(
       }
       ...AddToCartFragment
       ...PricingFragment
+      customFields(names: ["Store","Segment", "Presentation","Channel"]) {
+      edges {
+        node {
+          entityId
+          name
+          value
+        }
+      }
+    }
     }
   `,
   [PricingFragment, AddToCartFragment],
 );
+
+
 
 interface Props {
   product: ResultOf<typeof ProductCardFragment>;
@@ -83,11 +97,12 @@ export const ProductCard = ({
           {product.defaultImage ? (
             <BcImage
               alt={product.defaultImage.altText || product.name}
-              className="object-contain"
+              className="object-fill rounded-t-lg"
               fill
               priority={imagePriority}
               sizes="(max-width: 768px) 50vw, (max-width: 1536px) 25vw, 500px"
               src={product.defaultImage.url}
+              
             />
           ) : (
             <div className="h-full w-full bg-gray-200" />
@@ -96,6 +111,8 @@ export const ProductCard = ({
       </ProductCardImage>
       <ProductCardInfo className={cn(showCart && 'justify-end')}>
         {product.brand && <ProductCardInfoBrandName>{product.brand.name}</ProductCardInfoBrandName>}
+
+        <div className='flex flew-row justify-center items-center '>
         <ProductCardInfoProductName>
           {product.path ? (
             <Link
@@ -109,7 +126,63 @@ export const ProductCard = ({
             product.name
           )}
         </ProductCardInfoProductName>
-        {showReviews && (
+
+        <div className='pt-2.5'>
+          {
+            product.customFields?.edges?.map((edge) => 
+              edge && (
+                 (edge.node.name === "Store" ?
+                <div className='px-2 pt-0 '>
+                  <Link href={edge.node.value} target="_blank">  <OpenInNewIcon /> </Link>
+                </div> : "")
+              )
+            )
+          }
+        </div>
+
+        </div>
+
+        <div className='flex flew-row flex-wrap justify-center items-center lg:text-sm text-xs '>
+        <div>
+          {
+            product.customFields?.edges?.map((edge) => 
+              edge && (
+                (edge.node.name === "Segment" ?
+                <div>
+                  <p className=' px-2 py-1 mt-1 mr-1 border-transparent rounded-full bg-sky-100'>{edge.node.value} </p>
+                </div> :"")
+              )
+            )
+          }
+        </div>
+
+        <div>
+          {
+            product.customFields?.edges?.map((edge) => 
+              edge && (
+                (edge.node.name === "Presentation" ?
+                <div>
+                  <p className='px-2 py-1 mt-1 mr-1 border-transparent rounded-full bg-slate-100'>{edge.node.value} </p>
+                </div> :"")
+              )
+            )
+          }
+        </div>
+        <div>
+          {
+            product.customFields?.edges?.map((edge) => 
+              edge && (
+                (edge.node.name === "Channel" && edge.node.value!=="Marketplaces" && edge.node.value!=="na" ?
+                <div>
+                  <p className='px-2 py-1 mt-1 mr-1 border-transparent rounded-full bg-lime-100'>{edge.node.value}</p>
+                </div> :"")
+              )
+            )
+          }
+        </div>
+        </div>
+        
+        {/* {showReviews && (
           <div className="flex items-center gap-3">
             <p
               aria-describedby={summaryId}
@@ -135,22 +208,22 @@ export const ProductCard = ({
               {product.reviewSummary.numberOfReviews})
             </div>
           </div>
-        )}
-        <div className="flex flex-wrap items-end justify-between pt-1">
+        )} */}
+        <div className="flex flex-wrap items-end justify-between pt-2">
           <ProductCardInfoPrice>
             <Pricing data={product} />
           </ProductCardInfoPrice>
 
-          {showCompare && (
+         {/*  {showCompare && (
             <Compare
               productId={product.entityId}
               productImage={product.defaultImage}
               productName={product.name}
             />
-          )}
+          )} */}
         </div>
       </ProductCardInfo>
-      {showCart && <AddToCart data={product} />}
+      {/* {showCart && <AddToCart data={product} />} */}
     </ComponentsProductCard>
   );
 };

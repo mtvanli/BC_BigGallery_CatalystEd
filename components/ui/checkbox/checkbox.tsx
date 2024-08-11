@@ -31,7 +31,7 @@ export const Checkbox = forwardRef<ElementRef<CheckboxType>, CheckboxProps>(
         ref={ref}
         {...props}
       >
-        <CheckboxPrimitive.Indicator className="flex flex-shrink-0 items-center justify-center">
+        <CheckboxPrimitive.Indicator className="flex flex-shrink-0 items-center justify-center ">
           {children || <Check absoluteStrokeWidth className="stroke-white" size={13} />}
         </CheckboxPrimitive.Indicator>
       </CheckboxPrimitive.Root>

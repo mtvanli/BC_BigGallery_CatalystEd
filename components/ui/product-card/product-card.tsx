@@ -6,7 +6,7 @@ const ProductCard = forwardRef<ElementRef<'div'>, ComponentPropsWithRef<'div'>>(
   ({ children, className, ...props }, ref) => {
     return (
       <div
-        className={cn('group relative flex flex-col overflow-visible', className)}
+        className={cn('group relative flex flex-col overflow-visible rounded-lg bg-white drop-shadow-md', className)}
         ref={ref}
         {...props}
       >
@@ -21,7 +21,7 @@ ProductCard.displayName = 'ProductCard';
 const ProductCardImage = forwardRef<ElementRef<'div'>, ComponentPropsWithRef<'div'>>(
   ({ children, className, ...props }, ref) => {
     return (
-      <div className={cn('relative flex justify-center pb-3', className)} ref={ref} {...props}>
+      <div className={cn('relative flex justify-center pb-2 ', className)} ref={ref} {...props}>
         {children}
       </div>
     );
@@ -49,9 +49,11 @@ ProductCardBadge.displayName = 'ProductCardBadge';
 const ProductCardInfo = forwardRef<ElementRef<'div'>, ComponentPropsWithRef<'div'>>(
   ({ children, className, ...props }, ref) => {
     return (
+      <span className="inline-block align-baseline ...">
       <div className={cn('flex flex-1 flex-col gap-1', className)} ref={ref} {...props}>
         {children}
       </div>
+      </span>
     );
   },
 );
@@ -73,7 +75,7 @@ ProductCardInfoBrandName.displayName = 'ProductCardInfoBrandName';
 const ProductCardInfoProductName = forwardRef<ElementRef<'h3'>, ComponentPropsWithRef<'h3'>>(
   ({ children, className, ...props }, ref) => {
     return (
-      <h3 className={cn('text-xl font-bold lg:text-2xl', className)} ref={ref} {...props}>
+      <h3 className={cn('text-base text-center font-semibold lg:text-lg xl:text-xl pt-2 ml-2', className)} ref={ref} {...props}>
         {children}
       </h3>
     );

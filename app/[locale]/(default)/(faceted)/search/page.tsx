@@ -92,7 +92,7 @@ export default async function Search({ params: { locale }, searchParams }: Props
           </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-8">
+        <div className="grid grid-cols-4 gap-8 ">
           <FacetedSearch
             className="mb-8 hidden lg:block"
             facets={search.facets.items}
@@ -111,7 +111,7 @@ export default async function Search({ params: { locale }, searchParams }: Props
               {products.map((product, index) => (
                 <ProductCard
                   imagePriority={index <= 3}
-                  imageSize="wide"
+                  imageSize="tall"
                   key={product.entityId}
                   product={product}
                 />

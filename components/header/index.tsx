@@ -20,6 +20,9 @@ import { StoreLogo, StoreLogoFragment } from '../store-logo';
 import { logout } from './_actions/logout';
 import { CartLink } from './cart';
 import { HeaderNav, HeaderNavFragment } from './header-nav';
+import { Slider } from 'components/custom-icons/sliders'
+import { Logout } from 'components/custom-icons/logout'
+// import Logo from '~/components/custom-icons/custom_logo';
 
 export const HeaderFragment = graphql(
   `
@@ -51,6 +54,7 @@ export const Header = async ({ cart, data }: Props) => {
           >
             <Link href="/">
               <StoreLogo data={data.settings} />
+              {/* <Logo width="180" height="70" /> */}
             </Link>
           </NavigationMenuLink>
         )}
@@ -68,7 +72,7 @@ export const Header = async ({ cart, data }: Props) => {
                 </QuickSearch>
               </NavigationMenuItem>
             )}
-            <NavigationMenuItem className={`hidden xl:flex ${customerId ? 'self-stretch' : ''}`}>
+          {/*   <NavigationMenuItem className={`hidden xl:flex ${customerId ? 'self-stretch' : ''}`}>
               {customerId ? (
                 <div className="group/account flex cursor-pointer items-center">
                   <Link
@@ -156,8 +160,10 @@ export const Header = async ({ cart, data }: Props) => {
                   </Link>
                 </NavigationMenuLink>
               )}
-            </NavigationMenuItem>
-            <NavigationMenuItem>
+            </NavigationMenuItem> */}
+         
+            
+{/*             <NavigationMenuItem>
               <p role="status">
                 <Suspense
                   fallback={
@@ -169,10 +175,31 @@ export const Header = async ({ cart, data }: Props) => {
                   {cart}
                 </Suspense>
               </p>
+            </NavigationMenuItem> */}
+            <NavigationMenuItem className="hidden lg:block">
+            <Link aria-label="Login" href="/bg_admin">
+            <Slider /> 
+                  </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+           
+            </NavigationMenuItem>
+            <NavigationMenuItem >
+            <form action={logout}>
+                        <Button
+                          className="justify-start p-0 font-normal text-black hover:bg-transparent hover:text-black"
+                          type="submit"
+                          variant="subtle"
+                        >
+                          <Logout /> 
+                        </Button>
+                      </form>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuToggle className="xl:hidden" />
             </NavigationMenuItem>
+
+        
           </NavigationMenuList>
         </div>
 

@@ -74,7 +74,7 @@ const Slideshow = forwardRef<ElementRef<'section'>, SlideshowProps>(
               aria-label="Interactive slide show"
               aria-roledescription="carousel"
               className={cn(
-                'relative -mx-6 overflow-hidden sm:-mx-10 md:-mx-12 lg:mx-0',
+                'relative -mx-6 overflow-hidden sm:-mx-10 md:-mx-12 lg:mx-0 rounded-lg',
                 className,
               )}
               onBlur={() => setIsHoverPaused(false)}
@@ -165,7 +165,7 @@ const SlideshowControls = forwardRef<ElementRef<'div'>, ComponentPropsWithRef<'d
 
     return (
       <div
-        className={cn('absolute bottom-12 start-12 flex items-center gap-4', className)}
+        className={cn('absolute bottom-0 start-0 flex items-center gap-3 bg-white bg-opacity-30 rounded-tr-xl', className)}
         ref={ref}
         {...props}
       >
