@@ -1,8 +1,8 @@
 {
   "RootLayout": {
     "Metadata": {
-      "title": "Catalyst Store",
-      "description": "Example store built with Catalyst",
+      "title": "Big Gallery",
+      "description": "Big Gallery Catalyst Ed",
       "other": {
         "platform": "bigcommerce.catalyst"
       }
@@ -11,8 +11,8 @@
   "Home": {
     "Carousel": {
       "bestSellingProducts": "Best Selling Products",
-      "featuredProducts": "Featured Products",
-      "newestProducts": "Newest products"
+      "featuredProducts": "Cream of the crop",
+      "newestProducts": "New Launches"
     }
   },
   "Category": {
@@ -26,10 +26,10 @@
   },
   "Product": {
     "loading": "Loading...",
-    "carouselTitle": "Related Products",
+    "carouselTitle": "Similar Stores",
     "noGalleryText": "Coming Soon",
     "DescriptionAndReviews": {
-      "description": "Description",
+      "description": "Highlights",
       "warranty": "Warranty",
       "loading": "Loading...",
       "reviews": "Reviews",
@@ -349,7 +349,7 @@
       "ariaLabel": "Sort by:",
       "featuredItems": "Featured items",
       "bestSellingItems": "Best selling items",
-      "newestItems": "Newest items",
+      "newestItems": "Recently added",
       "aToZ": "A to Z",
       "zToA": "Z to A",
       "byReview": "By review",

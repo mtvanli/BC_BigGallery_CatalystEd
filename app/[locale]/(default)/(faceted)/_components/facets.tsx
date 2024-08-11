@@ -197,8 +197,10 @@ export const Facets = ({ facets, pageType }: Props) => {
                       attribute.value
                     }-${attribute.isSelected.toString()}`;
 
+                    //Don't show attribute values na and na_ in the list  
+                    if (attribute.value !== 'na' && attribute.value !== 'na_') {
                     return (
-                      <div className="flex max-w-sm items-center py-2 ps-1" key={key}>
+                      <div className="flex max-w-sm items-center py-1.5 ps-1" key={key}>
                         <Checkbox
                           aria-labelledby={labelId}
                           defaultChecked={attribute.isSelected}
@@ -208,7 +210,7 @@ export const Facets = ({ facets, pageType }: Props) => {
                           value={attribute.value}
                         />
                         <Label
-                          className="cursor-pointer ps-3 font-normal"
+                          className="cursor-pointer ps-3 font-normal "
                           htmlFor={id}
                           id={labelId}
                         >
@@ -220,6 +222,7 @@ export const Facets = ({ facets, pageType }: Props) => {
                         </Label>
                       </div>
                     );
+                  }
                   })}
                 </AccordionContent>
               </AccordionItem>

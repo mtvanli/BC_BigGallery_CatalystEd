@@ -84,14 +84,17 @@ export default async function Product({ params, searchParams }: ProductPageProps
           messages={{ Product: messages.Product ?? {}, AddToCart: messages.AddToCart ?? {} }}
         >
           <Gallery noImageText={t('noGalleryText')} product={product} />
+          <div className="pl-3">
           <Details product={product} />
-          <div className="lg:col-span-2">
+          <Description product={product} />
+          </div>
+{/*           <div className="lg:col-span-2">
             <Description product={product} />
             <Warranty product={product} />
             <Suspense fallback={t('loading')}>
               <Reviews productId={product.entityId} />
             </Suspense>
-          </div>
+          </div> */}
         </NextIntlClientProvider>
       </div>
 

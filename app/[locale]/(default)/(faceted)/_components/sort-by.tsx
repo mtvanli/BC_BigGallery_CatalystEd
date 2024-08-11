@@ -13,7 +13,7 @@ export function SortBy() {
   const [isPending, startTransition] = useTransition();
 
   const t = useTranslations('FacetedGroup.SortBy');
-  const value = searchParams.get('sort') ?? 'featured';
+  const value = searchParams.get('sort') ?? 'newest';
 
   const onSort = (sortValue: string) => {
     const params = new URLSearchParams(searchParams);
@@ -31,19 +31,20 @@ export function SortBy() {
       className="order-2 min-w-[224px] md:order-3 md:w-auto"
       onValueChange={onSort}
       value={value}
+      defaultValue="newest"
     >
       <span className="hidden" data-pending={isPending ? '' : undefined} />
 
       <SelectContent>
-        <SelectItem value="featured">{t('featuredItems')}</SelectItem>
+        {/* <SelectItem value="featured">{t('featuredItems')}</SelectItem> */}
         <SelectItem value="newest">{t('newestItems')}</SelectItem>
-        <SelectItem value="best_selling">{t('bestSellingItems')}</SelectItem>
+        {/* <SelectItem value="best_selling">{t('bestSellingItems')}</SelectItem> */}
         <SelectItem value="a_to_z">{t('aToZ')}</SelectItem>
         <SelectItem value="z_to_a">{t('zToA')}</SelectItem>
-        <SelectItem value="best_reviewed">{t('byReview')}</SelectItem>
+       {/*  <SelectItem value="best_reviewed">{t('byReview')}</SelectItem>
         <SelectItem value="lowest_price">{t('priceAscending')}</SelectItem>
         <SelectItem value="highest_price">{t('priceDescending')}</SelectItem>
-        <SelectItem value="relevance">{t('relevance')}</SelectItem>
+        <SelectItem value="relevance">{t('relevance')}</SelectItem> */}
       </SelectContent>
     </Select>
   );

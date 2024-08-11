@@ -15,6 +15,8 @@ import { ResetPasswordFormFragment } from './_components/reset-password-form/fra
 
 import { BcImage } from '~/components/bc-image';
 
+import Logo from '~/components/custom-icons/custom_logo';
+
 export const metadata = {
   title: 'Login',
 };
@@ -84,11 +86,11 @@ export default async function Login({ params: { locale }, searchParams }: Props)
   return (
     // using arbitrary values for margins - not great, but does the job! :)
     // https://tailwindcss.com/docs/adding-custom-styles#using-arbitrary-values
-    <div className="xl:mx-[250px] lg:mx-[150px] my-6 px-8"> 
-    
-      <h1 className="text-h2 mb-8  my-24 text-center lg:mx-20 text-4xl font-black lg:text-5xl">Big Gallery</h1>
-      <h3 className="text-h2 mb-8  text-center lg:mx-20 text-2xl font-black lg:text-3xl">{t('heading')} </h3>
-      <div className="mb-12 lg:mx-20 grid grid-cols-1  lg:gap-x-8">
+    <div className="xl:mx-[250px] lg:mx-[150px] mx-5 lg:my-28 my-5 px-8 bg-zinc-50 rounded-2xl ring-1 ring-black/5"> 
+     <Logo className="mb-8 my-24 mx-auto" width="300" height="100" />
+     {/* <h1 className="text-h2 mb-8  my-24 text-center lg:mx-20 text-4xl font-bold lg:text-5xl">Big Gallery</h1>
+      <h3 className="text-h2 mb-8  text-center lg:mx-20 text-2xl font-bold lg:text-3xl">{t('heading')} </h3>
+      */} <div className="mb-12 lg:mx-20 grid grid-cols-1  lg:gap-x-8">
         <NextIntlClientProvider locale={locale} messages={{ Account }}>
           <LoginForm />
         

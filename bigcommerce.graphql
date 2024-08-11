@@ -20,6 +20,11 @@ input AddCartLineItemsInput {
 
   """Add cart line items data object"""
   data: AddCartLineItemsDataInput!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Add cart line items result"""
@@ -41,6 +46,11 @@ input AddCheckoutBillingAddressInput {
 
   """Add checkout billing address data object"""
   data: AddCheckoutBillingAddressDataInput!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Add checkout billing address result"""
@@ -62,6 +72,11 @@ input AddCheckoutShippingConsignmentsInput {
 
   """Add checkout shipping consignments data object"""
   data: AddCheckoutShippingConsignmentsDataInput!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Apply checkout shipping consignments result"""
@@ -182,6 +197,11 @@ input ApplyCheckoutCouponInput {
 
   """Apply checkout coupon data object"""
   data: ApplyCheckoutCouponDataInput!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Apply checkout coupon result"""
@@ -215,6 +235,11 @@ type ApplyCheckoutSpamProtectionResult {
 input AssignCartToCustomerInput {
   """The cart id."""
   cartEntityId: String!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Assign cart to the customer result."""
@@ -761,6 +786,9 @@ type CreateCartMetafieldResult {
   errors: [CreateCartMetafieldError!]!
 }
 
+"""Error that occurs as a result of createCartRedirectUrlsMutation."""
+union CreateCartRedirectUrlsError = NotFoundError
+
 """Create cart redirect URLs input object."""
 input CreateCartRedirectUrlsInput {
   """The cart id to create the redirect URLs for."""
@@ -783,6 +811,9 @@ input CreateCartRedirectUrlsQueryParamsInput {
 type CreateCartRedirectUrlsResult {
   """The redirect URLs created as a result of the mutation."""
   redirectUrls: CartRedirectUrls
+
+  """Errors found during creation of cart redirect URLs."""
+  errors: [CreateCartRedirectUrlsError!]!
 }
 
 """Create cart result"""
@@ -991,6 +1022,11 @@ input DeleteCartLineItemInput {
 
   """The line item id"""
   lineItemEntityId: String!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Delete cart lien item result"""
@@ -1039,6 +1075,11 @@ input DeleteCheckoutConsignmentInput {
 
   """The consignment id"""
   consignmentEntityId: String!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Delete checkout consignment result"""
@@ -1379,6 +1420,11 @@ input SelectCheckoutShippingOptionInput {
 
   """Select checkout shipping option data object"""
   data: SelectCheckoutShippingOptionDataInput!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Select checkout shipping option result"""
@@ -1451,6 +1497,11 @@ input UnapplyCheckoutCouponInput {
 
   """Unapply checkout coupon data object"""
   data: UnapplyCheckoutCouponDataInput!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Unapply checkout coupon result"""
@@ -1463,6 +1514,11 @@ type UnapplyCheckoutCouponResult {
 input UnassignCartFromCustomerInput {
   """The cart id."""
   cartEntityId: String!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Unassign cart from the customer result."""
@@ -1525,6 +1581,11 @@ input UpdateCartLineItemInput {
 
   """Update cart line item data object"""
   data: UpdateCartLineItemDataInput!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Update cart line item result"""
@@ -1582,6 +1643,11 @@ input UpdateCheckoutBillingAddressInput {
 
   """Update checkout billing address data object"""
   data: UpdateCheckoutBillingAddressDataInput!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Update checkout billing address result"""
@@ -1603,6 +1669,11 @@ input UpdateCheckoutCustomerMessageInput {
 
   """Update checkout customer message data object"""
   data: UpdateCheckoutCustomerMessageDataInput!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Update checkout customer message result"""
@@ -1627,6 +1698,11 @@ input UpdateCheckoutShippingConsignmentInput {
 
   """Update checkout shipping consignment data object"""
   data: UpdateCheckoutShippingConsignmentDataInput!
+
+  """
+  Version number. When provided, will reject the request if the version number is not the latest version of the cart, in order to prevent race conditions.
+  """
+  version: Int
 }
 
 """Update checkout shipping consignment result"""
@@ -2420,6 +2496,9 @@ type Cart implements Node {
   """Locale of the cart."""
   locale: String!
 
+  """The current version of the cart, which is updated with every change."""
+  version: Int
+
   """Metafield data related to a cart."""
   metafields(
     """Metafield namespace filter"""
@@ -2483,7 +2562,7 @@ type CartDigitalItem {
   url: String!
 
   """URL of an image of this item, accessible on the internet."""
-  imageUrl: String
+  imageUrl: String @deprecated(reason: "Use `image` field instead.")
 
   """The product brand."""
   brand: String
@@ -2528,6 +2607,9 @@ type CartDigitalItem {
 
   """The list of selected options for this product."""
   selectedOptions: [CartSelectedOption!]!
+
+  """Image for the item."""
+  image: Image
 }
 
 """Discount applied to the cart."""
@@ -2657,7 +2739,7 @@ type CartPhysicalItem {
   url: String!
 
   """URL of an image of this item, accessible on the internet."""
-  imageUrl: String
+  imageUrl: String @deprecated(reason: "Use `image` field instead.")
 
   """The product brand."""
   brand: String
@@ -2708,6 +2790,9 @@ type CartPhysicalItem {
 
   """Gift wrapping for this item."""
   giftWrapping: CartGiftWrapping
+
+  """Image for the item."""
+  image: Image
 }
 
 """Selected checkbox option."""
@@ -3215,6 +3300,11 @@ type Checkout implements Node {
 
   """List of promotions"""
   promotions: [CheckoutPromotion!]!
+
+  """
+  The current version of the checkout, which is updated with every change.
+  """
+  version: Int
 }
 
 """Checkout address."""
@@ -3331,7 +3421,7 @@ type CheckoutAvailableShippingOption {
   type: String!
 
   """Shipping option image URL."""
-  imageUrl: String
+  imageUrl: String @deprecated(reason: "Use `image` field instead.")
 
   """Shipping option cost."""
   cost: Money!
@@ -3341,6 +3431,9 @@ type CheckoutAvailableShippingOption {
 
   """Is this shipping method the recommended shipping option or not."""
   isRecommended: Boolean!
+
+  """Shipping option image."""
+  image: Image
 }
 
 """Checkboxes billing address."""
@@ -3494,13 +3587,16 @@ type CheckoutSelectedShippingOption {
   type: String!
 
   """Shipping option image URL."""
-  imageUrl: String
+  imageUrl: String @deprecated(reason: "Use `image` field instead.")
 
   """Shipping option cost."""
   cost: Money!
 
   """An estimate of the arrival time."""
   transitTime: String
+
+  """Shipping option image."""
+  image: Image
 }
 
 """Checkout settings."""
@@ -5140,7 +5236,7 @@ type OrderDigitalLineItem implements OrderLineItemInterface {
   brand: String
 
   """Optional image url."""
-  imageUrl: String
+  imageUrl: String @deprecated(reason: "Use `image` field instead.")
 
   """List of download file urls."""
   downloadFileUrls: [String!]!
@@ -5150,6 +5246,9 @@ type OrderDigitalLineItem implements OrderLineItemInterface {
 
   """List of product options."""
   productOptions: [OrderLineItemProductOption!]!
+
+  """Image for the item."""
+  image: Image
 }
 
 """A connection to a list of digital line items."""
@@ -5324,13 +5423,16 @@ type OrderPhysicalLineItem implements OrderLineItemInterface {
   brand: String
 
   """Image URL."""
-  imageUrl: String
+  imageUrl: String @deprecated(reason: "Use `image` field instead.")
 
   """Wrapping."""
   wrapping: OrderLineItemWrapping
 
   """Product options."""
   productOptions: [OrderLineItemProductOption!]!
+
+  """Image for the item."""
+  image: Image
 }
 
 """A connection to a list of physical line items."""
@@ -6638,6 +6740,9 @@ type Query {
   """An inventory"""
   inventory: Inventory!
 
+  """The current store."""
+  store: Store!
+
   """Geography information."""
   geography: Geography!
 }
@@ -7082,13 +7187,16 @@ type Settings {
   """
   statusMessage: String
 
+  """Customers settings."""
+  customers: CustomersSettings
+
   """
   The form fields to display on the storefront during customer registration or address creation.
   """
   formFields: FormFields!
 
-  """Customers settings."""
-  customers: CustomersSettings
+  """Store seo information."""
+  seo: SeoDetails
 }
 
 """A connection to a list of items."""
@@ -7224,7 +7332,7 @@ type Site {
     sku: String
 
     """
-    When set to True, returns products with default option selection overlay if one exists. Otherwise returns a base product. Defaults to False
+    When set to True, returns products with default option selection overlay if one exists. Chosen options selections can be overridden by optionValueIds. If neither this option nor optionValueIds are used query returns a base product. Defaults to False.
     """
     useDefaultOptionSelections: Boolean
   ): Product
@@ -7340,6 +7448,25 @@ enum StockLevelDisplay {
   DONT_SHOW
   SHOW
   SHOW_WHEN_LOW
+}
+
+"""The Store"""
+type Store {
+  """The ID of the store."""
+  entityId: Long!
+
+  """Metafield data related to a store."""
+  metafields(
+    """Metafield namespace filter"""
+    namespace: String!
+
+    """Labels for identifying metafield data values."""
+    keys: [String!] = []
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): MetafieldConnection!
 }
 
 """Store logo as image."""

@@ -125,7 +125,7 @@ export const LoginForm = () => {
           <FormSubmit asChild>
             <SubmitButton />
           </FormSubmit>
-          <Link
+{/*           <Link
             className="my-5 inline-flex items-center justify-start font-semibold text-primary hover:text-secondary md:my-0"
             href={{
               pathname: '/login',
@@ -133,7 +133,7 @@ export const LoginForm = () => {
             }}
           >
             {t('Form.resetPassword')}
-          </Link>
+          </Link> */}
         </div>
       </Form>
     </>

@@ -78,7 +78,7 @@ const NavigationMenuList = forwardRef<
   ComponentPropsWithRef<typeof NavigationMenuPrimitive.List>
 >(({ children, className, ...props }, ref) => (
   <NavigationMenuPrimitive.List
-    className={cn('flex items-center gap-2 lg:gap-4', className)}
+    className={cn('flex text-2xl items-center gap-2 lg:gap-4', className)}
     ref={ref}
     {...props}
   >

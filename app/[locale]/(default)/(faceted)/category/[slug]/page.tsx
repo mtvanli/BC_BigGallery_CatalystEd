@@ -62,7 +62,8 @@ export default async function Category({ params: { locale, slug }, searchParams 
 
   return (
     <div className="group">
-      <Breadcrumbs category={category} />
+      <div className="md:mb-8 "/>
+      {/* <Breadcrumbs category={category} /> */}
       <NextIntlClientProvider
         locale={locale}
         messages={{
@@ -115,7 +116,7 @@ export default async function Category({ params: { locale, slug }, searchParams 
               {products.map((product, index) => (
                 <ProductCard
                   imagePriority={index <= 3}
-                  imageSize="wide"
+                  imageSize="tall"
                   key={product.entityId}
                   product={product}
                 />
