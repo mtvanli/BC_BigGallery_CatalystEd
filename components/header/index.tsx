@@ -22,6 +22,7 @@ import { CartLink } from './cart';
 import { HeaderNav, HeaderNavFragment } from './header-nav';
 import { Slider } from 'components/custom-icons/sliders'
 import { Logout } from 'components/custom-icons/logout'
+import { Info } from 'components/custom-icons/info'
 // import Logo from '~/components/custom-icons/custom_logo';
 
 export const HeaderFragment = graphql(
@@ -46,7 +47,7 @@ export const Header = async ({ cart, data }: Props) => {
 
   return (
     <header>
-      <NavigationMenu>
+      <NavigationMenu >
         {data.settings && (
           <NavigationMenuLink
             asChild
@@ -62,7 +63,7 @@ export const Header = async ({ cart, data }: Props) => {
         <HeaderNav className="hidden xl:flex" data={data.categoryTree} />
 
         <div className="flex">
-          <NavigationMenuList className="h-full">
+          <NavigationMenuList className="h-full ">
             {data.settings && (
               <NavigationMenuItem className="hidden sm:block">
                 <QuickSearch>
@@ -163,7 +164,7 @@ export const Header = async ({ cart, data }: Props) => {
             </NavigationMenuItem> */}
          
             
-{/*             <NavigationMenuItem>
+    {/*      <NavigationMenuItem>
               <p role="status">
                 <Suspense
                   fallback={
@@ -177,14 +178,23 @@ export const Header = async ({ cart, data }: Props) => {
               </p>
             </NavigationMenuItem> */}
             <NavigationMenuItem className="hidden lg:block">
-            <Link aria-label="Login" href="/bg_admin">
-            <Slider /> 
-                  </Link>
+            <Link  href="/bg_admin">
+              <Slider /> 
+            </Link>
             </NavigationMenuItem>
-            <NavigationMenuItem>
+            <NavigationMenuItem className="hidden xl:block">
            
-            </NavigationMenuItem>
-            <NavigationMenuItem >
+           </NavigationMenuItem>
+{/*            <NavigationMenuItem className="hidden lg:block">
+            <Link  href="/about">
+            <Info /> 
+                  </Link>
+            </NavigationMenuItem> */}
+            <NavigationMenuItem className="hidden xl:block">
+           
+           </NavigationMenuItem>
+            <NavigationMenuItem className="hidden xl:block">
+              
             <form action={logout}>
                         <Button
                           className="justify-start p-0 font-normal text-black hover:bg-transparent hover:text-black"

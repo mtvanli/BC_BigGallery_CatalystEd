@@ -1174,6 +1174,9 @@ type LoginResult {
   """The currently logged in customer."""
   customer: Customer
 
+  """The cart that is assigned to the customer after login."""
+  cart: Cart
+
   """The customer token."""
   customerAccessToken: CustomerAccessToken
 }
@@ -1185,6 +1188,9 @@ type LoginWithCustomerLoginJwtResult {
 
   """The currently logged in customer."""
   customer: Customer
+
+  """The cart that is assigned to the customer after login."""
+  cart: Cart
 
   """The customer token."""
   customerAccessToken: CustomerAccessToken
@@ -1228,6 +1234,9 @@ type Mutation {
 
     """A password of the customer."""
     password: String!
+
+    """The guest cart entity ID which should be assigned to customer."""
+    guestCartEntityId: String
   ): LoginResult!
 
   """Customer logout"""
@@ -1257,6 +1266,9 @@ type Mutation {
     Customer Login JWT, for more information: https://developer.bigcommerce.com/docs/start/authentication/customer-login.
     """
     jwt: String!
+
+    """The guest cart entity Id which should be assigned."""
+    guestCartEntityId: String
   ): LoginWithCustomerLoginJwtResult!
 }
 
@@ -5235,9 +5247,6 @@ type OrderDigitalLineItem implements OrderLineItemInterface {
   """Optional brand."""
   brand: String
 
-  """Optional image url."""
-  imageUrl: String @deprecated(reason: "Use `image` field instead.")
-
   """List of download file urls."""
   downloadFileUrls: [String!]!
 
@@ -5246,6 +5255,9 @@ type OrderDigitalLineItem implements OrderLineItemInterface {
 
   """List of product options."""
   productOptions: [OrderLineItemProductOption!]!
+
+  """Optional image url."""
+  imageUrl: String @deprecated(reason: "Use `image` field instead.")
 
   """Image for the item."""
   image: Image
@@ -5422,14 +5434,14 @@ type OrderPhysicalLineItem implements OrderLineItemInterface {
   """Brand."""
   brand: String
 
-  """Image URL."""
-  imageUrl: String @deprecated(reason: "Use `image` field instead.")
-
   """Wrapping."""
   wrapping: OrderLineItemWrapping
 
   """Product options."""
   productOptions: [OrderLineItemProductOption!]!
+
+  """Image URL."""
+  imageUrl: String @deprecated(reason: "Use `image` field instead.")
 
   """Image for the item."""
   image: Image
