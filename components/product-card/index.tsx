@@ -127,13 +127,13 @@ export const ProductCard = ({
           )}
         </ProductCardInfoProductName>
 
-        <div className='pt-2.5 z-20'>
+        <div className='pt-2.5 relative'>
           {
             product.customFields?.edges?.map((edge) => 
               edge && (
                  (edge.node.name === "Store" && (
-                <div key={edge.node.name}  className='px-3 pt-0 '>
-                  <Link href={edge.node.value} target="_blank" className="relative z-20">  <OpenInNewIcon /> </Link>
+                <div key={edge.node.name}  className='px-3 pt-0'>
+                  <Link href={edge.node.value} target="_blank" className="relative z-0">  <OpenInNewIcon /> </Link>
                 </div> )
               )
             )
