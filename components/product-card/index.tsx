@@ -112,14 +112,14 @@ export const ProductCard = ({
       <ProductCardInfo className={cn(showCart && 'justify-end')}>
         {product.brand && <ProductCardInfoBrandName>{product.brand.name}</ProductCardInfoBrandName>}
 
-        <div className='flex flew-row justify-center items-center '>
+        <div className='flex flew-row justify-center items-center relative'>
         <ProductCardInfoProductName>
           {product.path ? (
             <Link
               className="focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-primary/20 focus-visible:ring-0"
               href={product.path}
             >
-              <span aria-hidden="true" className="absolute inset-0 bottom-20" />
+              <span aria-hidden="true" className="absolute inset-0 bottom-20 z-10" />
               {product.name}
             </Link>
           ) : (
@@ -127,17 +127,17 @@ export const ProductCard = ({
           )}
         </ProductCardInfoProductName>
 
-        <div className='pt-2.5'>
+        <div className='pt-2.5 z-20'>
           {
             product.customFields?.edges?.map((edge) => 
               edge && (
-                 (edge.node.name === "Store" ?
-                <div className='px-2 pt-0 '>
-                  <Link href={edge.node.value} target="_blank">  <OpenInNewIcon /> </Link>
-                </div> : "")
+                 (edge.node.name === "Store" && (
+                <div key={edge.node.name}  className='px-3 pt-0 '>
+                  <Link href={edge.node.value} target="_blank" className="relative z-20">  <OpenInNewIcon /> </Link>
+                </div> )
               )
             )
-          }
+          )}
         </div>
 
         </div>

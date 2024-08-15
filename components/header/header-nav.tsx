@@ -1,6 +1,7 @@
 import { ChevronDown, User } from 'lucide-react';
 
 import { getSessionCustomerId } from '~/auth';
+import { logout } from './_actions/logout';
 import { FragmentOf, graphql } from '~/client/graphql';
 import { Link } from '~/components/link';
 import {
@@ -11,6 +12,8 @@ import {
   NavigationMenuTrigger,
 } from '~/components/ui/navigation-menu';
 import { cn } from '~/lib/utils';
+import { Button } from '~/components/ui/button';
+import { Logout } from 'components/custom-icons/logout'
 
 export const HeaderNavFragment = graphql(`
   fragment HeaderNavFragment on Site {
@@ -105,22 +108,25 @@ export const HeaderNav = async ({ data, className, inCollapsedNav = false }: Pro
           </NavigationMenuItem>
         ))}
       </NavigationMenuList>
+     
       {inCollapsedNav && (
         <NavigationMenuList className={cn('flex-col items-start border-t border-gray-200 pt-6')}>
           <NavigationMenuItem className="w-full">
-            {customerId ? (
-              <NavigationMenuLink href="/account">
-                Your Account <User />
-              </NavigationMenuLink>
-            ) : (
-              <NavigationMenuLink href="/login">
-                {/* TODO: add Log out for mobile */}
-                Log in <User />
-              </NavigationMenuLink>
-            )}
+ 
+
+            <form action={logout}>
+                        <Button
+                          className="justify-end p-0 font-normal text-black hover:bg-transparent hover:text-black"
+                          type="submit"
+                          variant="subtle"
+                        >
+                          <Logout /> 
+                        </Button>
+                      </form> 
           </NavigationMenuItem>
         </NavigationMenuList>
-      )}
+      )}  
+      
     </>
   );
 };
