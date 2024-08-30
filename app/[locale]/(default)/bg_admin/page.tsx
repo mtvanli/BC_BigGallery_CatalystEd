@@ -1,4 +1,5 @@
 const BG_AdminPage = () => {
+
     return (
         <div className="overflow: hidden; width:900px; width:100%; height:850px">
 		<iframe
