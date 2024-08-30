@@ -25,6 +25,8 @@ import { Logout } from 'components/custom-icons/logout'
 import { Info } from 'components/custom-icons/info'
 // import Logo from '~/components/custom-icons/custom_logo';
 
+import BG_Assistant from 'components/bg-assistant/index'
+
 export const HeaderFragment = graphql(
   `
     fragment HeaderFragment on Site {
@@ -177,33 +179,38 @@ export const Header = async ({ cart, data }: Props) => {
                 </Suspense>
               </p>
             </NavigationMenuItem> */}
-            <NavigationMenuItem className="hidden lg:block">
+            {/* <NavigationMenuItem className="hidden lg:block">
             <Link  href="/bg_admin">
               <Slider /> 
             </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem className="hidden xl:block">
+            </NavigationMenuItem> */}
+           {/*  <NavigationMenuItem className="hidden xl:block">
            
-           </NavigationMenuItem>
+           </NavigationMenuItem> */}
 {/*            <NavigationMenuItem className="hidden lg:block">
             <Link  href="/about">
             <Info /> 
                   </Link>
             </NavigationMenuItem> */}
+            <NavigationMenuItem className="hidden lg:block">
+            
+            <BG_Assistant />
+                  
+            </NavigationMenuItem>
             <NavigationMenuItem className="hidden xl:block">
-           
+          
            </NavigationMenuItem>
             <NavigationMenuItem className="hidden xl:block">
               
             <form action={logout}>
-                        <Button
-                          className="justify-start p-0 font-normal text-black hover:bg-transparent hover:text-black"
-                          type="submit"
-                          variant="subtle"
-                        >
-                          <Logout /> 
-                        </Button>
-                      </form>
+                <Button
+                  className="justify-start p-0 font-normal text-black hover:bg-transparent hover:text-black"
+                  type="submit"
+                  variant="subtle"
+                >
+                  <Logout /> 
+                </Button>
+            </form>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuToggle className="xl:hidden" />

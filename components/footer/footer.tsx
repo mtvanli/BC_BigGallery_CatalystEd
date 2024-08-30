@@ -2,7 +2,7 @@ import { FragmentOf, graphql } from '~/client/graphql';
 import { Footer as ComponentsFooter, FooterSection } from '~/components/ui/footer';
 
 import { StoreLogo, StoreLogoFragment } from '../store-logo';
-
+import { Link } from '~/components/link';
 import { ContactInformation, ContactInformationFragment } from './contact-information';
 import { Copyright, CopyrightFragment } from './copyright';
 import {
@@ -70,8 +70,16 @@ export const Footer = ({ data }: Props) => {
       </FooterSection> */}
 
       <FooterSection className="flex flex-col justify-between gap-10 sm:flex-row sm:gap-8 sm:py-6">
-        {/* <PaymentMethods /> */}
-
+      {/* <PaymentMethods /> */}
+      <div className="ml-auto  items-center gap-2 hidden lg:block">  
+    <Link href="/bg_admin" className="text-zinc-500">
+      Admin
+    </Link>
+    <span className="mx-4">|</span> 
+    <Link href="/about" className="text-zinc-500">
+      About
+    </Link>
+  </div>
         {data.settings && <Copyright data={data.settings} />}
       </FooterSection>
     </ComponentsFooter>
