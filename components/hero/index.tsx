@@ -36,11 +36,11 @@ export const Hero = () => (
             
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
-          <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-36 ">
-            <h2 className="text-5xl font-black  text-neutral-50 lg:text-6xl mt-10">Just Sunnies</h2>
-            <p className="text-lg max-w-xl  text-neutral-50">Uses Composable Commerce to Accelerate Sales
+          <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36">
+            <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Just Sunnies</h2>
+            <p className="text-md lg:text-lg max-w-xl text-neutral-50">Uses Composable Commerce to Accelerate Sales
             </p>
-            <Button asChild className="w-fit">
+            <Button asChild className="w-fit mt-4">
               <a href="https://www.bigcommerce.com/case-study/just-sunnies/" target="_blank" rel="noopener noreferrer">Case Study</a>
             </Button>
           </div>
@@ -59,12 +59,12 @@ export const Hero = () => (
             src={SlideshowBG3}
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
-        <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-36  ">
-          <h2 className="text-5xl text-neutral-50 font-black lg:text-6xl mt-10 ">White Stuff</h2>
-          <p className="text-lg max-w-xl text-neutral-50">
+          <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36 ">
+          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">White Stuff</h2>
+          <p className="text-md lg:text-lg max-w-xl text-neutral-50">
           Quickly Lifts Customer Experience with BigCommerce
           </p>
-          <Button asChild className="w-fit">
+          <Button asChild className="w-fit mt-4">
             <a href="https://www.bigcommerce.com/case-study/white-stuff/" target="_blank" rel="noopener noreferrer">Case Study</a>
           </Button>
         </div>
@@ -83,12 +83,12 @@ export const Hero = () => (
             src={SlideshowBG4}
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
-        <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-36">
-          <h2 className="text-5xl text-neutral-50 font-black lg:text-6xl mt-10 ">Inhaven</h2>
+          <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36 ">
+          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Inhaven</h2>
           <p className="text-lg max-w-xl text-neutral-50 ">
           Builds a Five-Star B2B Experience with BigCommerce
           </p>
-          <Button asChild className="w-fit">
+          <Button asChild className="w-fit mt-4">
             <a href="https://www.bigcommerce.com/case-study/inhaven/" target="_blank" rel="noopener noreferrer">Case Study</a>
           </Button>
         </div>

@@ -66,7 +66,7 @@ const sheetVariants = cva(
         right:
           'inset-y-0 end-0 h-full w-full sm:w-3/4 border-s data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm',
         bga:
-          'inset-y-0 end-0 h-full w-full sm:w-3/4 border-s data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:w-2/4 ',
+          'inset-y-0 end-0 h-full w-full sm:w-3/4 border-s data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:w-2/4 drop-shadow-xl rounded-l-xl',
             
         },
     },
