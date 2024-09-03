@@ -2,6 +2,7 @@ import { assistantId } from "~/app/assistant-config";
 import { openai } from "~/app/openai";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 // Send a new message to a thread
 export async function POST(request, { params: { threadId } }) {
