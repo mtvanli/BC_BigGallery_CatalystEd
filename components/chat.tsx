@@ -8,6 +8,8 @@ import Markdown from "react-markdown";
 import { AssistantStreamEvent } from "openai/resources/beta/assistants/assistants";
 import { RequiredActionFunctionToolCall } from "openai/resources/beta/threads/runs/runs";
 
+import {Trash} from '~/components/custom-icons/trash';
+
 type MessageProps = {
   role: "user" | "assistant" | "code";
   text: string;
@@ -387,7 +389,7 @@ return (
       Send
     </button>
     <button type="button" className={styles.button} onClick={clearMessages}>
-      Clear
+    <Trash />
     </button>
   </form>
 </div>
