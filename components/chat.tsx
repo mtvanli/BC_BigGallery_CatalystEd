@@ -9,6 +9,7 @@ import { AssistantStreamEvent } from "openai/resources/beta/assistants/assistant
 import { RequiredActionFunctionToolCall } from "openai/resources/beta/threads/runs/runs";
 
 import {Trash} from '~/components/custom-icons/trash';
+import { Trash2 } from 'lucide-react';
 
 type MessageProps = {
   role: "user" | "assistant" | "code";
@@ -389,7 +390,7 @@ return (
       Send
     </button>
     <button type="button" className={styles.button} onClick={clearMessages}>
-    <Trash />
+    <Trash2 />
     </button>
   </form>
 </div>

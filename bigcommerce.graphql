@@ -1,3 +1,6 @@
+"""Directive that allows overriding shopper preferences."""
+directive @shopperPreferences(locale: String) on QUERY
+
 """An error due to customer registration being disabled on a storefront."""
 type AccountCreationDisabledError implements Error {
   """A description of the error."""
@@ -246,6 +249,17 @@ input AssignCartToCustomerInput {
 type AssignCartToCustomerResult {
   """The Cart that is updated as a result of mutation."""
   cart: Cart
+}
+
+"""Scope which describes how to cache the query"""
+enum CacheControlScope {
+  """
+  Private means that query result is available only for the particular user.
+  """
+  PRIVATE
+
+  """Public means that query result is available for all users."""
+  PUBLIC
 }
 
 """Cart gift certificate input object"""
@@ -796,6 +810,9 @@ input CreateCartRedirectUrlsInput {
 
   """The query parameters to pass when redirecting to the URLs."""
   queryParams: [CreateCartRedirectUrlsQueryParamsInput!]
+
+  """IP4 or IP6 compatible address to include in the session redirect url"""
+  ipAddress: IpAddress
 }
 
 """Create cart redirect URLs query params input object."""
@@ -1156,6 +1173,9 @@ type InvalidInputFieldsError implements Error {
   """Error message."""
   message: String!
 }
+
+"""IP4 or IP6 compatible ip address"""
+scalar IpAddress
 
 """Limit already reached. Can't create more subjects."""
 type LimitExceededError implements Error {
@@ -3794,15 +3814,6 @@ enum CouponType {
   SHIPPING_DISCOUNT
 }
 
-"""Details of the credit card payment instrument."""
-type CreditCardPaymentInstrument {
-  """Credit card brand."""
-  brand: String!
-
-  """Last four digits of the credit card number."""
-  last4: String!
-}
-
 """Currency details."""
 type Currency {
   """Currency ID."""
@@ -3971,6 +3982,16 @@ type Customer {
     first: Int
     last: Int
   ): MetafieldConnection!
+
+  """The Orders for the customer."""
+  orders(
+    """The filters for the customers orders."""
+    filters: OrdersFiltersInput
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): OrdersConnection
 }
 
 """Address that is associated with a customer account."""
@@ -4291,6 +4312,12 @@ type FormFields {
   ): [FormField!]!
 }
 
+"""Google Analytics 4 provider."""
+type GA4Provider {
+  """Google Analytics 4 tag ID."""
+  tagId: String!
+}
+
 """Geography information."""
 type Geography {
   """A list of available countries."""
@@ -4300,12 +4327,6 @@ type Geography {
     """
     filters: CountryFiltersInput
   ): [Country!]
-}
-
-"""The details of a gift certificate payment instrument."""
-type GiftCertificatePaymentInstrument {
-  """The gift certificate code."""
-  code: String!
 }
 
 """Gift wrapping for product"""
@@ -4339,6 +4360,21 @@ type GiftWrappingEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+"""HSTS settings"""
+type HstsSettings {
+  """Flag indicating if HSTS is enabled on storefront."""
+  hstsOnStorefrontEnabled: Boolean!
+
+  """Flag indicating if HSTS is enabled in preload."""
+  hstsInPreloadEnabled: Boolean!
+
+  """Flag indicating if HSTS is enabled in subdomains."""
+  hstsInSubdomainsEnabled: Boolean!
+
+  """Value of Max-Age header for HSTS."""
+  hstsMaxAgeDurationSeconds: Long!
 }
 
 """Image"""
@@ -4394,6 +4430,24 @@ type ImageEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+"""Inactivity settings from control panel"""
+type InactivitySettings {
+  """
+  Duration in seconds indicating how long a shopper can be inactive before being logged out.
+  """
+  shopperInactivityDurationSeconds: Long
+
+  """
+  Flag informing if any shopper activity extends the inactivity duration.
+  """
+  shopperActivityExtendsDuration: Boolean
+
+  """
+  Duration in seconds indicating how long a control panel user can be inactive before being logged out.
+  """
+  controlPanelInactivityDurationSeconds: Long
 }
 
 """An inventory"""
@@ -4621,6 +4675,15 @@ enum LimitInputBy {
   RANGE
 }
 
+"""A store locale."""
+type Locale {
+  """A locale code."""
+  code: String!
+
+  """Indicates whether this is the default locale."""
+  isDefault: Boolean!
+}
+
 """A connection to a list of items."""
 type LocationConnection {
   """Information to aid in pagination."""
@@ -4661,6 +4724,12 @@ type Measurement {
 
   """Unit of measurement."""
   unit: String!
+}
+
+"""Facebook Pixel analytics provider."""
+type MetaPixelProvider {
+  """Identification number of Pixel."""
+  pixelId: String!
 }
 
 """A connection to a list of items."""
@@ -5255,9 +5324,6 @@ type OrderDigitalLineItem implements OrderLineItemInterface {
 
   """List of product options."""
   productOptions: [OrderLineItemProductOption!]!
-
-  """Image for the item."""
-  image: Image
 }
 
 """A connection to a list of digital line items."""
@@ -5436,9 +5502,6 @@ type OrderPhysicalLineItem implements OrderLineItemInterface {
 
   """Product options."""
   productOptions: [OrderLineItemProductOption!]!
-
-  """Image for the item."""
-  image: Image
 }
 
 """A connection to a list of physical line items."""
@@ -5714,16 +5777,6 @@ type OrderWithPayments implements Node & BaseOrder {
   """The ID of an object."""
   id: ID!
 
-  """The list of payments for an order."""
-  payments(
-    """A filter to allow getting payments of a certain status."""
-    filters: PaymentsFiltersInput
-    before: String
-    after: String
-    first: Int
-    last: Int
-  ): PaymentsConnection!
-
   """Order ID."""
   entityId: Int!
 
@@ -5981,56 +6034,6 @@ type PasswordFormFieldValue implements CustomerFormFieldValue {
   name: String!
 }
 
-"""A payment for an order."""
-type Payment {
-  """The id of the payment method."""
-  paymentMethodId: String!
-
-  """The name of the payment method."""
-  paymentMethodName: String!
-
-  """The amount of the payment."""
-  amount: Money!
-
-  """The specific details on the type of payment."""
-  detail: PaymentInstrument
-}
-
-"""The specific details of the instrument used for this payment."""
-union PaymentInstrument = GiftCertificatePaymentInstrument | CreditCardPaymentInstrument
-
-"""The status of a payment."""
-enum PaymentResultStatus {
-  ERROR
-  FAILURE
-  PENDING
-  SUCCESS
-}
-
-"""A connection to the list of payments."""
-type PaymentsConnection {
-  """Information to aid in pagination."""
-  pageInfo: PageInfo!
-
-  """A list of edges."""
-  edges: [PaymentsEdge!]
-}
-
-"""An edge in a connection."""
-type PaymentsEdge {
-  """The item at the end of the edge."""
-  node: Payment!
-
-  """A cursor for use in pagination."""
-  cursor: String!
-}
-
-"""Filter input for payments."""
-input PaymentsFiltersInput {
-  """The status we want to fetch orders by."""
-  status: PaymentResultStatus
-}
-
 """
 Pick list form field. Similar to Radio Buttons, but should be rendered as a dropdown select.
 """
@@ -6193,6 +6196,15 @@ type Prices {
 
   """List of bulk pricing tiers applicable to a product or variant."""
   bulkPricing: [BulkPricingTier!]!
+}
+
+"""Privacy settings from control panel"""
+type PrivacySettings {
+  """Flag indicating if cookie consent is enabled."""
+  cookieConsentEnabled: Boolean!
+
+  """URL to the privacy policy."""
+  privacyPolicyUrl: String
 }
 
 """Product"""
@@ -6751,6 +6763,9 @@ type Query {
 
   """Geography information."""
   geography: Geography!
+
+  """Shopper preferences."""
+  shopperPreferences: ShopperPreferences!
 }
 
 """Radio buttons form field."""
@@ -6867,6 +6882,14 @@ type ReCaptchaSettings {
 
   """Indicates whether ReCaptcha is enabled on the storefront."""
   isEnabledOnStorefront: Boolean!
+
+  """Flag indicating if reCaptcha is enabled on checkout."""
+  isEnabledOnCheckout: Boolean!
+
+  """
+  Duration in seconds indicating how long a user is locked out after failed login attempts.
+  """
+  failedLoginLockoutDurationSeconds: Long
 }
 
 """Redirect."""
@@ -7126,6 +7149,24 @@ type SearchQueries {
   ): SearchProducts!
 }
 
+"""Security settings from control panel"""
+type SecuritySettings {
+  """Value of custom Content Security Policy header."""
+  customCspHeader: String
+
+  """Value of X-Frame-Options header."""
+  xFrameOptions: String
+
+  """HSTS settings from control panel"""
+  hsts: HstsSettings
+}
+
+"""Segment.com analytics provider."""
+type SegmentProvider {
+  """Segment.com source identifier."""
+  writeKey: String!
+}
+
 """Seo Details"""
 type SeoDetails {
   """Page title."""
@@ -7196,6 +7237,12 @@ type Settings {
   """Customers settings."""
   customers: CustomersSettings
 
+  """Store locales."""
+  locales: [Locale!]!
+
+  """Store favicon url."""
+  faviconUrl: String
+
   """
   The form fields to display on the storefront during customer registration or address creation.
   """
@@ -7204,8 +7251,20 @@ type Settings {
   """Store seo information."""
   seo: SeoDetails
 
-  """Store favicon url."""
-  faviconUrl: String
+  """The robots.txt file content for the store."""
+  robotsTxt: String
+
+  """Analytics settings."""
+  webAnalytics: WebAnalytics
+
+  """Security settings from control panel"""
+  security: SecuritySettings
+
+  """Privacy settings from control panel"""
+  privacy: PrivacySettings
+
+  """Inactivity settings from control panel"""
+  inactivity: InactivitySettings
 }
 
 """A connection to a list of items."""
@@ -7230,6 +7289,18 @@ type ShopByPriceEdge {
 type ShopByPriceRange {
   """Category shop by price range."""
   ranges: MoneyRange!
+}
+
+"""Shopper locale."""
+type ShopperLocale {
+  """Resolved shopper locale."""
+  resolved: String
+}
+
+"""Shopper preferences."""
+type ShopperPreferences {
+  """Shopper locale."""
+  locale: ShopperLocale
 }
 
 """A site"""
@@ -7398,16 +7469,6 @@ type Site {
     """Brand ID."""
     entityId: Int!
   ): Brand
-
-  """List of orders."""
-  orders(
-    """Available search filters for use when querying orders."""
-    filters: OrdersFiltersInput
-    before: String
-    after: String
-    first: Int
-    last: Int
-  ): OrdersConnection
 
   """A single order."""
   order(
@@ -7831,6 +7892,18 @@ type VideoEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+"""Analytics settings."""
+type WebAnalytics {
+  """Google Analytics 4 provider data."""
+  ga4: GA4Provider
+
+  """Segment.com analytics provider data."""
+  segment: SegmentProvider
+
+  """Facebook Pixel analytics provider data."""
+  metaPixel: MetaPixelProvider
 }
 
 """WebPage details."""

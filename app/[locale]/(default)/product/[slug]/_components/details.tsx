@@ -10,6 +10,7 @@ import { ReviewSummary, ReviewSummaryFragment } from './review-summary';
 
 import  Link  from 'next/link';
 import { OpenInNewIcon } from 'components/custom-icons/open-in-new'
+import { ExternalLink } from 'lucide-react';
 
 export const DetailsFragment = graphql(
   `
@@ -89,15 +90,16 @@ export const Details = ({ product }: Props) => {
       {product.brand && (
         <p className="mb-2 font-semibold uppercase text-gray-500">{product.brand.name}</p>
       )}
-      <div className='flex flew-row'>
+      <div className='flex flew-row align-baseline'>
       <h1 className="mb-4 text-4xl font-black lg:text-5xl">{product.name}</h1>
       {
-            customFields.map((customField) => (
-              <div key={customField.entityId} className='pl-2 pt-3.5'>
-                {customField.name == 'Store'? <Link href={customField.value} target="_blank"> <OpenInNewIcon height={30} width={30} /> </Link>: null } 
+            customFields.map((customField) => 
+              customField.name == 'Store'? (
+              <div key={customField.entityId} className='pl-2 '>
+                 <Link href={customField.value} target="_blank">  <ExternalLink className="lg:mt-2 ml-7 stroke-slate-500 size-7 md:size-9" /> </Link>
                 {/* {customField.name == 'Store'? <p>{customField.value}</p>: null } */}
               </div>
-      ))} 
+      ): "" )} 
       </div>
       {/* <ReviewSummary data={product} /> */}
 

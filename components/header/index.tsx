@@ -1,4 +1,4 @@
-import { ShoppingCart, User } from 'lucide-react';
+import { ShoppingCart, User,LogOut } from 'lucide-react';
 import { ReactNode, Suspense } from 'react';
 
 import { getSessionCustomerId } from '~/auth';
@@ -21,7 +21,6 @@ import { logout } from './_actions/logout';
 import { CartLink } from './cart';
 import { HeaderNav, HeaderNavFragment } from './header-nav';
 import { Slider } from 'components/custom-icons/sliders'
-import { Logout } from 'components/custom-icons/logout'
 import { Info } from 'components/custom-icons/info'
 // import Logo from '~/components/custom-icons/custom_logo';
 
@@ -208,7 +207,7 @@ export const Header = async ({ cart, data }: Props) => {
                   type="submit"
                   variant="subtle"
                 >
-                  <Logout /> 
+                  <LogOut /> 
                 </Button>
             </form>
             </NavigationMenuItem>

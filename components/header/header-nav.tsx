@@ -14,6 +14,7 @@ import {
 import { cn } from '~/lib/utils';
 import { Button } from '~/components/ui/button';
 import { Logout } from 'components/custom-icons/logout'
+import { LogOut } from 'lucide-react';
 
 export const HeaderNavFragment = graphql(`
   fragment HeaderNavFragment on Site {
@@ -120,7 +121,7 @@ export const HeaderNav = async ({ data, className, inCollapsedNav = false }: Pro
                           type="submit"
                           variant="subtle"
                         >
-                          <Logout /> 
+                          <LogOut /> 
                         </Button>
                       </form> 
           </NavigationMenuItem>

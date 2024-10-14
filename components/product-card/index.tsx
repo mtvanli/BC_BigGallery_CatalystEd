@@ -22,6 +22,7 @@ import { AddToCartFragment } from './add-to-cart/fragment';
 import { Compare } from './compare';
 
 import { OpenInNewIcon } from 'components/custom-icons/open-in-new';
+import { ExternalLink } from 'lucide-react';
 
 
 export const ProductCardFragment = graphql(
@@ -127,13 +128,15 @@ export const ProductCard = ({
           )}
         </ProductCardInfoProductName>
 
-        <div className='pt-2.5 relative'>
+        <div className='pt-3.5 px-3 relative'>
           {
             product.customFields?.edges?.map((edge) => 
               edge && (
                  (edge.node.name === "Store" && (
-                <div key={edge.node.name}  className='px-3 pt-0'>
-                  <Link href={edge.node.value} target="_blank" className="relative z-0">  <OpenInNewIcon /> </Link>
+                <div key={edge.node.name}  >
+                  <Link href={edge.node.value} target="_blank" className="relative z-0">  
+                  <ExternalLink className="mb-1.5 md:mb-2 ml-2 stroke-slate-500 size-4 md:size-5" /> 
+                  </Link>
                 </div> )
               )
             )

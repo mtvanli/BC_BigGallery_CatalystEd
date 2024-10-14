@@ -73,7 +73,7 @@ export const Hero = () => (
       <SlideshowSlide>
       <div className="relative ">
       <Image
-            alt="Inhaven slide image"
+            alt="Kaiser Willys slide image"
             blurDataURL={SlideshowBlurDataURL}
             className="absolute -z-10 object-cover sm:object-center"
             fill
@@ -84,12 +84,12 @@ export const Hero = () => (
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
           <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36 ">
-          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Inhaven</h2>
+          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Kaiser Willys</h2>
           <p className="text-lg max-w-xl text-neutral-50 ">
-          Builds a Five-Star B2B Experience with BigCommerce
+          Accelerates Its Search Experience with BigCommerce
           </p>
           <Button asChild className="w-fit mt-4">
-            <a href="https://www.bigcommerce.com/case-study/inhaven/" target="_blank" rel="noopener noreferrer">Case Study</a>
+            <a href="https://www.bigcommerce.com/case-study/kaiser-willys/" target="_blank" rel="noopener noreferrer">Case Study</a>
           </Button>
         </div>
         </div>
