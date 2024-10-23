@@ -33,7 +33,7 @@ function BG_Assistant() {
           <button className="btn pt-1" ><ChatIcon/></button>
         </SheetTrigger>
         <SheetOverlay className="bg-transparent, backdrop-blur-none lg:hidden">
-        <SheetContent side="bga"> {/* Adjust the side prop as needed */}
+        <SheetContent side="bga" aria-describedby={undefined}> {/* Adjust the side prop as needed */}
           
           <SheetHeader>
           <SheetTitle className="relative inline-block">

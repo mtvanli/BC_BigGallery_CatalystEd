@@ -23,12 +23,23 @@ const HomePageQuery = graphql(
   `
     query HomePageQuery {
       site {
-        newestProducts(first: 12) {
+        newestProducts(first: 50) {
           edges {
             node {
               ...ProductCardCarouselFragment
+                metafields ( 
+                namespace: "newestProducts", 
+                keys: ["newLaunch"] 
+                ){
+                  edges {
+                  node {
+                    key
+                    value
+                    }
+                  }
+                }
+              }
             }
-          }
         }
         featuredProducts(first: 12) {
           edges {
@@ -58,7 +69,20 @@ export default async function Home({ params: { locale } }: Props) {
   });
 
   const featuredProducts = removeEdgesAndNodes(data.site.featuredProducts);
-  const newestProducts = removeEdgesAndNodes(data.site.newestProducts);
+
+  // Remove edges and nodes from newestProducts
+  const newestProductsRaw = removeEdgesAndNodes(data.site.newestProducts);
+
+  // Filter out products where the metafield 'display' is 'No'
+  const filteredNewestProducts = newestProductsRaw.filter((product: any) => {
+    const displayMetafield = product.metafields.edges.find(
+      (metafieldEdge: any) => metafieldEdge.node.key === 'newLaunch'
+    );
+    return !displayMetafield || displayMetafield.node.value !== 'No';
+  });
+
+  // Get the first 12 filtered products
+  const newestProducts = filteredNewestProducts.slice(0, 12);
 
   return (
     <>
