@@ -192,7 +192,7 @@ const Chat = ({
     }
 
     // Append the additional text to the user input
-    const modifiedText = `${text} Use only the information provided in the attached documents. Don't start the response with 'Based on the information provided'. Add the StoreURL into the answer only when relevant.`;
+    const modifiedText = `${text} Use only the information provided in the attached documents. Don't give any repsonse outside the information provided in the attached documents. Don't start the response with 'Based on the information provided'. Add the StoreURL into the answer only when relevant. Check the files before answering the questions. Note: Multi storefront and Multiple stores are different things. `;
 
     const response = await fetch(
       `/api/assistants/threads/${threadId}/messages`,
