@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ProseMirror {
+    > * + * {
+      margin-top: 0.75em;
+    }
+  }
+  
+  .resize-image {
+    display: inline-block;
+    position: relative;
+    
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  
+    .resize-handle {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 10px;
+      height: 10px;
+      background-color: #4a90e2;
+      cursor: se-resize;
+    }
+  }

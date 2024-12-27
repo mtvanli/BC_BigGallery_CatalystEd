@@ -40,7 +40,7 @@ export async function GET() {
   
         const data = await response.json();
         //console.log(data)
-        console.log(`Fetching page ${currentPage}...`);
+        console.log(`Page ${currentPage}: Fetched ${data.data.length} products`);
   
         // Add products from the current page to the allProducts array
         allProducts = allProducts.concat(data.data);
@@ -48,6 +48,7 @@ export async function GET() {
         // Update totalPages from the first API response
         if (data.meta && data.meta.pagination) {
           totalPages = data.meta.pagination.total_pages;
+          console.log(`Total pages: ${totalPages}`);
         }
   
         currentPage++; // Move to the next page
