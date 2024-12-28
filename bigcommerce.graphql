@@ -5547,7 +5547,7 @@ input OrderFilterInput {
   entityId: Int!
 
   """Card id."""
-  cartEntityId: Int
+  cartEntityId: String
 }
 
 """A gift certificate consignment for an order."""

@@ -13,8 +13,8 @@ import {
 } from '~/components/ui/slideshow';
 
 import SlideshowBG from './slideshow-bg-05.jpg';
-import SlideshowBG3 from './slideshow-bg-04.jpg';
-import SlideshowBG4 from './slideshow-bg-03.jpg';
+import SlideshowBG3 from './slide_bbq.jpg';
+import SlideshowBG4 from './slide_nextbase.jpg';
 
 
 const SlideshowBlurDataURL =
@@ -28,7 +28,7 @@ export const Hero = () => (
           <Image
             alt="Designerie slide image"
             blurDataURL={SlideshowBlurDataURL}
-            className="absolute -z-10 object-cover object-right"
+            className="absolute -z-10 object-cover sm:object-center"
             fill
             placeholder="blur"
             priority
@@ -52,7 +52,7 @@ export const Hero = () => (
       <Image
             alt="Grenson slide image"
             blurDataURL={SlideshowBlurDataURL}
-            className="absolute -z-10 object-cover  object-right"
+            className="absolute -z-10 object-cover  sm:object-center"
             fill
             placeholder="blur"
             priority
@@ -61,12 +61,12 @@ export const Hero = () => (
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
           <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36 ">
-          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Grenson</h2>
+          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Barbeques Galore</h2>
           <p className="text-md lg:text-lg max-w-xl text-neutral-50">
-          Steps Up Its Ecommerce with BigCommerce
+          Heats up International Expansion with BigCommerce
           </p>
           <Button asChild className="w-fit mt-4">
-            <a href="https://www.bigcommerce.com/case-study/grenson/" target="_blank" rel="noopener noreferrer">Case Study</a>
+            <a href="https://www.bigcommerce.com/case-study/barbeques-galore/" target="_blank" rel="noopener noreferrer">Case Study</a>
           </Button>
         </div>
         </div>
@@ -85,12 +85,12 @@ export const Hero = () => (
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
           <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36 ">
-          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Kaiser Willys</h2>
+          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Nextbase</h2>
           <p className="text-lg max-w-xl text-neutral-50 ">
-          Accelerates Its Search Experience with BigCommerce
+          records peak conversions on its DTC site
           </p>
           <Button asChild className="w-fit mt-4">
-            <a href="https://www.bigcommerce.com/case-study/kaiser-willys/" target="_blank" rel="noopener noreferrer">Case Study</a>
+            <a href="https://www.bigcommerce.com/case-study/nextbase/" target="_blank" rel="noopener noreferrer">Case Study</a>
           </Button>
         </div>
         </div>
