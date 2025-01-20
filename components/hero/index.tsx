@@ -12,6 +12,7 @@ import {
   SlideshowSlide,
 } from '~/components/ui/slideshow';
 
+
 import SlideshowBG from './ultra.jpg';
 import SlideshowBG3 from './slide_bbq.jpg';
 import SlideshowBG4 from './sara_raven.jpg';
@@ -85,12 +86,14 @@ export const Hero = () => (
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
           <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36 ">
+
           <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Sarah Raven</h2>
           <p className="text-lg max-w-xl text-neutral-50 ">
           sews the seeds of expansion with BigCommerce
           </p>
           <Button asChild className="w-fit mt-4">
             <a href="https://www.bigcommerce.com/case-study/sarah-raven/" target="_blank" rel="noopener noreferrer">Case Study</a>
+
           </Button>
         </div>
         </div>
