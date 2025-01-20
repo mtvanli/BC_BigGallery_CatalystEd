@@ -1,9 +1,11 @@
 """Directive that allows overriding shopper preferences."""
 directive @shopperPreferences(locale: String) on QUERY
 
+directive @cacheControl(maxAge: Int, scope: CacheControlScope, inheritMaxAge: Boolean) on FIELD | FIELD_DEFINITION | OBJECT
+
 """An error due to customer registration being disabled on a storefront."""
 type AccountCreationDisabledError implements Error {
-  """A description of the error."""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -175,7 +177,7 @@ type AddWishlistItemsResult {
 
 """An error due to providing an invalid or non-existent address ID. """
 type AddressDoesNotExistError implements Error {
-  """Error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -183,7 +185,7 @@ type AddressDoesNotExistError implements Error {
 Subject that should be created as a result of mutation would cause duplicate. 
 """
 type AlreadyExistsError implements Error {
-  """A description of the error"""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -488,6 +490,32 @@ input CartSelectedTextFieldOptionInput {
 
   """TODO"""
   text: String!
+}
+
+"""An error with cart unassign occurred during a logout."""
+union CartUnassignError = CartUnassignInaccessibleError | CartUnassignNotAllowedError
+
+"""Error indicating that there was an exception during cart unassign."""
+type CartUnassignInaccessibleError implements Error {
+  """A description of the error in user language."""
+  message: String!
+}
+
+"""
+Error indicating that the request is a stateful while this operation can be performed only as stateless.
+"""
+type CartUnassignNotAllowedError implements Error {
+  """A description of the error in user language."""
+  message: String!
+}
+
+"""Result of unassigning the cart during logout"""
+type CartUnassignResult {
+  """The cart which was unassigned."""
+  cart: Cart
+
+  """List of errors which happened during unassign operation."""
+  errors: [CartUnassignError!]!
 }
 
 """Catalog mutations """
@@ -868,19 +896,19 @@ type CustomerAccessToken {
 
 """Unexpected error while creating a customer address."""
 type CustomerAddressCreationError implements Error {
-  """Error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
 """Unexpected error while deleting a customer address."""
 type CustomerAddressDeletionError implements Error {
-  """Error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
 """An unexpected error while updating an address for a customer."""
 type CustomerAddressUpdateError implements Error {
-  """Error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -888,7 +916,7 @@ type CustomerAddressUpdateError implements Error {
 An error resulting from a customer submitting multiple reviews to the same product.
 """
 type CustomerAlreadyReviewedProductError implements Error {
-  """Error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -896,7 +924,7 @@ type CustomerAlreadyReviewedProductError implements Error {
 An error due to customer not existing when attempting to update customer information.
 """
 type CustomerDoesNotExistError implements Error {
-  """Error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -999,7 +1027,7 @@ type CustomerMutations {
 An error due to not supplying a customer ID either via customer-id header (when using a customer impersonation token) or by logging into the storefront as a customer.
 """
 type CustomerNotLoggedInError implements Error {
-  """Error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -1007,13 +1035,13 @@ type CustomerNotLoggedInError implements Error {
 An error that occurred when a customer password is being changed or reset.
 """
 type CustomerPasswordError implements Error {
-  """Details of the error."""
+  """A description of the error in user language."""
   message: String!
 }
 
 """An unexpected error while registering a customer."""
 type CustomerRegistrationError implements Error {
-  """A description of the error."""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -1153,13 +1181,13 @@ input DeleteWishlistsInput {
 An error due to the customer email already being in use when attempting registration.
 """
 type EmailAlreadyInUseError implements Error {
-  """A description of the error."""
+  """A description of the error in user language."""
   message: String!
 }
 
 """An error object, indicating what went wrong with a mutation."""
 interface Error {
-  """A description of the error"""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -1167,7 +1195,7 @@ interface Error {
 Error that occured as a result of generateSessionSyncJwtToken mutation when cartId is provided and not found.
 """
 type GenerateSessionSyncTokenCartNotFound implements Error {
-  """Not found error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -1201,7 +1229,7 @@ type InvalidInputFieldsError implements Error {
   """The input fields that had a validation issue."""
   fields: [String!]!
 
-  """Error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -1210,7 +1238,7 @@ type InvalidSessionSyncJwtError implements Error {
   """Enum with error type."""
   errorType: InvalidSessionSyncJwtErrorType!
 
-  """A description of the error"""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -1231,7 +1259,7 @@ scalar IpAddress
 
 """JWT token is expired."""
 type JwtTokenExpiredError implements Error {
-  """A description of the error"""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -1240,7 +1268,7 @@ type LimitExceededError implements Error {
   """Limit boundary."""
   limit: Int!
 
-  """A description of the error"""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -1255,7 +1283,9 @@ type LoginResult {
   """The cart that is assigned to the customer after login."""
   cart: Cart
 
-  """The customer token."""
+  """
+  The customer access token. This field can only be fetched in server-to-server context.
+  """
   customerAccessToken: CustomerAccessToken
 }
 
@@ -1270,7 +1300,9 @@ type LoginWithCustomerLoginJwtResult {
   """The cart that is assigned to the customer after login."""
   cart: Cart
 
-  """The customer token."""
+  """
+  The customer access token. This field can only be fetched in server-to-server context.
+  """
   customerAccessToken: CustomerAccessToken
 }
 
@@ -1278,6 +1310,11 @@ type LoginWithCustomerLoginJwtResult {
 type LogoutResult {
   """The result of a logout"""
   result: String!
+
+  """
+  The result of the cart unassign operation which can be performed during logout.
+  """
+  cartUnassignResult: CartUnassignResult!
 }
 
 """The user input for multiline text form fields."""
@@ -1318,7 +1355,10 @@ type Mutation {
   ): LoginResult!
 
   """Customer logout"""
-  logout: LogoutResult!
+  logout(
+    """The customer cart entity ID which should be unassigned on logout."""
+    cartEntityId: String
+  ): LogoutResult!
 
   """The wishlist mutations."""
   wishlist: WishlistMutations!
@@ -1373,19 +1413,19 @@ type Mutation {
 
 """The not authorized to perform operation error."""
 type NotAuthorisedError implements Error {
-  """A description of the error"""
+  """A description of the error in user language."""
   message: String!
 }
 
 """The not authorized to add product review error."""
 type NotAuthorizedToAddProductReviewError implements Error {
-  """Error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
 """Subject not found error."""
 type NotFoundError implements Error {
-  """A description of the error"""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -1409,7 +1449,7 @@ input PasswordFormFieldInput {
 
 """Product ID did not map to any existing products."""
 type ProductIdNotFoundError implements Error {
-  """Error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -1660,13 +1700,13 @@ type UnassignCartFromCustomerResult {
 Catch all error type for any unexpected responses from the AddProductReview mutation rpc.
 """
 type UnexpectedAddReviewError implements Error {
-  """Error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
 """An unexpected error when updating a customer."""
 type UnexpectedUpdateCustomerError implements Error {
-  """The error message."""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -1972,7 +2012,7 @@ type ValidationError implements Error {
   """Path to the field that caused the error, if applicable"""
   path: [String!]!
 
-  """A description of the error"""
+  """A description of the error in user language."""
   message: String!
 }
 
@@ -2289,6 +2329,16 @@ type BlogIndexPage implements WebPage & Node {
   """Unique ID for the parent page."""
   parentEntityId: Int
 
+  """Web page breadcrumbs."""
+  breadcrumbs(
+    """The depth of the breadcrumbs."""
+    depth: Int!
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): BreadcrumbConnection!
+
   """Page name."""
   name: String!
 
@@ -2297,6 +2347,16 @@ type BlogIndexPage implements WebPage & Node {
 
   """Page SEO details."""
   seo: SeoDetails!
+
+  """Details of the web page children."""
+  children(
+    """Filters for querying the web page children."""
+    filters: WebPageChildrenFiltersInput
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): PageConnection!
 }
 
 """Blog post details."""
@@ -2540,13 +2600,13 @@ type BrandSearchFilterItemEdge {
 
 """Breadcrumb"""
 type Breadcrumb {
-  """Category id."""
+  """The ID of the breadcrumb entity. (e.g. Category ID or WebPage ID)"""
   entityId: Int!
 
-  """Name of the category."""
+  """Name of the breadcrumb entity."""
   name: String!
 
-  """Path to the category."""
+  """Path to the breadcrumb entity."""
   path: String
 }
 
@@ -2783,6 +2843,12 @@ type CartDigitalItem {
 
   """Image for the item."""
   image: Image
+
+  """The base product information."""
+  baseCatalogProduct: Product
+
+  """The product with option selections applied."""
+  catalogProductWithOptionSelections: Product
 }
 
 """Discount applied to the cart."""
@@ -2966,6 +3032,12 @@ type CartPhysicalItem {
 
   """Image for the item."""
   image: Image
+
+  """The base product information."""
+  baseCatalogProduct: Product
+
+  """The product with option selections applied."""
+  catalogProductWithOptionSelections: Product
 }
 
 """Selected checkbox option."""
@@ -3867,6 +3939,16 @@ type ContactPage implements WebPage & Node {
   """Unique ID for the parent page."""
   parentEntityId: Int
 
+  """Web page breadcrumbs."""
+  breadcrumbs(
+    """The depth of the breadcrumbs."""
+    depth: Int!
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): BreadcrumbConnection!
+
   """Page name."""
   name: String!
 
@@ -3875,6 +3957,16 @@ type ContactPage implements WebPage & Node {
 
   """Page SEO details."""
   seo: SeoDetails!
+
+  """Details of the web page children."""
+  children(
+    """Filters for querying the web page children."""
+    filters: WebPageChildrenFiltersInput
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): PageConnection!
 }
 
 """The page content."""
@@ -3980,6 +4072,9 @@ type Currency {
 
   """Currency display settings."""
   display: CurrencyDisplay!
+
+  """Indicates whether this currency is selected as the default currency."""
+  isDefault: Boolean!
 }
 
 """A connection to a list of items."""
@@ -4016,6 +4111,12 @@ type CurrencyEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+"""Currency settings."""
+type CurrencySettings {
+  """The default currency."""
+  defaultCurrency: currencyCode!
 }
 
 """Currency symbol position"""
@@ -4345,6 +4446,16 @@ type ExternalLinkPage implements WebPage {
   """Unique ID for the parent page."""
   parentEntityId: Int
 
+  """Web page breadcrumbs."""
+  breadcrumbs(
+    """The depth of the breadcrumbs."""
+    depth: Int!
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): BreadcrumbConnection!
+
   """Page name."""
   name: String!
 
@@ -4353,6 +4464,16 @@ type ExternalLinkPage implements WebPage {
 
   """Page SEO details."""
   seo: SeoDetails!
+
+  """Details of the web page children."""
+  children(
+    """Filters for querying the web page children."""
+    filters: WebPageChildrenFiltersInput
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): PageConnection!
 }
 
 """
@@ -5083,6 +5204,16 @@ type NormalPage implements WebPage & Node {
   """Unique ID for the parent page."""
   parentEntityId: Int
 
+  """Web page breadcrumbs."""
+  breadcrumbs(
+    """The depth of the breadcrumbs."""
+    depth: Int!
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): BreadcrumbConnection!
+
   """Page name."""
   name: String!
 
@@ -5091,6 +5222,16 @@ type NormalPage implements WebPage & Node {
 
   """Page SEO details."""
   seo: SeoDetails!
+
+  """Details of the web page children."""
+  children(
+    """Filters for querying the web page children."""
+    filters: WebPageChildrenFiltersInput
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): PageConnection!
 }
 
 """A single line text input field that only accepts numbers."""
@@ -5497,6 +5638,12 @@ type OrderDigitalLineItem implements OrderLineItemInterface {
 
   """Image for the item."""
   image: Image
+
+  """The base product information."""
+  baseCatalogProduct: Product
+
+  """The product with option selections applied."""
+  catalogProductWithOptionSelections: Product
 }
 
 """A connection to a list of digital line items."""
@@ -5547,7 +5694,7 @@ input OrderFilterInput {
   entityId: Int!
 
   """Card id."""
-  cartEntityId: Int
+  cartEntityId: String
 }
 
 """A gift certificate consignment for an order."""
@@ -5681,6 +5828,12 @@ type OrderPhysicalLineItem implements OrderLineItemInterface {
 
   """Image for the item."""
   image: Image
+
+  """The base product information."""
+  baseCatalogProduct: Product
+
+  """The product with option selections applied."""
+  catalogProductWithOptionSelections: Product
 }
 
 """A connection to a list of physical line items."""
@@ -7070,6 +7223,16 @@ type RawHtmlPage implements WebPage & Node {
   """Unique ID for the parent page."""
   parentEntityId: Int
 
+  """Web page breadcrumbs."""
+  breadcrumbs(
+    """The depth of the breadcrumbs."""
+    depth: Int!
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): BreadcrumbConnection!
+
   """Page name."""
   name: String!
 
@@ -7078,6 +7241,16 @@ type RawHtmlPage implements WebPage & Node {
 
   """Page SEO details."""
   seo: SeoDetails!
+
+  """Details of the web page children."""
+  children(
+    """Filters for querying the web page children."""
+    filters: WebPageChildrenFiltersInput
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): PageConnection!
 }
 
 """ReCaptcha settings."""
@@ -7450,6 +7623,9 @@ type Settings {
 
   """Analytics settings."""
   webAnalytics: WebAnalytics
+
+  """Currency settings."""
+  currency: CurrencySettings!
 
   """
   The form fields to display on the storefront during customer registration or address creation.
@@ -8119,6 +8295,16 @@ interface WebPage {
   """Unique ID for the parent page."""
   parentEntityId: Int
 
+  """Web page breadcrumbs."""
+  breadcrumbs(
+    """The depth of the breadcrumbs."""
+    depth: Int!
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): BreadcrumbConnection!
+
   """Page name."""
   name: String!
 
@@ -8127,6 +8313,28 @@ interface WebPage {
 
   """Page SEO details."""
   seo: SeoDetails!
+
+  """Details of the web page children."""
+  children(
+    """Filters for querying the web page children."""
+    filters: WebPageChildrenFiltersInput
+    before: String
+    after: String
+    first: Int
+    last: Int
+  ): PageConnection!
+}
+
+"""Object containing filters for querying web pages"""
+input WebPageChildrenFiltersInput {
+  """Ids of the expected pages."""
+  entityIds: [Int!]
+
+  """Type of the expected pages."""
+  pageType: WebPageType
+
+  """Whether the expected pages are visible in the navigation bar."""
+  isVisibleInNavigation: Boolean
 }
 
 """Web page type"""
@@ -8148,6 +8356,9 @@ input WebPagesFiltersInput {
 
   """Whether the expected pages are visible in the navigation bar."""
   isVisibleInNavigation: Boolean
+
+  """Parent IDs of the expected pages."""
+  parentEntityIds: [Int!]
 }
 
 """A wishlist"""

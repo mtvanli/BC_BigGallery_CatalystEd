@@ -7,8 +7,19 @@
       margin-top: 0.75em;
     }
   }
+
+.ProseMirror {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
   
-  .resize-image {
+.ProseMirror p {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+  
+.resize-image {
     display: inline-block;
     position: relative;
     
@@ -26,4 +37,4 @@
       background-color: #4a90e2;
       cursor: se-resize;
     }
-  }
+}

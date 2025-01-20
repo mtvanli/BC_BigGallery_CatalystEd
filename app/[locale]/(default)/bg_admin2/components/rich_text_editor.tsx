@@ -288,7 +288,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
         </Popover.Root>
       </div>
       
-      <EditorContent editor={editor} className="p-5 h-70 overflow-y-auto resize-y min-h-[16rem] max-h-[32rem]" />
+      <EditorContent editor={editor} className="p-5 h-70 overflow-y-auto resize-y min-h-[16rem] max-h-[40rem] h-[300px] lg:h-[450px] " />
 
       <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
         <Dialog.Portal>

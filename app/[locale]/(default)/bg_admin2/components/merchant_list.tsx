@@ -37,8 +37,8 @@ export function MerchantList({ merchants, selectedMerchant, onMerchantSelect }: 
       </div>
 
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm flex-grow">
-        <ScrollArea.Root className="h-[calc(100vh-200px)] lg:h-[calc(105vh)] w-full rounded-md overflow-hidden">
-          <ScrollArea.Viewport className="w-full h-full">
+        <ScrollArea.Root className="min-h-[300px] max-h-[500px] lg:max-h-[1375px] w-full rounded-md overflow-hidden">
+          <ScrollArea.Viewport className="w-full min-h-[300px] max-h-[500px] lg:max-h-[1375px]">
             <div className="p-2">
               {filteredMerchants.map((merchant) => (
                 <div

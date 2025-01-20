@@ -62,15 +62,15 @@ export function MerchantForm({
       };
     
     
-      /* const getMiscFields = (): CustomField[] => {
+      const getMiscFields = (): CustomField[] => {
         const existingMiscFields = merchant.custom_fields
-        ? merchant.custom_fields.filter(field => field.name === 'Misc')
-        : [];// Always return exactly two Misc fields
+      ? merchant.custom_fields.filter(field => field.name === 'Misc')
+      : [];// Always return exactly two Misc fields
         return [
           existingMiscFields[0] || { id: Date.now(), name: 'Misc', value: '-- Select --' },
           existingMiscFields[1] || { id: Date.now() + 1, name: 'Misc', value: '-- Select --' }
         ];
-      }; */
+      };
   
 
   return (
@@ -320,7 +320,7 @@ export function MerchantForm({
 
         <div>
           <label className="text-sm font-medium mb-1 block">Miscellaneous</label>
-          {merchant.custom_fields?.filter(field => field.name === 'Misc').map((miscField, index) => (
+          {getMiscFields().map((miscField, index) => (
             <Select.Root
               key={miscField.id}
               value={miscField.value}

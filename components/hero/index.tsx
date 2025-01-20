@@ -12,9 +12,9 @@ import {
   SlideshowSlide,
 } from '~/components/ui/slideshow';
 
-import SlideshowBG from './slideshow-bg-05.jpg';
-import SlideshowBG3 from './slideshow-bg-04.jpg';
-import SlideshowBG4 from './slideshow-bg-03.jpg';
+import SlideshowBG from './ultra.jpg';
+import SlideshowBG3 from './slide_bbq.jpg';
+import SlideshowBG4 from './sara_raven.jpg';
 
 
 const SlideshowBlurDataURL =
@@ -26,9 +26,9 @@ export const Hero = () => (
       <SlideshowSlide>
         <div className="relative ">
           <Image
-            alt="Designerie slide image"
+            alt="Ultraceuticals slide image"
             blurDataURL={SlideshowBlurDataURL}
-            className="absolute -z-10 object-cover object-right"
+            className="absolute -z-10 object-cover sm:object-right"
             fill
             placeholder="blur"
             priority
@@ -38,11 +38,11 @@ export const Hero = () => (
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
           <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36">
-            <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Designerie</h2>
-            <p className="text-md lg:text-lg max-w-xl text-neutral-50">Builds a Luxury Ecommerce Site with BigCommerce
+            <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Ultraceuticals</h2>
+            <p className="text-md lg:text-lg max-w-xl text-neutral-50">Supercharges Their B2B Digital Transformation
             </p>
             <Button asChild className="w-fit mt-4">
-              <a href="https://www.bigcommerce.com/case-study/designerie/" target="_blank" rel="noopener noreferrer">Case Study</a>
+              <a href="https://www.bigcommerce.com/case-study/ultraceuticals/" target="_blank" rel="noopener noreferrer">Case Study</a>
             </Button>
           </div>
         </div>
@@ -50,9 +50,9 @@ export const Hero = () => (
       <SlideshowSlide>
       <div className="relative ">
       <Image
-            alt="Grenson slide image"
+            alt="BBQ Galore slide image"
             blurDataURL={SlideshowBlurDataURL}
-            className="absolute -z-10 object-cover  object-right"
+            className="absolute -z-10 object-cover  sm:object-center"
             fill
             placeholder="blur"
             priority
@@ -61,12 +61,12 @@ export const Hero = () => (
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
           <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36 ">
-          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Grenson</h2>
+          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Barbeques Galore</h2>
           <p className="text-md lg:text-lg max-w-xl text-neutral-50">
-          Steps Up Its Ecommerce with BigCommerce
+          Heats up International Expansion with BigCommerce
           </p>
           <Button asChild className="w-fit mt-4">
-            <a href="https://www.bigcommerce.com/case-study/grenson/" target="_blank" rel="noopener noreferrer">Case Study</a>
+            <a href="https://www.bigcommerce.com/case-study/barbeques-galore/" target="_blank" rel="noopener noreferrer">Case Study</a>
           </Button>
         </div>
         </div>
@@ -74,7 +74,7 @@ export const Hero = () => (
       <SlideshowSlide>
       <div className="relative ">
       <Image
-            alt="Kaiser Willys slide image"
+            alt="Sara Raven slide image"
             blurDataURL={SlideshowBlurDataURL}
             className="absolute -z-10 object-cover sm:object-center"
             fill
@@ -85,12 +85,12 @@ export const Hero = () => (
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
           <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36 ">
-          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Kaiser Willys</h2>
+          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Sarah Raven</h2>
           <p className="text-lg max-w-xl text-neutral-50 ">
-          Accelerates Its Search Experience with BigCommerce
+          sews the seeds of expansion with BigCommerce
           </p>
           <Button asChild className="w-fit mt-4">
-            <a href="https://www.bigcommerce.com/case-study/kaiser-willys/" target="_blank" rel="noopener noreferrer">Case Study</a>
+            <a href="https://www.bigcommerce.com/case-study/sarah-raven/" target="_blank" rel="noopener noreferrer">Case Study</a>
           </Button>
         </div>
         </div>

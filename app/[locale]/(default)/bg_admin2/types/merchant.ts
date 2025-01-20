@@ -2,9 +2,17 @@ export interface CustomField {
     id: number;
     name: string;
     value: string;
-}
+  }
   
-export interface Merchant {
+  export interface Image {
+    id: number;
+    url_standard: string;
+    is_thumbnail: boolean;
+    file?: File;
+    merchant_id?:number
+  }
+  
+  export interface Merchant {
     id: number;
     name: string;
     segment: string;
@@ -19,7 +27,9 @@ export interface Merchant {
     description: string;
     custom_fields: CustomField[];
     search_keywords?: string;
-    images: { url_standard: string; is_thumbnail: boolean }[];
-}
+    images: Image[];
+  }
+  
+  
   
   
