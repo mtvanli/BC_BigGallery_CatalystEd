@@ -33,15 +33,17 @@ export const StoreLogo = ({ data }: Props) => {
   }
 
   return (
-/*     <BcImage
+    
+     /* <BcImage
       alt={logo.image.altText ? logo.image.altText : storeName}
       className="max-h-16 object-contain"
       height={50}
       priority
       src={logo.image.url}
-      width={200}
+      width={210}
     />  */
     
-    <Logo width="180" height="70" />
+    //for custom logo use below
+    <Logo width="180" height="70" /> 
   );
 };

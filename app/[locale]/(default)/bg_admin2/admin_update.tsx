@@ -1,53 +1,17 @@
-
-import React, { useState, useEffect, useRef } from 'react'
-import { X } from 'lucide-react'
-
-import * as Select from '@radix-ui/react-select'
-import * as Checkbox from '@radix-ui/react-checkbox'
-import * as ScrollArea from '@radix-ui/react-scroll-area'
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons/dist'
-import {
-  Bold,
-  Italic,
-  Underline,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  List,
-  ListOrdered,
-  MoreHorizontal,
-  RotateCcw,
-  Upload,
-  Save,
-} from 'lucide-react'
-
-interface CustomField {
-    id: number;
-    name: string;
-    value: string;
-  }
-
-interface Merchant {
-    name: string;
-    segment: string;
-    presentation: string;
-    channel: string;
-    store: string;
-    agency: string;
-    region: string;
-    industry: string;
-    miscellaneous: string;
-    is_visible?: boolean;
-    highlights: string;
-    custom_fields: CustomField[];
-    search_keywords?: string;
-    images: { url_standard: string; is_thumbnail: boolean }[];
-  }
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { RotateCcw, Upload, Save} from 'lucide-react'
+import { type Merchant , type Image} from './types/merchant'
+import { RichTextEditor } from './components/rich_text_editor'
+import { MerchantList } from './components/merchant_list'
+import { ImageManager } from './components/image_manager'
+import { MerchantForm } from './components/merchant_form'
+import { toast } from 'react-hot-toast'
 
 export default function BG_Admin_Update() {
-  const [searchTerm, setSearchTerm] = useState("")
+  //const [searchTerm, setSearchTerm] = useState("")
   const [merchants, setMerchants] = useState<Merchant[]>([]);
   const [selectedMerchant, setSelectedMerchant] = useState<Merchant | null>(null);
+  const [originalMerchant, setOriginalMerchant] = useState<Merchant | null>(null);
   const [originalImages, setOriginalImages] = useState<string[]>([]);
   const [uniqueSegments, setUniqueSegments] = useState<string[]>([]);
   const [uniquePresentations, setUniquePresentations] = useState<string[]>([]);
@@ -57,49 +21,229 @@ export default function BG_Admin_Update() {
   const [uniqueMiscellaneous, setUniqueMiscellaneous] = useState<string[]>([]);
   const [keywords, setKeywords] = useState<string>('');
   const [isVisible, setIsVisible] = useState(false);
+  const [highlights, setHighlights] = useState<string>('')
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
-  const [originalMerchant, setOriginalMerchant] = useState<Merchant | null>(null);
+ // const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+ const handleMerchantClick = useCallback((merchant: Merchant) => {
+    console.log("Merchant clicked:", merchant.name)
+    console.log("Merchant highlights:", merchant.description)
+    setSelectedMerchant({...merchant});
+    setOriginalMerchant({...merchant}); // Store the original state
+    setKeywords(merchant.search_keywords || '');
+    setIsVisible(merchant.is_visible === true);
+    setOriginalImages(merchant.images.map(img => img.url_standard));
+    setHighlights(merchant.description|| '')
+  },[]);
+  
+  const fetchMerchants = useCallback(async (): Promise<Merchant[]> => {
+    try {
+      const timestamp = Date.now();
+      const response = await fetch(`/api/get-merchants?t=${timestamp}`, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error fetching merchants: ${response.statusText}`);
+      }
+
+      const responseData: Merchant[] = await response.json();
+      console.log("API Response Data:", responseData);
+      setMerchants(responseData);
+
+      const sortedMerchants = sortMerchants(responseData);
+      setMerchants(sortedMerchants)
+      
+      // If a merchant is currently selected, update its data
+    if (selectedMerchant) {
+        const updatedSelectedMerchant = sortedMerchants.find(m => m.id === selectedMerchant.id);
+        if (updatedSelectedMerchant) {
+          setSelectedMerchant(updatedSelectedMerchant);
+          setOriginalMerchant(updatedSelectedMerchant);
+        } else {
+          // If the previously selected merchant is no longer in the list, select the first merchant
+          if (sortedMerchants.length > 0 && sortedMerchants[0]) {
+            handleMerchantClick(sortedMerchants[0]);
+          } else {
+            setSelectedMerchant(null);
+            setOriginalMerchant(null);
+          }
+        }
+      } else {
+        // If no merchant was previously selected, select the first one
+        if (sortedMerchants.length > 0 && sortedMerchants[0]) {
+          handleMerchantClick(sortedMerchants[0]);
+        }
+      } 
+
+      /*   // Select the first merchant from the sorted list by default
+      if (sortedMerchants.length > 0 && sortedMerchants[0]) {
+        handleMerchantClick(sortedMerchants[0])
+      } */
+
+      // Extract unique values for dropdowns
+      const segments = [...new Set(responseData.flatMap(m => m.custom_fields.filter(f => f.name === 'Segment').map(f => f.value)))]
+      const presentations = [...new Set(responseData.flatMap(m => m.custom_fields.filter(f => f.name === 'Presentation').map(f => f.value)))]
+      const regions = [...new Set(responseData.flatMap(m => m.custom_fields.filter(f => f.name === 'Region').map(f => f.value)))]
+      const industries = [...new Set(responseData.flatMap(m => m.custom_fields.filter(f => f.name === 'Industry').map(f => f.value)))]
+      const channels = [...new Set(responseData.flatMap(m => m.custom_fields.filter(f => f.name === 'Channel').map(f => f.value)))]
+      const miscellaneous = [...new Set(responseData.flatMap(m => m.custom_fields.filter(f => f.name.startsWith('Misc')).map(f => f.value)))]
+ 
+      setUniqueSegments(segments.filter(s => s && !['na', 'na_'].includes(s.toLowerCase())))
+      setUniquePresentations(presentations.filter(Boolean))
+      setUniqueRegions(regions.filter(Boolean))
+      setUniqueIndustries(industries.filter(Boolean))
+      setUniqueChannels(channels.filter(c => c && !['na', 'na_'].includes(c.toLowerCase())))
+      setUniqueMiscellaneous(miscellaneous.filter(m => m && !['na', 'na_'].includes(m.toLowerCase())))
+
+
+      return sortedMerchants;
+
+    } catch (error) {
+      console.error("Error fetching merchants:", error);
+      toast.error("Failed to fetch merchants. Please try again.")
+      return [];
+    }
+  },[selectedMerchant, handleMerchantClick])
+
   
 
-  const handleFileSelectClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click(); // Programmatically trigger the file input click
-    }
-  };
+  const handleMerchantChange = (updatedMerchant: Partial<Merchant>) => {
+    setSelectedMerchant((prev) => prev ? { ...prev, ...updatedMerchant } : null)
+  }
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const file = event.target.files?.[0];
-    if (file && selectedMerchant) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const newImageUrl = e.target?.result as string;
-        const updatedImages = [...selectedMerchant.images];
-        if (updatedImages[index]) {
-          updatedImages[index] = { ...updatedImages[index], url_standard: newImageUrl };
+  // In admin_update.tsx
+
+const handleFileChange = (index: number, file: File) => {
+  if (selectedMerchant) {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const newImageUrl = e.target?.result as string
+      setSelectedMerchant((prev) => {
+        if (!prev) return null
+        
+        const updatedImages = [...prev.images]
+        
+        if (index === 0) {
+          // Handle thumbnail (first position)
+          const existingThumbnailIndex = updatedImages.findIndex(img => img.is_thumbnail)
+          
+          if (existingThumbnailIndex !== -1) {
+            // Update existing thumbnail
+            updatedImages[existingThumbnailIndex] = {
+              ...updatedImages[existingThumbnailIndex],
+              url_standard: newImageUrl,
+              file: file
+            }
+          } else {
+            // Create new thumbnail
+            updatedImages.unshift({
+              id: 0,
+              url_standard: newImageUrl,
+              is_thumbnail: true,
+              file: file
+            })
+          }
         } else {
-          updatedImages[index] = { url_standard: newImageUrl, is_thumbnail: false };
-        }
-        setSelectedMerchant({ ...selectedMerchant, images: updatedImages });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+          // Handle non-thumbnail images (positions 1 and 2)
+          const nonThumbnailImages = updatedImages.filter(img => !img.is_thumbnail)
+          const positionIndex = index - 1  // Convert to 0-based index for non-thumbnails
+          
+          // Find all existing non-thumbnail images
+          const nonThumbnailIndices = updatedImages
+            .map((img, idx) => ({ img, idx }))
+            .filter(({ img }) => !img.is_thumbnail)
+            .map(({ idx }) => idx)
 
-  //handleReset function for individual image resets
+          if (positionIndex < nonThumbnailIndices.length) {
+            // Update existing image at this position
+            const targetIndex = nonThumbnailIndices[positionIndex]
+            updatedImages[targetIndex] = {
+              ...updatedImages[targetIndex],
+              url_standard: newImageUrl,
+              file: file
+            }
+          } else {
+            // Add new image for this position
+            updatedImages.push({
+              id: 0,
+              url_standard: newImageUrl,
+              is_thumbnail: false,
+              file: file
+            })
+          }
+        }
+        
+        return { ...prev, images: updatedImages }
+      })
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+  
+
   const handleReset = (index: number) => {
-    if (selectedMerchant && originalImages.length > index) {
-      const updatedImages = [...selectedMerchant.images];
-      const originalUrl = originalImages[index];
-      if (originalUrl) {
-        updatedImages[index] = {
-          url_standard: originalUrl,
-          is_thumbnail: selectedMerchant.images[index]?.is_thumbnail || false
-        };
-        setSelectedMerchant({ ...selectedMerchant, images: updatedImages });
+    if (selectedMerchant && originalMerchant) {
+      const updatedImages = [...selectedMerchant.images]
+      const originalImages = [...originalMerchant.images]
+  
+      if (index === 0) {
+        // Reset thumbnail
+        const originalThumbnail = originalImages.find(img => img.is_thumbnail)
+        const currentThumbnailIndex = updatedImages.findIndex(img => img.is_thumbnail)
+  
+        if (originalThumbnail && currentThumbnailIndex !== -1) {
+          // Replace current thumbnail with original
+          updatedImages[currentThumbnailIndex] = {
+            ...originalThumbnail,
+            file: undefined
+          }
+        }
+      } else {
+        // Reset specific non-thumbnail image
+        const originalNonThumbnails = originalImages.filter(img => !img.is_thumbnail)
+        const currentNonThumbnails = updatedImages.filter(img => !img.is_thumbnail)
+        const targetPosition = index - 1
+  
+        if (targetPosition < originalNonThumbnails.length) {
+          // Find the current image at this position
+          const currentImageIndex = updatedImages.findIndex(
+            img => img === currentNonThumbnails[targetPosition]
+          )
+  
+          if (currentImageIndex !== -1) {
+            // Replace with original image
+            updatedImages[currentImageIndex] = {
+              ...originalNonThumbnails[targetPosition],
+              file: undefined
+            }
+          }
+        } else {
+          // If we're resetting a newly added image, remove it
+          const currentImageIndex = updatedImages.findIndex(
+            img => img === currentNonThumbnails[targetPosition]
+          )
+          if (currentImageIndex !== -1) {
+            updatedImages.splice(currentImageIndex, 1)
+          }
+        }
+      }
+  
+      // Update the merchant with reset images
+      setSelectedMerchant({ ...selectedMerchant, images: updatedImages })
+  
+      // Reset the file input
+      const fileInput = document.getElementById(`file-input-${index}`) as HTMLInputElement
+      if (fileInput) {
+        fileInput.value = ''
       }
     }
   };
+  
 
   //  for the master reset
   const handleMasterReset = () => {
@@ -107,693 +251,376 @@ export default function BG_Admin_Update() {
       setSelectedMerchant({...originalMerchant});
       setKeywords(originalMerchant.search_keywords || '');
       setIsVisible(originalMerchant.is_visible === true);
+      setHighlights(originalMerchant.description || '')
     }
   }
+
+  const sortMerchants = (merchants: Merchant[]): Merchant[] => {
+    return [...merchants].sort((a, b) => a.name.trim().localeCompare(b.name.trim()));
+  };
+
+  const getCategoryByRegion = (region: string): number[] => {
+    switch (region) {
+      case 'UK':
+      case 'IT':
+      case 'NL':
+      case 'FR':
+      case 'ES':  
+      case 'DE':
+      case 'EMEA - Other':
+        return [33, 36];
+      case 'AU':
+      case 'SG':
+      case 'IN':
+      case 'JP':
+      case 'NZ':
+      case 'APAC - Other':
+        return [33, 35];
+      case 'US':
+      case 'CA':
+      case 'LATAM':
+        return [33, 34];
+      case 'Global':
+        return [33];
+      default:
+        return [];
+    }
+  };
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Helper function to convert File to base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          resolve(reader.result);
+        } else {
+          reject(new Error('Failed to convert file to base64'));
+        }
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
+
+
+  const handleSave = useCallback(async () => {
+
+    if (selectedMerchant && originalMerchant && !isLoading) {
+      setIsLoading(true)
+
+      const getFieldValue = (fieldName: string, merchant: Merchant): string => {
+        const field = merchant.custom_fields.find(f => f.name === fieldName);
+        return field ? field.value : '';
+      };
+  
+      const hasFieldChanged = (fieldName: string): boolean => {
+        return getFieldValue(fieldName, selectedMerchant) !== getFieldValue(fieldName, originalMerchant);
+      };
+
+      const updateCustomField = async (fieldName: string) => {
+        const newValue = getFieldValue(fieldName, selectedMerchant);
+        const field = selectedMerchant.custom_fields.find(f => f.name === fieldName);
+      
+        if (field) {
+          const response = await fetch(`/api/update-merchant-custom-field/${selectedMerchant.id}/${field.id}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              custom_field_id: field.id,
+              custom_field_name: fieldName,
+              custom_field_value: newValue,
+            }),
+          });
+  
+          if (!response.ok) {
+            throw new Error(`Error updating custom field ${fieldName}: ${response.statusText}`);
+          }
+        } else {
+          throw new Error(`Custom field ${fieldName} not found`);
+        }
+      };
+  
+      const createCustomField = async (fieldName: string) => {
+        const newValue = getFieldValue(fieldName, selectedMerchant);
+        
+        const response = await fetch(`/api/create-merchant-custom-field/${selectedMerchant.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            custom_field_name: fieldName,
+            custom_field_value: newValue,
+          }),
+        });
+  
+        if (!response.ok) {
+          throw new Error(`Error creating custom field ${fieldName}: ${response.statusText}`);
+        }
+      };
+  
+      const customFieldsToUpdate = ['Region', 'Presentation', 'Store', 'Segment', 'Channel', 'Agency', 'Industry'];
+      const changedCustomFields = customFieldsToUpdate.filter(hasFieldChanged);
+  
+      const newRegion = getFieldValue('Region', selectedMerchant);
+      const originalRegion = getFieldValue('Region', originalMerchant);
+      const regionChanged = newRegion !== originalRegion;
+
+       // Check if images have changed or new ones are added
+      const imagesChanged = selectedMerchant.images.some((img, index) => {
+        console.log("Images changed")
+      return img.url_standard !== (originalImages[index] || '');
+      });
+  
+      // Check if any relevant fields have changed
+      const hasChanges = 
+        selectedMerchant.name !== originalMerchant.name ||
+        selectedMerchant.search_keywords !== originalMerchant.search_keywords ||
+        selectedMerchant.description !== originalMerchant.description ||
+        selectedMerchant.is_visible !== originalMerchant.is_visible ||
+        regionChanged ||
+        changedCustomFields.length > 0 ||
+        selectedMerchant.custom_fields.filter(f => f.name === 'Misc').some((f, i) => 
+          f.value !== (originalMerchant.custom_fields.filter(of => of.name === 'Misc')[i]?.value || '')
+        ) ||
+        imagesChanged;
+  
+      if (hasChanges) {
+        try {
+          const updateData: any = {
+            id: selectedMerchant.id,
+            name: selectedMerchant.name,
+            search_keywords: selectedMerchant.search_keywords,
+            description: selectedMerchant.description,
+            is_visible: selectedMerchant.is_visible,
+            custom_fields: selectedMerchant.custom_fields.filter(f => f.name === 'Misc'),
+            };
+  
+          if (regionChanged) {
+            updateData.categories = getCategoryByRegion(newRegion);
+            }
+  
+          const response = await fetch('/api/update-merchant', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData),
+            });
+  
+          if (!response.ok) {
+            throw new Error(`Error updating merchant: ${response.statusText}`);
+          }
+
+          // Update or create custom fields
+          for (const fieldName of changedCustomFields) {
+            const existingField = selectedMerchant.custom_fields.find(f => f.name === fieldName);
+            if (existingField) {
+              await updateCustomField(fieldName);
+            } else {
+              await createCustomField(fieldName);
+            }
+          }
+          
+  
+          // Handle image updates
+          const thumbnailImage = selectedMerchant.images.find(img => img.is_thumbnail);
+          const nonThumbnailImages = selectedMerchant.images.filter(img => !img.is_thumbnail);
+          const orderedImages = thumbnailImage ? [thumbnailImage, ...nonThumbnailImages] : nonThumbnailImages;
+
+          
+          for (let i = 0; i < orderedImages.length; i++) {
+            const currentImage = orderedImages[i];
+            const originalImageUrl = originalImages[i];
+
+            if (currentImage && currentImage.file) {  // Check if there's a new file to upload
+
+              let sortOrder
+              console.log("hey 1");
+              if (originalImageUrl) {
+                console.log("hey 2");
+                //before delete store the sort order
+                console.log(`Fetching sort order for merchant ${selectedMerchant.id}, image ${currentImage.id}`);
+                console.log(selectedMerchant.id, currentImage.id);
+                const sortOrderResponse = await fetch(`/api/get-merchant-image/${selectedMerchant.id}/${currentImage.id}`,{
+                  method:'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  }
+                })
+
+                console.log('Sort order response status:', sortOrderResponse.status);
+                
+                if (!sortOrderResponse.ok) {
+                  throw new Error(`Error getting image sort order: ${sortOrderResponse.statusText}`);
+                }
+      
+                const sortOrderData = await sortOrderResponse.json();
+                sortOrder = sortOrderData.data.sort_order;
+                console.log('Sort Order:', sortOrder); 
+
+                console.log("Deleting original image with URL:", originalImageUrl); 
+                // Delete existing image first
+                const deleteResponse = await fetch(`/api/delete-merchant-image/${selectedMerchant.id}/${currentImage.id}`, {
+                  method: 'DELETE',
+                });
+                if (!deleteResponse.ok) {
+                  throw new Error(`Error deleting image: ${deleteResponse.statusText}`);
+                }
+              }
+              
+              
+              // Wait a brief moment after deletion
+              await new Promise(resolve => setTimeout(resolve, 500));
+            
+              // Create new image
+              const base64 = await fileToBase64(currentImage.file);
+              console.log("Creating image at index:", i);
+              const createResponse = await fetch(`/api/create-merchant-image/${selectedMerchant.id}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  image_file: base64,
+                  is_thumbnail: i === 0,
+                }),
+              });
+
+              if (!createResponse.ok) {
+                throw new Error(`Error creating image: ${createResponse.statusText}`);
+              }
+
+              // Parse the JSON response
+              const responseData = await createResponse.json();  
+
+              // Access the `data` object and `data.id`
+              const image_id = responseData.data.id;
+              console.log('Data ID:', image_id); 
+
+              // Wait a brief moment after creation
+              await new Promise(resolve => setTimeout(resolve, 500));
+
+              const updateResponse = await fetch(`/api/update-merchant-image/${selectedMerchant.id}/${image_id}`,{
+                method:'PUT',
+                headers:{
+                  'Content-Type': 'application/json',
+                },
+                body:JSON.stringify({
+                  is_thumbnail: i===0,
+                })})
+
+              if (!updateResponse.ok) {
+                throw new Error(`Error updating thumbnail status: ${updateResponse.statusText}`);
+              }
+
+            } 
+          }
+  
+          // Fetch updated merchant data
+          const updatedMerchants = await fetchMerchants();
+
+           // Important: Wait for the state to be updated
+          await new Promise(resolve => setTimeout(resolve, 100));
+
+          // Find the updated merchant in the new list
+          const updatedMerchant = updatedMerchants.find(m => m.id === selectedMerchant.id);
+          if (updatedMerchant) {
+          setSelectedMerchant(updatedMerchant);
+          setOriginalMerchant(updatedMerchant);
+
+          // Update other related states
+          setKeywords(updatedMerchant.search_keywords || '');
+          setIsVisible(updatedMerchant.is_visible === true);
+          setHighlights(updatedMerchant.description || '');
+          setOriginalImages(updatedMerchant.images.map(img => img.url_standard));
+          }
+  
+          toast.success("Merchant updated successfully");
+        } catch (error) {
+          console.error("Error saving merchant:", error);
+          toast.error("Failed to update merchant. Please try again.");
+        } finally {
+          setIsLoading(false); }
+      } else {
+        toast("No changes to save");
+      }
+    }
+  }, [selectedMerchant, originalMerchant, fetchMerchants]);
+  
 
   // Fetch merchants data on component mount
   useEffect(() => {
-    const fetchMerchants = async () => {
-      try {
-        const response = await fetch('/api/merchants');
-        if (!response.ok) {
-          throw new Error(`Error fetching merchants: ${response.statusText}`);
-        }
-
-        const responseData: Merchant[] = await response.json();
-        console.log("API Response Data:", responseData);
-        setMerchants(responseData);
-
-         // Extract unique segments
-         const segments = responseData.reduce((acc: string[], merchant: Merchant) => {
-            const segmentField = merchant.custom_fields.find(field => field.name === 'Segment');
-            if (segmentField && segmentField.value && !['na', 'na_'].includes(segmentField.value.toLowerCase())) {
-              acc.push(segmentField.value);
-            }
-            return acc;
-          }, []);
-          const uniqueSegments = [...new Set(segments)];
-          setUniqueSegments(uniqueSegments);
-
-        // Extract unique presentations
-          const presentations = responseData.reduce((acc: string[], merchant: Merchant) => {
-            const presentationField = merchant.custom_fields.find(field => field.name === 'Presentation');
-            if (presentationField && presentationField.value ) {
-              acc.push(presentationField.value);
-            }
-            return acc;
-          }, []);
-          const uniquePresentations = [...new Set(presentations)];
-          setUniquePresentations(uniquePresentations);
-
-          // Extract unique regions
-          const regions = responseData.reduce((acc: string[], merchant: Merchant) => {
-            const regionField = merchant.custom_fields.find(field => field.name === 'Region');
-            if (regionField && regionField.value) {
-              acc.push(regionField.value);
-            }
-            return acc;
-          }, []);
-          setUniqueRegions([...new Set(regions)]);
-
-           // Extract unique industries
-          const industries = responseData.reduce((acc: string[], merchant: Merchant) => {
-            const industryField = merchant.custom_fields.find(field => field.name === 'Industry');
-            if (industryField && industryField.value) {
-              acc.push(industryField.value);
-            }
-            return acc;
-          }, []);
-          setUniqueIndustries([...new Set(industries)]);
-
-          // Extract unique LOVs for the channel dropdown
-          const channels = responseData.reduce((acc: string[], merchant: Merchant) => {
-            const channelField = merchant.custom_fields.find(field => field.name === 'Channel');
-            if (channelField && channelField.value && !['na', 'na_'].includes(channelField.value.toLowerCase())) {
-              acc.push(channelField.value);
-            }
-            return acc;
-          }, []);
-          setUniqueChannels([...new Set(channels)]);
-
-          const miscellaneous = responseData.reduce((acc: string[], merchant: Merchant) => {
-            const miscFields = merchant.custom_fields.filter(field => field.name === 'Misc');
-            miscFields.forEach(field => {
-              if (field.value && !['na', 'na_'].includes(field.value.toLowerCase())) {
-                acc.push(field.value);
-              }
-            });
-            return acc;
-          }, []);
-          setUniqueMiscellaneous([...new Set(miscellaneous)]);
-
-      } catch (error) {
-        console.error("Error fetching merchants:", error);
-      }
-    };
-
-    fetchMerchants();
-  }, []);
+    fetchMerchants()
+  }, [])
   
-  const filteredMerchants = merchants
-    .filter(merchant => merchant.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    .sort((a, b) => a.name.trim().localeCompare(b.name.trim(), undefined, { sensitivity: 'base' }));
-  
-
-  const handleMerchantClick = (merchant: Merchant) => {
-    setSelectedMerchant({...merchant});
-    setOriginalMerchant({...merchant}); // Store the original state
-    setKeywords(merchant.search_keywords || '');
-    setIsVisible(merchant.is_visible === true);
-    setOriginalImages(merchant.images.map(img => img.url_standard));
-  }
-
-
-
-  //Segment functions
-  const handleSegmentChange = (value: string) => {
-    if (selectedMerchant) {
-      const updatedCustomFields = selectedMerchant.custom_fields.map(field => 
-        field.name === 'Segment' ? { ...field, value } : field
-      );
-      setSelectedMerchant({ ...selectedMerchant, custom_fields: updatedCustomFields });
-    }
-  }
-
-  const getSegmentValue = (merchant: Merchant | null) => {
-    if (!merchant) return '';
-    const segmentField = merchant.custom_fields.find(field => field.name === 'Segment');
-    return segmentField ? segmentField.value : '';
-  }
-
-  //Presentation functions
-  const handlePresentationChange = (value: string) => {
-    if (selectedMerchant) {
-      const updatedCustomFields = selectedMerchant.custom_fields.map(field => 
-        field.name === 'Presentation' ? { ...field, value } : field
-      );
-      setSelectedMerchant({ ...selectedMerchant, custom_fields: updatedCustomFields });
-    }
-  }
-
-  const getPresentationValue = (merchant: Merchant | null) => {
-    if (!merchant) return '';
-    const presentationField = merchant.custom_fields.find(field => field.name === 'Presentation');
-    return presentationField ? presentationField.value : '';
-  }
-
-  //Region functions
-  const handleRegionChange = (value: string) => {
-    if (selectedMerchant) {
-      const updatedCustomFields = selectedMerchant.custom_fields.map(field => 
-        field.name === 'Region' ? { ...field, value } : field
-      );
-      setSelectedMerchant({ ...selectedMerchant, custom_fields: updatedCustomFields });
-    }
-  }
-
-  const getRegionValue = (merchant: Merchant | null) => {
-    if (!merchant) return '';
-    const regionField = merchant.custom_fields.find(field => field.name === 'Region');
-    return regionField ? regionField.value : '';
-  }
-
-
-  const handleIndustryChange = (value: string) => {
-    if (selectedMerchant) {
-      const updatedCustomFields = selectedMerchant.custom_fields.map(field => 
-        field.name === 'Industry' ? { ...field, value } : field
-      );
-      setSelectedMerchant({ ...selectedMerchant, custom_fields: updatedCustomFields });
-    }
-  }
-
-  const getIndustryValue = (merchant: Merchant | null) => {
-    if (!merchant) return '';
-    const industryField = merchant.custom_fields.find(field => field.name === 'Industry');
-    return industryField ? industryField.value : '';
-  }
-
-  const clearSearch = () => {
-    setSearchTerm("");
-  }
-
-  const getAgencyValue = (merchant: Merchant | null) => {
-    if (!merchant) return '';
-    const agencyField = merchant.custom_fields.find(field => field.name === 'Agency');
-    return agencyField ? agencyField.value : '';
-  }
-
-  const getStoreValue = (merchant: Merchant | null) => {
-    if (!merchant) return '';
-    const storeField = merchant.custom_fields.find(field => field.name === 'Store');
-    return storeField ? storeField.value : '';
-  }
-
-  const handleChannelChange = (value: string) => {
-    if (selectedMerchant) {
-      const updatedCustomFields = selectedMerchant.custom_fields.map(field => 
-        field.name === 'Channel' ? { ...field, value } : field
-      );
-      setSelectedMerchant({ ...selectedMerchant, custom_fields: updatedCustomFields });
-    }
-  }
-
-  const getChannelValue = (merchant: Merchant | null) => {
-    if (!merchant) return '';
-    const channelField = merchant.custom_fields.find(field => field.name === 'Channel');
-    const value = channelField ? channelField.value : '';
-    return value.toLowerCase() === 'na' || value.toLowerCase() === 'na_' ? '-- Select --' : value;
-  }
-
-  const handleMiscellaneousChange = (index: number, value: string) => {
-    if (selectedMerchant) {
-      const miscFields = selectedMerchant.custom_fields.filter(field => field.name === 'Misc');
-      if (miscFields[index]) {
-        const updatedCustomFields = selectedMerchant.custom_fields.map(field => 
-          field.id === miscFields[index].id ? { ...field, value } : field
-        );
-        setSelectedMerchant({ ...selectedMerchant, custom_fields: updatedCustomFields });
-      }
-    }
-  };
-
-  const getMiscellaneousValues = (merchant: Merchant | null): string[] => {
-    if (!merchant) return [];
-    
-    const miscFields = merchant.custom_fields.filter(field => field.name === 'Misc');
-    
-    return miscFields
-      .map(field => 
-        field.value.toLowerCase() === 'na' || field.value.toLowerCase() === 'na_'  
-          ? '-- Select --' 
-          : field.value
-      )
-      .filter(Boolean); // Ensures we only return non-empty values
-  };
-
-  const getImages = (merchant: Merchant | null) => {
-    if (!merchant) return [];
-    return merchant.images.map(img => img.url_standard);
-  }
 
   return (
+    
     <div className="container mx-auto p-1 max-w-7xl" >
-      <div className="flex flex-col lg:flex-row gap-6" >
+        <div className="flex flex-col lg:flex-row gap-6" >
+        {/* <div className="w-full lg:w-64 space-y-4"> */}
+        <MerchantList
+          merchants={sortMerchants(merchants)}
+          selectedMerchant={selectedMerchant}
+          onMerchantSelect={handleMerchantClick}
+        />
+    
+        <div className="flex-1 space-y-6">
         
-        {/* <div className="flex-grow grid grid-cols-[250px,1fr] gap-6"> */}
-          <div className="w-full lg:w-64 space-y-4">
-         
-         {/*Search*/} 
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        {selectedMerchant && (
+            <> 
+            <MerchantForm
+                merchant={selectedMerchant}
+                onMerchantChange={handleMerchantChange}
+                uniqueSegments={uniqueSegments}
+                uniquePresentations={uniquePresentations}
+                uniqueRegions={uniqueRegions}
+                uniqueIndustries={uniqueIndustries}
+                uniqueChannels={uniqueChannels}
+                uniqueMiscellaneous={uniqueMiscellaneous}
             />
-             {searchTerm && (
-              <button
-                onClick={clearSearch}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-            </div>
-
-
-            {/*Merchant List*/} 
-            <div className="bg-white border border-gray-200 rounded-lg shadow-sm flex-grow ">
-              <ScrollArea.Root className="h-[calc(100vh-200px)]  lg:max-h-[calc(100vh-150px)] w-full rounded-md overflow-hidden">
-                <ScrollArea.Viewport className="w-full h-full">
-                  <div className="p-2">
-                    {filteredMerchants.map((merchant,index) => (
-                      <div
-                        key={merchant.name}
-                        className={`cursor-pointer p-1 hover:bg-gray-100 rounded-md ${
-                            selectedMerchant?.name === merchant.name ? 'bg-blue-100' : ''
-                          }`}
-                        onClick={() => handleMerchantClick(merchant)}
-                        aria-selected={selectedMerchant?.name === merchant.name}
-                      >
-                        {merchant.name}
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea.Viewport>
-                <ScrollArea.Scrollbar
-                  className="flex select-none touch-none p-0.5 bg-gray-100 transition-colors duration-[160ms] ease-out hover:bg-gray-200 data-[orientation=vertical]:w-2.5 data-[orientation=horizontal]:flex-col data-[orientation=horizontal]:h-2.5"
-                  orientation="vertical"
-                >
-                  <ScrollArea.Thumb className="flex-1 bg-gray-300 rounded-[10px] relative before:content-[''] before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:w-full before:h-full before:min-w-[44px] before:min-h-[44px]" />
-                </ScrollArea.Scrollbar>
-              </ScrollArea.Root>
-            </div>
-          </div>
-
-                    
-          <div className="flex-1 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-
-                {/* Merchant Name */} 
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Merchant</label>
-                  <input type="text"
-                        value={selectedMerchant?.name || ''}  
-                        onChange={(e) => setSelectedMerchant(prev => prev ? {...prev, name: e.target.value} : null)}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                </div>
-
-                {/* Segment */} 
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Segment</label>
-                  <Select.Root 
-                  value={getSegmentValue(selectedMerchant)}
-                  onValueChange={handleSegmentChange}>
-                    <Select.Trigger className="inline-flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                      <Select.Value>{getSegmentValue(selectedMerchant) || '-- Select --'}</Select.Value>
-                      <Select.Icon>
-                        <ChevronDownIcon />
-                      </Select.Icon>
-                    </Select.Trigger>
-                    <Select.Portal>
-                      <Select.Content className="overflow-hidden bg-white rounded-md shadow-lg">
-                        <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-gray-700 cursor-default">
-                          <ChevronUpIcon />
-                        </Select.ScrollUpButton>
-                        <Select.Viewport className="p-1">
-                        {uniqueSegments.map((segment, index) => (
-                          <Select.Item 
-                            key={index} 
-                            value={segment} 
-                            className="relative flex items-center h-[25px] px-[25px] text-sm text-gray-700 rounded-[3px] select-none hover:bg-blue-100 focus:bg-blue-100 focus:outline-none"
-                          >
-                            <Select.ItemText>{segment}</Select.ItemText>
-                            <Select.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
-                              <CheckIcon />
-                            </Select.ItemIndicator>
-                          </Select.Item>
-                        ))}
-                        </Select.Viewport>
-                        <Select.ScrollDownButton className="flex items-center justify-center h-[25px] bg-white text-gray-700 cursor-default">
-                          <ChevronDownIcon />
-                        </Select.ScrollDownButton>
-                      </Select.Content>
-                    </Select.Portal>
-                  </Select.Root>
-                </div>
-
-                {/* Presentation */} 
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Presentation</label>
-                  <Select.Root 
-                  value={getPresentationValue(selectedMerchant)}
-                  onValueChange={handlePresentationChange}>
-                    <Select.Trigger className="inline-flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                      <Select.Value> {getPresentationValue(selectedMerchant) || '-- Select --' } </Select.Value>
-                      <Select.Icon>
-                        <ChevronDownIcon />
-                      </Select.Icon>
-                    </Select.Trigger>
-                    <Select.Portal>
-                      <Select.Content className="overflow-hidden bg-white rounded-md shadow-lg">
-                        <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-gray-700 cursor-default">
-                          <ChevronUpIcon />
-                        </Select.ScrollUpButton>
-                        <Select.Viewport className="p-1">
-                        {uniquePresentations.map((presentation, index) => (
-                          <Select.Item 
-                            key={index} 
-                            value={presentation} 
-                            className="relative flex items-center h-[25px] px-[25px] text-sm text-gray-700 rounded-[3px] select-none hover:bg-blue-100 focus:bg-blue-100 focus:outline-none"
-                          >
-                            <Select.ItemText>{presentation}</Select.ItemText>
-                            <Select.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
-                              <CheckIcon />
-                            </Select.ItemIndicator>
-                          </Select.Item>
-                        ))}
-
-                        </Select.Viewport>
-                        <Select.ScrollDownButton className="flex items-center justify-center h-[25px] bg-white text-gray-700 cursor-default">
-                          <ChevronDownIcon />
-                        </Select.ScrollDownButton>
-                      </Select.Content>
-                    </Select.Portal>
-                  </Select.Root>
-                </div>
-
-                {/* Channel */} 
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Channel</label>
-                  <Select.Root 
-                  value={getChannelValue(selectedMerchant)}
-                  onValueChange={handleChannelChange}
-                >
-                  <Select.Trigger className="inline-flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <Select.Value>{getChannelValue(selectedMerchant) || '-- Select --'}</Select.Value>
-                    <Select.Icon>
-                      <ChevronDownIcon />
-                    </Select.Icon>
-                  </Select.Trigger>
-                  <Select.Portal>
-                    <Select.Content className="overflow-hidden bg-white rounded-md shadow-lg">
-                      <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-gray-700 cursor-default">
-                        <ChevronUpIcon />
-                      </Select.ScrollUpButton>
-                      <Select.Viewport className="p-1">
-                      <Select.Item value="-- Select --" className="relative flex items-center h-[25px] px-[25px] text-sm text-gray-700 rounded-[3px] select-none hover:bg-blue-100 focus:bg-blue-100 focus:outline-none">
-                          <Select.ItemText>-- Select --</Select.ItemText>
-                        </Select.Item>
-                        {uniqueChannels.map((channel, index) => (
-                          <Select.Item 
-                            key={index} 
-                            value={channel} 
-                            className="relative flex items-center h-[25px] px-[25px] text-sm text-gray-700 rounded-[3px] select-none hover:bg-blue-100 focus:bg-blue-100 focus:outline-none"
-                          >
-                            <Select.ItemText>{channel}</Select.ItemText>
-                            <Select.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
-                              <CheckIcon />
-                            </Select.ItemIndicator>
-                          </Select.Item>
-                        ))}
-                      </Select.Viewport>
-                      <Select.ScrollDownButton className="flex items-center justify-center h-[25px] bg-white text-gray-700 cursor-default">
-                        <ChevronDownIcon />
-                      </Select.ScrollDownButton>
-                    </Select.Content>
-                    </Select.Portal>
-                  </Select.Root>
-                </div>
-
-                {/* Store */} 
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Store</label>
-                  <input type="text" 
-                  value={getStoreValue(selectedMerchant)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Agency</label>
-                  <input type="text" 
-                  value={getAgencyValue(selectedMerchant)}
-                  placeholder="Which agency built the store?" 
-                  onChange={(e) => {
-                    if (selectedMerchant) {
-                      const updatedCustomFields = selectedMerchant.custom_fields.map(field => 
-                        field.name === 'Agency' ? { ...field, value: e.target.value } : field
-                      );
-                      setSelectedMerchant({ ...selectedMerchant, custom_fields: updatedCustomFields });
-                    }
-                  }}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Region</label>
-                  <Select.Root
-                  value={getRegionValue(selectedMerchant)}
-                  onValueChange={handleRegionChange}>
-                    <Select.Trigger className="inline-flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <Select.Value>{getRegionValue(selectedMerchant) || '-- Select --'}</Select.Value>
-                    <Select.Icon>
-                        <ChevronDownIcon />
-                      </Select.Icon>
-                    </Select.Trigger>
-                    <Select.Portal>
-                      <Select.Content className="overflow-hidden bg-white rounded-md shadow-lg">
-                        <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-gray-700 cursor-default">
-                          <ChevronUpIcon />
-                        </Select.ScrollUpButton>
-                        <Select.Viewport className="p-1">
-                        {uniqueRegions.map((region, index) => (
-                          <Select.Item 
-                            key={index} 
-                            value={region} 
-                            className="relative flex items-center h-[25px] px-[25px] text-sm text-gray-700 rounded-[3px] select-none hover:bg-blue-100 focus:bg-blue-100 focus:outline-none"
-                          >
-                            <Select.ItemText>{region}</Select.ItemText>
-                            <Select.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
-                              <CheckIcon />
-                            </Select.ItemIndicator>
-                          </Select.Item>
-                        ))}
-                        </Select.Viewport>
-                        <Select.ScrollDownButton className="flex items-center justify-center h-[25px] bg-white text-gray-700 cursor-default">
-                          <ChevronDownIcon />
-                        </Select.ScrollDownButton>
-                      </Select.Content>
-                    </Select.Portal>
-                  </Select.Root>
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Industry</label>
-                  <Select.Root 
-                  value={getIndustryValue(selectedMerchant)}
-                  onValueChange={handleIndustryChange}
-                    >
-                  <Select.Trigger className="inline-flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <Select.Value>{getIndustryValue(selectedMerchant) || '-- Select --'}</Select.Value>
-                    <Select.Icon>
-                      <ChevronDownIcon />
-                    </Select.Icon>
-                  </Select.Trigger>
-                  <Select.Portal>
-                    <Select.Content className="overflow-hidden bg-white rounded-md shadow-lg">
-                      <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-gray-700 cursor-default">
-                        <ChevronUpIcon />
-                      </Select.ScrollUpButton>
-                      <Select.Viewport className="p-1">
-                        {uniqueIndustries.map((industry, index) => (
-                          <Select.Item 
-                            key={index} 
-                            value={industry} 
-                            className="relative flex items-center h-[25px] px-[25px] text-sm text-gray-700 rounded-[3px] select-none hover:bg-blue-100 focus:bg-blue-100 focus:outline-none"
-                          >
-                            <Select.ItemText>{industry}</Select.ItemText>
-                            <Select.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
-                              <CheckIcon />
-                            </Select.ItemIndicator>
-                          </Select.Item>
-                        ))}
-                      </Select.Viewport>
-                      <Select.ScrollDownButton className="flex items-center justify-center h-[25px] bg-white text-gray-700 cursor-default">
-                        <ChevronDownIcon />
-                      </Select.ScrollDownButton>
-                    </Select.Content>
-                  </Select.Portal>
-                </Select.Root>
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Miscellaneous</label>
-                  {[0, 1].map((index) => (
-                  <Select.Root 
-                    key={index}
-                    value={getMiscellaneousValues(selectedMerchant)[index] || ''}
-                    onValueChange={(value) => handleMiscellaneousChange(index, value)}
-                  >
-                    <Select.Trigger className="inline-flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mt-2">
-                      <Select.Value>{getMiscellaneousValues(selectedMerchant)[index] || `Miscellaneous ${index + 1}`}</Select.Value>
-                      <Select.Icon>
-                        <ChevronDownIcon />
-                      </Select.Icon>
-                    </Select.Trigger>
-                    <Select.Portal>
-                      <Select.Content className="overflow-hidden bg-white rounded-md shadow-lg">
-                        <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-gray-700 cursor-default">
-                          <ChevronUpIcon />
-                        </Select.ScrollUpButton>
-                        <Select.Viewport className="p-1">
-                        <Select.Item value="-- Select --" className="relative flex items-center h-[25px] px-[25px] text-sm text-gray-700 rounded-[3px] select-none hover:bg-blue-100 focus:bg-blue-100 focus:outline-none">
-                          <Select.ItemText>-- Select --</Select.ItemText>
-                        </Select.Item>
-                          {uniqueMiscellaneous.map((misc, i) => (
-                            <Select.Item 
-                              key={i} 
-                              value={misc} 
-                              className="relative flex items-center h-[25px] px-[25px] text-sm text-gray-700 rounded-[3px] select-none hover:bg-blue-100 focus:bg-blue-100 focus:outline-none"
-                            >
-                              <Select.ItemText>{misc}</Select.ItemText>
-                              <Select.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
-                                <CheckIcon />
-                              </Select.ItemIndicator>
-                            </Select.Item>
-                          ))}
-                        </Select.Viewport>
-                        <Select.ScrollDownButton className="flex items-center justify-center h-[25px] bg-white text-gray-700 cursor-default">
-                          <ChevronDownIcon />
-                        </Select.ScrollDownButton>
-                      </Select.Content>
-                    </Select.Portal>
-                  </Select.Root>
-                ))}
-                </div>
-
-             
-
-                {/* Visible */}
-                <div className="flex items-center space-x-2">
-                  <Checkbox.Root
-                    className="flex h-4 w-4 appearance-none items-center justify-center rounded-sm border border-gray-300 bg-white data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
-                    id="visible"
-                    checked={isVisible}
-                    onCheckedChange={(checked) => {
-                      setIsVisible(checked === true);
-                      if (selectedMerchant) {
-                        setSelectedMerchant({...selectedMerchant, is_visible: checked === true});
-                      }
-                    }}
-                  >
-                    <Checkbox.Indicator className="text-white">
-                      <CheckIcon className="h-4 w-4" />
-                    </Checkbox.Indicator>
-                  </Checkbox.Root>
-                  <label
-                    htmlFor="visible"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Visible
-                  </label>
-                </div>
-              </div>
-            </div>
-
             <div>
-              <label className="text-sm font-medium mb-1 block">Keywords</label>
-              <textarea
-                  value={keywords}
-                  onChange={(e) => setKeywords(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  rows={1}
+                <label className="text-sm font-medium mb-1 block">Highlights</label>
+                <RichTextEditor
+                  content={selectedMerchant.description}
+                  onChange={(content) => 
+                    setSelectedMerchant((prev) => prev ? { ...prev, description: content } : null)
+                  }
                 />
             </div>
+            <ImageManager
+                images={selectedMerchant.images}
+                onImageChange={handleFileChange}
+                onImageReset={handleReset}
+            />
 
-            <div>
-              <label className="text-sm font-medium mb-1 block">Highlights</label>
-              <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-                <div className="flex flex-wrap items-center gap-1 border-b p-2">
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <Bold className="w-4 h-4" />
-                  </button>
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <Italic className="w-4 h-4" />
-                  </button>
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <Underline className="w-4 h-4" />
-                  </button>
-                  <span className="w-px h-4 bg-gray-300 mx-2" />
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <AlignLeft className="w-4 h-4" />
-                  </button>
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <AlignCenter className="w-4 h-4" />
-                  </button>
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <AlignRight className="w-4 h-4" />
-                  </button>
-                  <span className="w-px h-4 bg-gray-300 mx-2" />
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <List className="w-4 h-4" />
-                  </button>
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <ListOrdered className="w-4 h-4" />
-                  </button>
-                  <button className="p-1 hover:bg-gray-100 rounded">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </button>
-                </div>
-                <div className="min-h-[200px] p-2" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[0, 1, 2].map((index) => {
-          const images = getImages(selectedMerchant);
-          const imageUrl = images[index];
-          return (
-            <div key={index} className="space-y-2">
-              <div className="aspect-[3/4] border border-gray-200 rounded-lg overflow-hidden">
-                {imageUrl ? (
-                  <img src={imageUrl} alt={`Image ${index + 1}`} className="object-cover w-full h-full" />
-                ) : (
-                  <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                    <span className="text-gray-400">No image</span>
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                <button 
-                onClick={() => handleReset(index)}
-                className="flex items-center gap-2 px-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                  <RotateCcw className="w-4 h-4" />
-                </button>
-                <label className="flex-1 flex items-center justify-center gap-2 px-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer">
-                  <Upload className="w-4 h-4" />
-                  <span className="truncate">Select Image</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: "none" }}
-                    onChange={(e) => handleFileChange(e, index)}
-                  />
-                </label>
-              </div>
-            </div>
-          );
-        })}
-            </div>
-          </div>
-        {/* </div> */}
+            </>
+        )}
+        </div>      
       </div>
 
       <div className="mt-6 flex justify-end gap-2">
-        <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+        <button 
+        onClick={handleSave}
+        disabled={isLoading}
+        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50">
+          {isLoading ? (
+          <>
+          <span className="animate-spin">⌛</span>
+            Saving...
+          </>
+          ) : (
+          <>
           <Save className="w-4 h-4" />
-          Save
+            Save
+          </>
+          )}
         </button>
         <button 
         onClick={handleMasterReset}
@@ -801,7 +628,6 @@ export default function BG_Admin_Update() {
           <RotateCcw className="w-4 h-4" />
           Reset
         </button>
-
       </div>
     </div>
   )
