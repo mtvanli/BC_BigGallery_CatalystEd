@@ -26,6 +26,7 @@ export function MerchantForm({
   uniqueMiscellaneous
 }: MerchantFormProps) {
 
+
   const getFieldValue = (fieldName: string): string => {
     if (!merchant.custom_fields) {
       return fieldName === 'Agency' ? "Which agency built the store?" : '-- Select --';
@@ -33,66 +34,66 @@ export function MerchantForm({
     const field = merchant.custom_fields.find(f => f.name === fieldName);
     const value = field ? field.value : '';
     if (fieldName === 'Agency') {
-      return value.toLowerCase() === 'na' || value.toLowerCase() === 'na_' || value === '' 
-        ? "Which agency built the store?" 
+      return value.toLowerCase() === 'na' || value.toLowerCase() === 'na_' || value === ''
+        ? "Which agency built the store?"
         : value;
     }
-    return value.toLowerCase() === 'na' || value.toLowerCase() === 'na_' || value === '' 
-      ? '-- Select --' 
+    return value.toLowerCase() === 'na' || value.toLowerCase() === 'na_' || value === ''
+      ? '-- Select --'
       : value;
   };
 
 
-    const handleCustomFieldChange = (fieldName: string, value: string, id?: number) => {
-        let updatedCustomFields;
-        if (fieldName === 'Misc') {
-          updatedCustomFields = merchant.custom_fields.map(field => 
-            field.id === id ? { ...field, value } : field
-          );
-          // If the field doesn't exist, add it
-          if (!updatedCustomFields.some(field => field.id === id)) {
-            updatedCustomFields.push({ id: id || Date.now(), name: 'Misc', value });
-          }
-        } else {
-          updatedCustomFields = merchant.custom_fields.map(field =>
-            field.name === fieldName ? { ...field, value } : field
-          );
-        }
-        onMerchantChange({ ...merchant, custom_fields: updatedCustomFields });
-      };
-    
-    
-      const getMiscFields = (): CustomField[] => {
-        const existingMiscFields = merchant.custom_fields
+  const handleCustomFieldChange = (fieldName: string, value: string, id?: number) => {
+    let updatedCustomFields;
+    if (fieldName === 'Misc') {
+      updatedCustomFields = merchant.custom_fields.map(field =>
+        field.id === id ? { ...field, value } : field
+      );
+      // If the field doesn't exist, add it
+      if (!updatedCustomFields.some(field => field.id === id)) {
+        updatedCustomFields.push({ id: id || Date.now(), name: 'Misc', value });
+      }
+    } else {
+      updatedCustomFields = merchant.custom_fields.map(field =>
+        field.name === fieldName ? { ...field, value } : field
+      );
+    }
+    onMerchantChange({ ...merchant, custom_fields: updatedCustomFields });
+  };
+
+
+  const getMiscFields = (): CustomField[] => {
+    const existingMiscFields = merchant.custom_fields
       ? merchant.custom_fields.filter(field => field.name === 'Misc')
       : [];// Always return exactly two Misc fields
-        return [
-          existingMiscFields[0] || { id: Date.now(), name: 'Misc', value: '-- Select --' },
-          existingMiscFields[1] || { id: Date.now() + 1, name: 'Misc', value: '-- Select --' }
-        ];
-      };
-  
+    return [
+      existingMiscFields[0] || { id: Date.now(), name: 'Misc', value: '-- Select --' },
+      existingMiscFields[1] || { id: Date.now() + 1, name: 'Misc', value: '-- Select --' }
+    ];
+  };
+
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
       <div className="space-y-4">
         <div>
-             <label className="text-sm font-medium mb-1 block">Merchant</label>
-            <input
+          <label className="text-sm font-medium mb-1 block">Merchant</label>
+          <input
             type="text"
             value={merchant.name}
             onChange={(e) => onMerchantChange({ ...merchant, name: e.target.value })}
             className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
+          />
         </div>
 
-        {/* Segment */}     
+        {/* Segment */}
         <div>
-            <label className="text-sm font-medium mb-1 block">Segment</label>
-            <Select.Root
+          <label className="text-sm font-medium mb-1 block">Segment</label>
+          <Select.Root
             value={getFieldValue('Segment')}
             onValueChange={(value) => handleCustomFieldChange('Segment', value)}
-            >
+          >
             <Select.Trigger className="inline-flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <Select.Value>{getFieldValue('Segment')}</Select.Value>
               <Select.Icon><ChevronDownIcon /></Select.Icon>
@@ -129,11 +130,11 @@ export function MerchantForm({
 
         {/* Presentation */}
         <div>
-            <label className="text-sm font-medium mb-1 block">Presentation</label>
-            <Select.Root
+          <label className="text-sm font-medium mb-1 block">Presentation</label>
+          <Select.Root
             value={getFieldValue('Presentation')}
             onValueChange={(value) => handleCustomFieldChange('Presentation', value)}
-            >
+          >
             <Select.Trigger className="inline-flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <Select.Value>{getFieldValue('Presentation')}</Select.Value>
               <Select.Icon><ChevronDownIcon /></Select.Icon>
@@ -170,11 +171,11 @@ export function MerchantForm({
 
         {/* Channel */}
         <div>
-            <label className="text-sm font-medium mb-1 block">Channel</label>
-            <Select.Root
+          <label className="text-sm font-medium mb-1 block">Channel</label>
+          <Select.Root
             value={getFieldValue('Channel')}
             onValueChange={(value) => handleCustomFieldChange('Channel', value)}
-            >
+          >
             <Select.Trigger className="inline-flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <Select.Value>{getFieldValue('Channel')}</Select.Value>
               <Select.Icon><ChevronDownIcon /></Select.Icon>
@@ -229,20 +230,19 @@ export function MerchantForm({
             value={getFieldValue('Agency')}
             onChange={(e) => handleCustomFieldChange('Agency', e.target.value)}
             placeholder="Which agency built the store?"
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-              getFieldValue('Agency') === "Which agency built the store?" ? "text-gray-400" : ""
-            }`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${getFieldValue('Agency') === "Which agency built the store?" ? "text-gray-400" : ""
+              }`}
           />
         </div>
 
 
-         {/* Region */}
+        {/* Region */}
         <div>
-            <label className="text-sm font-medium mb-1 block">Region</label>
-            <Select.Root
+          <label className="text-sm font-medium mb-1 block">Region</label>
+          <Select.Root
             value={getFieldValue('Region')}
             onValueChange={(value) => handleCustomFieldChange('Region', value)}
-            >
+          >
             <Select.Trigger className="inline-flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <Select.Value>{getFieldValue('Region')}</Select.Value>
               <Select.Icon><ChevronDownIcon /></Select.Icon>
@@ -279,11 +279,11 @@ export function MerchantForm({
 
         {/* Industry */}
         <div>
-            <label className="text-sm font-medium mb-1 block">Industry</label>
-            <Select.Root
+          <label className="text-sm font-medium mb-1 block">Industry</label>
+          <Select.Root
             value={getFieldValue('Industry')}
             onValueChange={(value) => handleCustomFieldChange('Industry', value)}
-            >
+          >
             <Select.Trigger className="inline-flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
               <Select.Value>{getFieldValue('Industry')}</Select.Value>
               <Select.Icon><ChevronDownIcon /></Select.Icon>
@@ -316,7 +316,7 @@ export function MerchantForm({
               </Select.Content>
             </Select.Portal>
           </Select.Root>
-        </div> 
+        </div>
 
         <div>
           <label className="text-sm font-medium mb-1 block">Miscellaneous</label>
@@ -328,8 +328,8 @@ export function MerchantForm({
             >
               <Select.Trigger className="inline-flex items-center justify-between w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mt-2">
                 <Select.Value>
-                  {!miscField.value || miscField.value.toLowerCase() === 'na' || miscField.value.toLowerCase() === 'na_' 
-                    ? '-- Select --' 
+                  {!miscField.value || miscField.value.toLowerCase() === 'na' || miscField.value.toLowerCase() === 'na_'
+                    ? '-- Select --'
                     : miscField.value}
                 </Select.Value>
                 <Select.Icon><ChevronDownIcon /></Select.Icon>
@@ -366,32 +366,32 @@ export function MerchantForm({
         </div>
 
         <div className="flex items-center space-x-2">
-             <Checkbox.Root
+          <Checkbox.Root
             className="flex h-4 w-4 appearance-none items-center justify-center rounded-sm border border-gray-300 bg-white data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
             id="visible"
             checked={merchant.is_visible}
             onCheckedChange={(checked) => onMerchantChange({ ...merchant, is_visible: checked === true })}
-            >
+          >
             <Checkbox.Indicator className="text-white">
               <CheckIcon className="h-4 w-4" />
             </Checkbox.Indicator>
-            </Checkbox.Root>
-            <label
+          </Checkbox.Root>
+          <label
             htmlFor="visible"
             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
+          >
             Visible
-            </label>
+          </label>
         </div>
       </div>
 
-        <div className="md:col-span-2">
-            <label className="text-sm font-medium mb-1 block">Keywords</label>
-            <textarea
-            value={merchant.search_keywords || ''}
-            onChange={(e) => onMerchantChange({ ...merchant, search_keywords: e.target.value })}
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            rows={1}
+      <div className="md:col-span-2">
+        <label className="text-sm font-medium mb-1 block">Keywords</label>
+        <textarea
+          value={merchant.search_keywords || ''}
+          onChange={(e) => onMerchantChange({ ...merchant, search_keywords: e.target.value })}
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          rows={1}
         />
       </div>
     </div>
