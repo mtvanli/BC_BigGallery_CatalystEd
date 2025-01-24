@@ -21,7 +21,6 @@ import { AddToCart } from './add-to-cart';
 import { AddToCartFragment } from './add-to-cart/fragment';
 import { Compare } from './compare';
 
-import { OpenInNewIcon } from 'components/custom-icons/open-in-new';
 import { ExternalLink } from 'lucide-react';
 import Image from 'next/image'
 
@@ -145,75 +144,64 @@ export const ProductCard = ({
 
         </div>
 
-        <div className='flex flew-row flex-wrap justify-center items-center lg:text-sm text-xs '>
-          <div>
-            {
-              product.customFields?.edges?.map((edge) =>
-                edge && (
-                  (edge.node.name === "Region" ?
-                    <div key={edge.node.value}>
-                      {edge.node.value.length === 2 ? (
-                        <div className="w-8 h-5 lg:w-9 lg:h-[25px]  overflow-hidden shadow rounded-full mt-1 mr-1 ml-3 " >
-                          <Image
-                            src={`https://flagcdn.com/w2560/${edge.node.value === 'UK' ? 'gb' : edge.node.value.toLowerCase()}.png`}
-                            alt={`${edge.node.value} flag`}
-                            width={128}
-                            height={80}
-                            className="h-full object-fill object-left-top opacity-80"
-                            quality={100}
-                            unoptimized={true}
-                            priority={true}
-                          />
-                        </div>
-                      ) : <p className=' px-2 py-1 mt-1 mr-1 border-transparent  rounded-full bg-violet-50'>
+        <div className='flex flex-row flex-wrap gap-1 justify-center items-center lg:text-sm text-xs mb-4 mx-3'>
+          {product.customFields?.edges?.sort((a, b) => {
+            const order = {
+              'Region': 1,
+              'Segment': 2,
+              'Presentation': 3,
+              'Channel': 4
+            };
+            return (order[a.node.name] || 99) - (order[b.node.name] || 99);
+          }).map((edge) => {
+            if (!edge) return null;
+
+            switch (edge.node.name) {
+              case "Region":
+                return (
+                  <div key={edge.node.value}>
+                    {edge.node.value.length === 2 ? (
+                      <div className="w-8 h-[22px] lg:w-[38px] lg:h-[26px] overflow-hidden shadow rounded-full">
+                        <img
+                          src={`https://flagcdn.com/${edge.node.value === 'UK' ? 'gb' : edge.node.value.toLowerCase()}.svg`}
+                          alt={`${edge.node.value} flag`}
+                          width={100}
+                          className="h-full object-cover object-center opacity-80"
+                        />
+                      </div>
+                    ) : (
+                      <p className='px-2 py-1 border-transparent rounded-full bg-violet-50'>
                         {edge.node.value === 'APAC - Other' ? 'APAC' : edge.node.value === 'EMEA - Other' ? 'EMEA' : edge.node.value}
-                      </p>}
-                    </div> : "")
-                )
-              )
+                      </p>
+                    )}
+                  </div>
+                );
+
+              case "Segment":
+                return (
+                  <p key={edge.node.value} className='px-2 py-1 border-transparent rounded-full bg-sky-100'>
+                    {edge.node.value}
+                  </p>
+                );
+
+              case "Presentation":
+                return (
+                  <p key={edge.node.value} className='px-2 py-1 border-transparent rounded-full bg-slate-100'>
+                    {edge.node.value}
+                  </p>
+                );
+
+              case "Channel":
+                return edge.node.value !== "Marketplaces" && edge.node.value !== "na" ? (
+                  <p key={edge.node.value} className='px-2 py-1 border-transparent rounded-full bg-lime-100'>
+                    {edge.node.value}
+                  </p>
+                ) : null;
+
+              default:
+                return null;
             }
-          </div>
-
-          <div>
-            {
-              product.customFields?.edges?.map((edge) =>
-                edge && (
-                  (edge.node.name === "Segment" ?
-                    <div>
-                      <p className=' px-2 py-1 mt-1 mr-1 border-transparent  rounded-full bg-sky-100'>{edge.node.value} </p>
-                    </div> : "")
-                )
-              )
-            }
-          </div>
-
-          <div>
-            {
-              product.customFields?.edges?.map((edge) =>
-                edge && (
-                  (edge.node.name === "Presentation" ?
-                    <div>
-                      <p className='px-2 py-1 mt-1 mr-1 border-transparent  rounded-full bg-slate-100'>{edge.node.value} </p>
-                    </div> : "")
-                )
-              )
-            }
-          </div>
-          <div>
-            {
-              product.customFields?.edges?.map((edge) =>
-                edge && (
-                  (edge.node.name === "Channel" && edge.node.value !== "Marketplaces" && edge.node.value !== "na" ?
-                    <div>
-                      <p className='px-2 py-1 mt-1 mr-2 border-transparent rounded-full bg-lime-100'>{edge.node.value}</p>
-                    </div> : "")
-                )
-              )
-            }
-          </div>
-
-
-
+          })}
         </div>
 
         {/* {showReviews && (
@@ -243,19 +231,20 @@ export const ProductCard = ({
             </div>
           </div>
         )} */}
-        <div className="flex flex-wrap items-end justify-between pt-2">
+
+        {/*  <div className="flex flex-wrap items-end justify-between pt-2">
           <ProductCardInfoPrice>
             <Pricing data={product} />
           </ProductCardInfoPrice>
 
-          {/*  {showCompare && (
+        {showCompare && (
             <Compare
               productId={product.entityId}
               productImage={product.defaultImage}
               productName={product.name}
             />
-          )} */}
-        </div>
+          )} 
+        </div> */}
       </ProductCardInfo>
       {/* {showCart && <AddToCart data={product} />} */}
     </ComponentsProductCard>
