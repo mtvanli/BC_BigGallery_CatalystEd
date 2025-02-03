@@ -104,7 +104,7 @@ const GalleryControls = forwardRef<ElementRef<'div'>, ComponentPropsWithRef<'div
     return (
       <div
         className={cn(
-          'absolute top-1/2 flex w-full -translate-y-1/2 justify-between px-5 sm:px-0',
+          'absolute top-1/2 flex w-full -translate-y-1/2 justify-between px-2 sm:px-0',
           className,
         )}
         ref={ref}
@@ -158,7 +158,7 @@ const GalleryContent = forwardRef<ElementRef<'figure'>, ComponentPropsWithRef<'f
   ({ className, children, ...props }, ref) => {
     return (
       <figure
-        className={cn('relative aspect-square h-full max-h-[548px] w-full', className)}
+        className={cn('relative aspect-square h-full  w-full', className)}
         ref={ref}
         {...props}
       >
@@ -176,7 +176,7 @@ const GalleryThumbnailList = forwardRef<ElementRef<'nav'>, ComponentPropsWithRef
       <nav
         aria-label="Thumbnail navigation"
         className={cn(
-          'mt-3 flex w-full flex-wrap items-center gap-4 px-1 py-1 md:mt-5 md:gap-6',
+          'my-6 flex w-full flex-wrap justify-center items-center gap-4 px-1 py-1 md:mt-5 md:gap-6',
           className,
         )}
         ref={ref}

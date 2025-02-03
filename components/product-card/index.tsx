@@ -144,7 +144,7 @@ export const ProductCard = ({
 
         </div>
 
-        <div className='flex flex-row flex-wrap gap-1 justify-center items-center lg:text-sm text-xs mb-4 mx-3'>
+        <div className='flex flex-row flex-wrap gap-1 justify-center items-center lg:text-sm  text-xs mb-4 mx-3'>
           {product.customFields?.edges?.sort((a, b) => {
             const order = {
               'Region': 1,
