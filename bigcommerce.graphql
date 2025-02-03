@@ -2792,7 +2792,7 @@ type CartDigitalItem {
   name: String!
 
   """The product URL."""
-  url: String!
+  url: String! @deprecated(reason: "Use `path` instead")
 
   """URL of an image of this item, accessible on the internet."""
   imageUrl: String @deprecated(reason: "Use `image` field instead.")
@@ -2849,6 +2849,9 @@ type CartDigitalItem {
 
   """The product with option selections applied."""
   catalogProductWithOptionSelections: Product
+
+  """Relative URL path to product page."""
+  path: String!
 }
 
 """Discount applied to the cart."""
@@ -2975,7 +2978,7 @@ type CartPhysicalItem {
   name: String!
 
   """The product URL."""
-  url: String!
+  url: String! @deprecated(reason: "Use `path` instead")
 
   """URL of an image of this item, accessible on the internet."""
   imageUrl: String @deprecated(reason: "Use `image` field instead.")
@@ -3038,6 +3041,9 @@ type CartPhysicalItem {
 
   """The product with option selections applied."""
   catalogProductWithOptionSelections: Product
+
+  """Relative URL path to product page."""
+  path: String!
 }
 
 """Selected checkbox option."""
@@ -6292,6 +6298,7 @@ type PageRedirect {
 enum PageType {
   ACCOUNT_ADDRESS
   ACCOUNT_ADD_ADDRESS
+  ACCOUNT_ADD_PAYMENT_METHOD
   ACCOUNT_ADD_RETURN
   ACCOUNT_ADD_WISHLIST
   ACCOUNT_DOWNLOAD_ITEM

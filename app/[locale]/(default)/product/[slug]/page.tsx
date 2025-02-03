@@ -43,13 +43,13 @@ export async function generateMetadata({
     keywords: metaKeywords ? metaKeywords.split(',') : null,
     openGraph: url
       ? {
-          images: [
-            {
-              url,
-              alt,
-            },
-          ],
-        }
+        images: [
+          {
+            url,
+            alt,
+          },
+        ],
+      }
       : null,
   };
 }
@@ -85,10 +85,10 @@ export default async function Product({ params, searchParams }: ProductPageProps
         >
           <Gallery noImageText={t('noGalleryText')} product={product} />
           <div className="pl-3">
-          <Details product={product} />
-          <Description product={product} />
+            <Details product={product} />
+            <Description product={product} />
           </div>
-{/*           <div className="lg:col-span-2">
+          {/*           <div className="lg:col-span-2">
             <Description product={product} />
             <Warranty product={product} />
             <Suspense fallback={t('loading')}>
