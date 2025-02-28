@@ -1,8 +1,6 @@
 """Directive that allows overriding shopper preferences."""
 directive @shopperPreferences(locale: String) on QUERY
 
-directive @cacheControl(maxAge: Int, scope: CacheControlScope, inheritMaxAge: Boolean) on FIELD | FIELD_DEFINITION | OBJECT
-
 """An error due to customer registration being disabled on a storefront."""
 type AccountCreationDisabledError implements Error {
   """A description of the error in user language."""
@@ -841,6 +839,12 @@ input CreateCartRedirectUrlsInput {
 
   """IP4 or IP6 compatible address to include in the session redirect url"""
   ipAddress: IpAddress
+
+  """Visitor id to synchronise analytics data on session synchronization."""
+  visitorId: UUID
+
+  """Visit id to synchronise analytics data on session synchronization."""
+  visitId: UUID
 }
 
 """Create cart redirect URLs query params input object."""
@@ -1363,6 +1367,17 @@ type Mutation {
   """The wishlist mutations."""
   wishlist: WishlistMutations!
 
+  """Login with Customer Login JWT."""
+  loginWithCustomerLoginJwt(
+    """
+    Customer Login JWT, for more information: https://developer.bigcommerce.com/docs/start/authentication/customer-login.
+    """
+    jwt: String!
+
+    """The guest cart entity Id which should be assigned."""
+    guestCartEntityId: String
+  ): LoginWithCustomerLoginJwtResult!
+
   """Contact us mutation."""
   submitContactUs(
     """The reCaptchaV2 token."""
@@ -1378,17 +1393,6 @@ type Mutation {
   """The customer mutations."""
   customer: CustomerMutations!
 
-  """Login with Customer Login JWT."""
-  loginWithCustomerLoginJwt(
-    """
-    Customer Login JWT, for more information: https://developer.bigcommerce.com/docs/start/authentication/customer-login.
-    """
-    jwt: String!
-
-    """The guest cart entity Id which should be assigned."""
-    guestCartEntityId: String
-  ): LoginWithCustomerLoginJwtResult!
-
   """Generate Session Sync JWT Token."""
   generateSessionSyncJwt(
     """The route where to redirect after generation of token"""
@@ -1398,10 +1402,13 @@ type Mutation {
     cartId: String
 
     """The visitor Id."""
-    visitorId: String
+    visitorId: UUID
 
     """IP4 or IP6 compatible address to include in the session redirect url"""
     ipAddress: IpAddress
+
+    """The visit Id."""
+    visitId: UUID
   ): GenerateSessionSyncTokenResult!
 
   """Unwrapping encoded in jwt token session state."""
@@ -1652,6 +1659,9 @@ input TextFormFieldInput {
   """Text value."""
   text: String!
 }
+
+"""Scalar type representing a universally unique identifier (UUID)."""
+scalar UUID
 
 """Unapply checkout coupon data object"""
 input UnapplyCheckoutCouponDataInput {
@@ -1993,6 +2003,9 @@ type UpdateWishlistResult {
 type ValidateSessionSyncJwtAnalytics {
   """Visitor ID."""
   visitorId: String
+
+  """Visit ID."""
+  visitId: String
 }
 
 """An union error for restoring a session errors."""
@@ -8441,6 +8454,9 @@ type WishlistItemConnection {
 
   """A list of edges."""
   edges: [WishlistItemEdge!]
+
+  """Collection info"""
+  collectionInfo: CollectionInfo
 }
 
 """An edge in a connection."""

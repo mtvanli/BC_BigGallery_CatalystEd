@@ -24,6 +24,8 @@ import { Compare } from './compare';
 import { ExternalLink } from 'lucide-react';
 import Image from 'next/image'
 
+import { contentImageUrl, imageManagerImageUrl } from '~/lib/store-assets';
+
 export const ProductCardFragment = graphql(
   `
     fragment ProductCardFragment on Product {
@@ -44,7 +46,7 @@ export const ProductCardFragment = graphql(
       }
       ...AddToCartFragment
       ...PricingFragment
-      customFields(names: ["Store","Segment", "Presentation","Channel","Region"]) {
+      customFields(names: ["Store","Segment", "Presentation","Channel","Region","Misc"]) {
       edges {
         node {
           entityId
@@ -196,6 +198,28 @@ export const ProductCard = ({
                   <p key={edge.node.value} className='px-2 py-1 border-transparent rounded-full bg-lime-100'>
                     {edge.node.value}
                   </p>
+                ) : null;
+
+              case "Misc":
+                return edge.node.value === "B2B Edition" ? (
+                  <>
+                    <div
+                      className='px-2 py-1 border rounded-full bg-white'
+                      title="B2B Edition"
+                    >
+                      <BcImage
+                        src={imageManagerImageUrl("b2b-ed.jpg")}
+                        width={18} // Adjust image size
+                        height={17}
+                        alt=""
+                        style={{
+                          objectFit: "cover", // Ensures the image fills the circular area
+                          objectPosition: "center", // Centers the image
+                        }}
+                      />
+                    </div>
+
+                  </>
                 ) : null;
 
               default:

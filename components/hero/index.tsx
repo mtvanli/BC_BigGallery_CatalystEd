@@ -13,9 +13,9 @@ import {
 } from '~/components/ui/slideshow';
 
 
-import SlideshowBG from './ultra.jpg';
+import SlideshowBG from './lekker.jpg';
 import SlideshowBG3 from './slide_bbq.jpg';
-import SlideshowBG4 from './sara_raven.jpg';
+import SlideshowBG4 from './glass_craft.jpg';
 
 
 const SlideshowBlurDataURL =
@@ -35,22 +35,22 @@ export const Hero = () => (
             priority
             sizes="(max-width: 1536px) 100vw, 1536px"
             src={SlideshowBG}
-            
+
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
           <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36">
-            <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Ultraceuticals</h2>
-            <p className="text-md lg:text-lg max-w-xl text-neutral-50">Supercharges Their B2B Digital Transformation
+            <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Lekker Home</h2>
+            <p className="text-md lg:text-lg max-w-xl text-neutral-50">Elevates B2B and B2C Experiences with BigCommerce and Acumatica
             </p>
             <Button asChild className="w-fit mt-4">
-              <a href="https://www.bigcommerce.com/case-study/ultraceuticals/" target="_blank" rel="noopener noreferrer">Case Study</a>
+              <a href="https://www.bigcommerce.com/case-study/lekker-home/" target="_blank" rel="noopener noreferrer">Case Study</a>
             </Button>
           </div>
         </div>
       </SlideshowSlide>
       <SlideshowSlide>
-      <div className="relative ">
-      <Image
+        <div className="relative ">
+          <Image
             alt="BBQ Galore slide image"
             blurDataURL={SlideshowBlurDataURL}
             className="absolute -z-10 object-cover  sm:object-center"
@@ -62,19 +62,19 @@ export const Hero = () => (
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
           <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36 ">
-          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Barbeques Galore</h2>
-          <p className="text-md lg:text-lg max-w-xl text-neutral-50">
-          Heats up International Expansion with BigCommerce
-          </p>
-          <Button asChild className="w-fit mt-4">
-            <a href="https://www.bigcommerce.com/case-study/barbeques-galore/" target="_blank" rel="noopener noreferrer">Case Study</a>
-          </Button>
-        </div>
+            <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Barbeques Galore</h2>
+            <p className="text-md lg:text-lg max-w-xl text-neutral-50">
+              Heats up International Expansion with BigCommerce
+            </p>
+            <Button asChild className="w-fit mt-4">
+              <a href="https://www.bigcommerce.com/case-study/barbeques-galore/" target="_blank" rel="noopener noreferrer">Case Study</a>
+            </Button>
+          </div>
         </div>
       </SlideshowSlide>
       <SlideshowSlide>
-      <div className="relative ">
-      <Image
+        <div className="relative ">
+          <Image
             alt="Sara Raven slide image"
             blurDataURL={SlideshowBlurDataURL}
             className="absolute -z-10 object-cover sm:object-center"
@@ -87,15 +87,15 @@ export const Hero = () => (
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
           <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36 ">
 
-          <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">Sarah Raven</h2>
-          <p className="text-lg max-w-xl text-neutral-50 ">
-          sews the seeds of expansion with BigCommerce
-          </p>
-          <Button asChild className="w-fit mt-4">
-            <a href="https://www.bigcommerce.com/case-study/sarah-raven/" target="_blank" rel="noopener noreferrer">Case Study</a>
+            <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10 ">GlassCraft Door</h2>
+            <p className="text-lg max-w-xl text-neutral-50 ">
+              Opens the Door to a Better Customer Experience with BigCommerce
+            </p>
+            <Button asChild className="w-fit mt-4">
+              <a href="https://www.bigcommerce.com/case-study/glasscraft-door-company/" target="_blank" rel="noopener noreferrer">Case Study</a>
 
-          </Button>
-        </div>
+            </Button>
+          </div>
         </div>
       </SlideshowSlide>
     </SlideshowContent>
