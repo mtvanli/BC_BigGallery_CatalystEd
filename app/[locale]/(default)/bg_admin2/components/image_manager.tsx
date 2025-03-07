@@ -26,10 +26,10 @@ export function ImageManager({ images, onImageChange, onImageReset }: ImageManag
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {[0, 1, 2].map((index) => {
         // Get the appropriate image for this position
-        const imageToShow = index === 0 
-          ? thumbnailImage 
+        const imageToShow = index === 0
+          ? thumbnailImage
           : nonThumbnailImages[index - 1]
-        
+
         const imageUrl = imageToShow?.url_standard
 
         return (
@@ -48,7 +48,7 @@ export function ImageManager({ images, onImageChange, onImageReset }: ImageManag
               )}
             </div>
             <div className="flex items-center gap-2">
-              <button 
+              <button
                 onClick={() => onImageReset(index)}
                 className="flex items-center gap-2 px-2 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 aria-label={`Reset Image ${index + 1}`}

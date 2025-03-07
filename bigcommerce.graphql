@@ -1387,12 +1387,6 @@ type Mutation {
     input: SubmitContactUsInput!
   ): SubmitContactUsResult!
 
-  """The catalog mutations."""
-  catalog: CatalogMutations!
-
-  """The customer mutations."""
-  customer: CustomerMutations!
-
   """Generate Session Sync JWT Token."""
   generateSessionSyncJwt(
     """The route where to redirect after generation of token"""
@@ -1416,6 +1410,12 @@ type Mutation {
     """jwt token session state with encoded session state."""
     jwt: String!
   ): ValidateSessionSyncJwtResult!
+
+  """The catalog mutations."""
+  catalog: CatalogMutations!
+
+  """The customer mutations."""
+  customer: CustomerMutations!
 }
 
 """The not authorized to perform operation error."""
@@ -2854,6 +2854,9 @@ type CartDigitalItem {
   """The list of selected options for this product."""
   selectedOptions: [CartSelectedOption!]!
 
+  """Relative URL path to product page."""
+  path: String!
+
   """Image for the item."""
   image: Image
 
@@ -2862,9 +2865,6 @@ type CartDigitalItem {
 
   """The product with option selections applied."""
   catalogProductWithOptionSelections: Product
-
-  """Relative URL path to product page."""
-  path: String!
 }
 
 """Discount applied to the cart."""
@@ -3046,6 +3046,9 @@ type CartPhysicalItem {
   """Gift wrapping for this item."""
   giftWrapping: CartGiftWrapping
 
+  """Relative URL path to product page."""
+  path: String!
+
   """Image for the item."""
   image: Image
 
@@ -3054,9 +3057,6 @@ type CartPhysicalItem {
 
   """The product with option selections applied."""
   catalogProductWithOptionSelections: Product
-
-  """Relative URL path to product page."""
-  path: String!
 }
 
 """Selected checkbox option."""
