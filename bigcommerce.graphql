@@ -1,6 +1,8 @@
 """Directive that allows overriding shopper preferences."""
 directive @shopperPreferences(locale: String) on QUERY
 
+directive @cacheControl(maxAge: Int, scope: CacheControlScope, inheritMaxAge: Boolean) on FIELD | FIELD_DEFINITION | OBJECT
+
 """An error due to customer registration being disabled on a storefront."""
 type AccountCreationDisabledError implements Error {
   """A description of the error in user language."""
@@ -185,6 +187,86 @@ Subject that should be created as a result of mutation would cause duplicate.
 type AlreadyExistsError implements Error {
   """A description of the error in user language."""
   message: String!
+}
+
+"""A common input object for analytics events containing shared fields."""
+input AnalyticsCommonEventInput {
+  """Details about the initiator of the analytics event."""
+  initiator: AnalyticsEventInitiatorInput!
+
+  """Request-related details for the analytics event."""
+  request: AnalyticsEventRequestInput!
+
+  """Consent-related details for the analytics event."""
+  consent: AnalyticsEventConsentInput
+}
+
+"""Input object for capturing user consent details in analytics events."""
+input AnalyticsEventConsentInput {
+  """User consent related to targeted advertising."""
+  targeting: Boolean!
+
+  """User consent related to analytics tracking."""
+  analytics: Boolean!
+
+  """User consent related to functional cookies or settings."""
+  functional: Boolean!
+}
+
+"""Input object representing the initiator of an analytics event."""
+input AnalyticsEventInitiatorInput {
+  """Unique identifier for the visit initiating the event."""
+  visitId: String!
+
+  """Unique identifier for the visitor initiating the event."""
+  visitorId: String!
+}
+
+"""Input object containing request-related details for analytics events."""
+input AnalyticsEventRequestInput {
+  """URL associated with the analytics event request."""
+  url: URL!
+
+  """User agent string from the request header."""
+  userAgent: String!
+
+  """Referrer URL for the analytics event request."""
+  refererUrl: URL
+
+  """IP address associated with the request."""
+  ip: IpAddress
+
+  """Accepted language preference from the request header."""
+  acceptLanguage: String
+}
+
+"""
+A collection of mutations related to analytics events, such as product views, page views, and visit starts.
+"""
+type AnalyticsMutations {
+  """Mutation to record a product view event in the analytics system."""
+  productViewedEvent(
+    """
+    Input data required to log a product view event, including product details and common analytics context.
+    """
+    input: ProductViewedEventInput!
+  ): ProductViewedEventResult!
+
+  """Mutation to record a page view event in the analytics system."""
+  pageViewedEvent(
+    """
+    Input data required to log a page view event, including page details and common analytics context.
+    """
+    input: PageViewedEventInput!
+  ): PageViewedEventResult!
+
+  """Mutation to record the start of a user visit in the analytics system."""
+  visitStartedEvent(
+    """
+    Input data required to log the start of a user visit, including session details and common analytics context.
+    """
+    input: VisitStartedEventInput!
+  ): VisitStartedEventResult!
 }
 
 """Apply checkout coupon data object"""
@@ -1401,6 +1483,9 @@ type Mutation {
     """IP4 or IP6 compatible address to include in the session redirect url"""
     ipAddress: IpAddress
 
+    """The payment wallet data."""
+    paymentWalletData: PaymentWalletDataInput
+
     """The visit Id."""
     visitId: UUID
   ): GenerateSessionSyncTokenResult!
@@ -1416,6 +1501,9 @@ type Mutation {
 
   """The customer mutations."""
   customer: CustomerMutations!
+
+  """A mutation namespace for managing and recording analytics events."""
+  analytics: AnalyticsMutations!
 }
 
 """The not authorized to perform operation error."""
@@ -1445,6 +1533,20 @@ input NumberFormFieldInput {
   number: Float!
 }
 
+"""Input object for fields related to a page-viewed event."""
+input PageViewedEventInput {
+  """Common input fields for the page-viewed event."""
+  commonInput: AnalyticsCommonEventInput!
+}
+
+"""
+Represents the result of a page-viewed event, including execution status and any associated data.
+"""
+type PageViewedEventResult {
+  """Indicates whether the page-viewed event was successfully executed."""
+  executed: Boolean!
+}
+
 """The user input for password form fields."""
 input PasswordFormFieldInput {
   """The custom form field ID."""
@@ -1452,6 +1554,18 @@ input PasswordFormFieldInput {
 
   """Password value."""
   password: String!
+}
+
+"""The payment wallet data input."""
+input PaymentWalletDataInput {
+  """Initialization id."""
+  initializationId: String
+
+  """Provider order id."""
+  providerOrderId: String
+
+  """Provider id."""
+  providerId: String
 }
 
 """Product ID did not map to any existing products."""
@@ -1476,6 +1590,32 @@ input ProductReviewInput {
 
   """Email of review author."""
   email: String
+}
+
+"""Input object for defining product-related details in analytics events."""
+input ProductViewed {
+  """Unique identifier for the product entity."""
+  productEntityId: Int!
+
+  """Search keyword related to the product type."""
+  searchKeyword: String
+}
+
+"""Input object for fields related to a product-viewed event."""
+input ProductViewedEventInput {
+  """Common input fields for the product-viewed event."""
+  commonInput: AnalyticsCommonEventInput!
+
+  """Product-specific input fields for the event."""
+  productInput: ProductViewed!
+}
+
+"""
+Represents the result of a product-viewed event, including execution status and any associated data.
+"""
+type ProductViewedEventResult {
+  """Indicates whether the product-viewed event was successfully executed."""
+  executed: Boolean!
 }
 
 """Recaptcha input (in case Recaptcha is enabled on a store)"""
@@ -1659,6 +1799,9 @@ input TextFormFieldInput {
   """Text value."""
   text: String!
 }
+
+"""Scalar type representing a valid URL."""
+scalar URL
 
 """Scalar type representing a universally unique identifier (UUID)."""
 scalar UUID
@@ -2027,6 +2170,20 @@ type ValidationError implements Error {
 
   """A description of the error in user language."""
   message: String!
+}
+
+"""Input object for fields related to a visit-started event."""
+input VisitStartedEventInput {
+  """Common input fields for the visit-started event."""
+  commonInput: AnalyticsCommonEventInput!
+}
+
+"""
+Represents the result of a visit-started event, including execution status and any associated data.
+"""
+type VisitStartedEventResult {
+  """Indicates whether the visit-started event was successfully executed."""
+  executed: Boolean!
 }
 
 """Wishlist item input object"""
@@ -8432,6 +8589,12 @@ type WishlistEdge {
 input WishlistFiltersInput {
   """A wishlist ids filter."""
   entityIds: [Int!]
+
+  """Filter for wishlists containing certain product ids."""
+  productEntityIds: [Int!]
+
+  """Filter for wishlists containing certain variant ids."""
+  variantEntityIds: [Int!]
 }
 
 """The wishlist item"""
@@ -8440,7 +8603,7 @@ type WishlistItem {
   entityId: Int!
 
   """A product included in the wishlist."""
-  product: Product!
+  product: Product
 
   """An id of the product from the wishlist."""
   productEntityId: Int!

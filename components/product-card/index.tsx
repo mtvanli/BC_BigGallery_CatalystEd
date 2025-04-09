@@ -120,35 +120,37 @@ export const ProductCard = ({
       <ProductCardInfo className={cn(showCart && 'justify-end')}>
         {product.brand && <ProductCardInfoBrandName>{product.brand.name}</ProductCardInfoBrandName>}
 
-        <ProductCardInfoProductName>
-          <div className="flex items-center justify-center">
+        <div className='flex flew-row justify-center items-center relative'>
+          <ProductCardInfoProductName>
             {product.path ? (
-              <>
-                <Link
-                  className="focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-primary/20 focus-visible:ring-0"
-                  href={product.path}
-                >
-                  <span aria-hidden="true" className="absolute inset-0 bottom-20 z-10" />
-                  {product.name}
-                </Link>
-                {storeUrl && (
-                  <Link href={storeUrl} target="_blank" className="relative z-20 ml-1.5">
-                    <ExternalLink className="mb-1 stroke-slate-500 size-4 md:size-5" />
-                  </Link>
-                )}
-              </>
-            ) : (
-              <>
+              <Link
+                className="focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-primary/20 focus-visible:ring-0"
+                href={product.path}
+              >
+                <span aria-hidden="true" className="absolute inset-0 bottom-20 z-10" />
                 {product.name}
-                {storeUrl && (
-                  <Link href={storeUrl} target="_blank" className="relative z-20 ml-1.5">
-                    <ExternalLink className="mb-1 stroke-slate-500 size-4 md:size-5" />
-                  </Link>
-                )}
-              </>
+              </Link>
+            ) : (
+              product.name
             )}
+          </ProductCardInfoProductName>
+
+          <div className='pt-3.5 px-3 relative'>
+            {
+              product.customFields?.edges?.map((edge) =>
+                edge && (
+                  (edge.node.name === "Store" && (
+                    <div key={edge.node.name}  >
+                      <Link href={edge.node.value} target="_blank" className="relative z-0">
+                        <ExternalLink className="mb-1.5 md:mb-2 ml-2 stroke-slate-500 size-4 md:size-5" />
+                      </Link>
+                    </div>)
+                  )
+                )
+              )}
           </div>
-        </ProductCardInfoProductName>
+
+        </div>
 
         <div className='flex flex-row flex-wrap gap-1 justify-center items-center lg:text-sm  text-xs mb-4 mx-3'>
           {product.customFields?.edges?.sort((a, b) => {
