@@ -82,6 +82,12 @@ export const ProductCard = ({
   const summaryId = useId();
   const t = useTranslations('Product.ProductSheet');
 
+  // Find the store custom field if it exists
+  const storeField = product.customFields?.edges?.find(
+    edge => edge?.node.name === "Store"
+  );
+  const storeUrl = storeField?.node.value;
+
   if (!product.entityId) {
     return null;
   }
@@ -114,37 +120,35 @@ export const ProductCard = ({
       <ProductCardInfo className={cn(showCart && 'justify-end')}>
         {product.brand && <ProductCardInfoBrandName>{product.brand.name}</ProductCardInfoBrandName>}
 
-        <div className='flex flew-row justify-center items-center relative'>
-          <ProductCardInfoProductName>
+        <ProductCardInfoProductName>
+          <div className="flex items-center justify-center">
             {product.path ? (
-              <Link
-                className="focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-primary/20 focus-visible:ring-0"
-                href={product.path}
-              >
-                <span aria-hidden="true" className="absolute inset-0 bottom-20 z-10" />
-                {product.name}
-              </Link>
+              <>
+                <Link
+                  className="focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-primary/20 focus-visible:ring-0"
+                  href={product.path}
+                >
+                  <span aria-hidden="true" className="absolute inset-0 bottom-20 z-10" />
+                  {product.name}
+                </Link>
+                {storeUrl && (
+                  <Link href={storeUrl} target="_blank" className="relative z-20 ml-1.5">
+                    <ExternalLink className="mb-1 stroke-slate-500 size-4 md:size-5" />
+                  </Link>
+                )}
+              </>
             ) : (
-              product.name
+              <>
+                {product.name}
+                {storeUrl && (
+                  <Link href={storeUrl} target="_blank" className="relative z-20 ml-1.5">
+                    <ExternalLink className="mb-1 stroke-slate-500 size-4 md:size-5" />
+                  </Link>
+                )}
+              </>
             )}
-          </ProductCardInfoProductName>
-
-          <div className='pt-3.5 px-3 relative'>
-            {
-              product.customFields?.edges?.map((edge) =>
-                edge && (
-                  (edge.node.name === "Store" && (
-                    <div key={edge.node.name}  >
-                      <Link href={edge.node.value} target="_blank" className="relative z-0">
-                        <ExternalLink className="mb-1.5 md:mb-2 ml-2 stroke-slate-500 size-4 md:size-5" />
-                      </Link>
-                    </div>)
-                  )
-                )
-              )}
           </div>
-
-        </div>
+        </ProductCardInfoProductName>
 
         <div className='flex flex-row flex-wrap gap-1 justify-center items-center lg:text-sm  text-xs mb-4 mx-3'>
           {product.customFields?.edges?.sort((a, b) => {
@@ -152,7 +156,8 @@ export const ProductCard = ({
               'Region': 1,
               'Segment': 2,
               'Presentation': 3,
-              'Channel': 4
+              'Channel': 5,
+              'Misc': 4
             };
             return (order[a.node.name] || 99) - (order[b.node.name] || 99);
           }).map((edge) => {
@@ -163,7 +168,7 @@ export const ProductCard = ({
                 return (
                   <div key={edge.node.value}>
                     {edge.node.value.length === 2 ? (
-                      <div className="w-8 h-[22px] lg:w-[38px] lg:h-[26px] overflow-hidden shadow rounded-full">
+                      <div className="w-[25px] h-[22px] lg:w-[30px] lg:h-[25px] overflow-hidden shadow rounded-full">
                         <img
                           src={`https://flagcdn.com/${edge.node.value === 'UK' ? 'gb' : edge.node.value.toLowerCase()}.svg`}
                           alt={`${edge.node.value} flag`}
@@ -204,21 +209,21 @@ export const ProductCard = ({
                 return edge.node.value === "B2B Edition" ? (
                   <>
                     <div
-                      className='px-2 py-1 border rounded-full bg-white'
+                      className='px-1 py-0.5 sm:px-1.5 sm:py-0.5 md:px-2 md:py-1 border rounded-full bg-white'
                       title="B2B Edition"
                     >
                       <BcImage
                         src={imageManagerImageUrl("b2b-ed.jpg")}
-                        width={18} // Adjust image size
-                        height={17}
-                        alt=""
+                        width={10}
+                        height={10}
+                        className="w-4 h-4  md:w-4.5 md:h-4 lg:w-4.5 lg:h-4.5"
+                        alt="B2B Edition"
                         style={{
-                          objectFit: "cover", // Ensures the image fills the circular area
-                          objectPosition: "center", // Centers the image
+                          objectFit: "cover",
+                          objectPosition: "center",
                         }}
                       />
                     </div>
-
                   </>
                 ) : null;
 

@@ -4080,7 +4080,7 @@ type Currency {
   """Flag image URL."""
   flagImage: String
 
-  """Indicates whether this currency is active."""
+  """Shopper selected currency."""
   isActive: Boolean!
 
   """Exchange rate relative to default currency."""
@@ -4092,7 +4092,9 @@ type Currency {
   """Currency display settings."""
   display: CurrencyDisplay!
 
-  """Indicates whether this currency is selected as the default currency."""
+  """
+  Indicates whether this currency is selected as the default one in the control panel.
+  """
   isDefault: Boolean!
 }
 
