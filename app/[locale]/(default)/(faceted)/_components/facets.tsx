@@ -231,6 +231,7 @@ export const Facets = ({ facets, pageType }: Props) => {
                         'NZ',
                         'SG',
                         'JP',
+                        'KR',
                         'IN',
                         'APAC - Other',
                         'UK',
