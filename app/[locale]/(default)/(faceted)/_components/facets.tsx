@@ -185,45 +185,152 @@ export const Facets = ({ facets, pageType }: Props) => {
                   <h3>{facet.name}</h3>
                 </AccordionTrigger>
                 <AccordionContent>
-                  {facet.attributes.map((attribute) => {
-                    const normalizedFilterName = facet.filterName.replace(/\s/g, '-').toLowerCase();
-                    const normalizedAttributeValue = attribute.value
-                      .replace(/\s/g, '-')
-                      .toLowerCase();
-                    const id = `${normalizedFilterName}-${attribute.value}`;
-                    const labelId = `${normalizedFilterName}-${normalizedAttributeValue}-label`;
+                  {(() => {
+                    // For HealthScore, reorder attributes in the specified order
+                    let attributesToRender = [...facet.attributes];
 
-                    const key = `${attribute.value}-${
-                      attribute.value
-                    }-${attribute.isSelected.toString()}`;
+                    if (facet.filterName === 'HealthScore') {
+                      // Define the order for HealthScore values
+                      const healthScoreOrder = [
+                        'Excellent',
+                        'Very Good',
+                        'Good',
+                        'Bad',
+                        'Churn Risk',
+                        'Churning',
+                        'Unmanaged'
+                      ];
 
-                    //Don't show attribute values na and na_ in the list  
-                    if (attribute.value !== 'na' && attribute.value !== 'na_') {
-                    return (
-                      <div className="flex max-w-sm items-center py-1.5 xl:ps-1 2xl:ps-1" key={key}>
-                        <Checkbox
-                          aria-labelledby={labelId}
-                          defaultChecked={attribute.isSelected}
-                          id={id}
-                          name={`attr_${facet.filterName}`}
-                          onCheckedChange={submitForm}
-                          value={attribute.value}
-                        />
-                        <Label
-                          className="cursor-pointer ps-3 font-normal text-sm  xl:text-base"
-                          htmlFor={id}
-                          id={labelId}
-                        >
-                          {attribute.value}
-                          <ProductCount
-                            count={attribute.productCount}
-                            shouldDisplay={facet.displayProductCount}
-                          />
-                        </Label>
-                      </div>
-                    );
-                  }
-                  })}
+                      // Sort based on the defined order
+                      attributesToRender.sort((a, b) => {
+                        const indexA = healthScoreOrder.indexOf(a.value);
+                        const indexB = healthScoreOrder.indexOf(b.value);
+
+                        // If both values are in our order array, sort by the defined order
+                        if (indexA !== -1 && indexB !== -1) {
+                          return indexA - indexB;
+                        }
+
+                        // If only one value is in our order array, prioritize it
+                        if (indexA !== -1) return -1;
+                        if (indexB !== -1) return 1;
+
+                        // For any other values, maintain their original order
+                        return 0;
+                      });
+                    }
+
+
+                    if (facet.filterName === 'Region') {
+                      // Define the order for HealthScore values
+                      const healthScoreOrder = [
+                        'US',
+                        'CA',
+                        'LATAM',
+                        'AU',
+                        'NZ',
+                        'SG',
+                        'JP',
+                        'IN',
+                        'APAC - Other',
+                        'UK',
+                        'IT',
+                        'NL',
+                        'DE',
+                        'ES',
+                        'FR',
+                        'EMEA - Other',
+                        'Global'
+                      ];
+
+                      // Sort based on the defined order
+                      attributesToRender.sort((a, b) => {
+                        const indexA = healthScoreOrder.indexOf(a.value);
+                        const indexB = healthScoreOrder.indexOf(b.value);
+
+                        // If both values are in our order array, sort by the defined order
+                        if (indexA !== -1 && indexB !== -1) {
+                          return indexA - indexB;
+                        }
+
+                        // If only one value is in our order array, prioritize it
+                        if (indexA !== -1) return -1;
+                        if (indexB !== -1) return 1;
+
+                        // For any other values, maintain their original order
+                        return 0;
+                      });
+                    }
+
+                    return attributesToRender.map((attribute) => {
+                      const normalizedFilterName = facet.filterName.replace(/\s/g, '-').toLowerCase();
+                      const normalizedAttributeValue = attribute.value
+                        .replace(/\s/g, '-')
+                        .toLowerCase();
+                      const id = `${normalizedFilterName}-${attribute.value}`;
+                      const labelId = `${normalizedFilterName}-${normalizedAttributeValue}-label`;
+
+                      const key = `${attribute.value}-${attribute.value
+                        }-${attribute.isSelected.toString()}`;
+
+                      // Function to get emoji for HealthScore values
+                      /*     const getHealthScoreEmoji = (value) => {
+                            if (facet.filterName === 'HealthScore') {
+                              const emojis = {
+                                'Unmanaged': ' 🤷‍♂️',
+                                'Churning': ' 🚨',
+                                'Churn Risk': ' ⚠️',
+                                'Bad': ' ☹️',
+                                'Good': ' 😊',
+                                'Very Good': ' 😀',
+                                'Excellent': ' 🏆'
+                              };
+                              return emojis[value] || '';
+                            }
+                            return '';
+                          }; */
+
+                      // Don't show attribute values na and na_ in the list
+                      // For HealthScore, show all attributes regardless of product count
+                      if (attribute.value !== 'na' && attribute.value !== 'na_') {
+                        // Always show HealthScore attributes, regardless of count
+                        const shouldShow = facet.filterName === 'HealthScore' ||
+                          (attribute.productCount > 0 || attribute.isSelected);
+
+                        if (shouldShow) {
+                          return (
+                            <div className="flex max-w-sm items-center py-1.5 xl:ps-1 2xl:ps-1" key={key}>
+                              <Checkbox
+                                aria-labelledby={labelId}
+                                defaultChecked={attribute.isSelected}
+                                id={id}
+                                name={`attr_${facet.filterName}`}
+                                onCheckedChange={submitForm}
+                                value={attribute.value}
+                              />
+                              <Label
+                                className="cursor-pointer ps-3 font-normal text-sm xl:text-base"
+                                htmlFor={id}
+                                id={labelId}
+                              >
+                                {attribute.value}
+                                {/* {facet.filterName === 'HealthScore' && (
+                                  <span className="ml-1">{getHealthScoreEmoji(attribute.value)}</span>
+                                )} */}
+                                <ProductCount
+                                  count={attribute.productCount}
+                                  shouldDisplay={facet.filterName === 'HealthScore' ? true : facet.displayProductCount}
+                                />
+                              </Label>
+
+                            </div>
+
+                          );
+                        }
+                      }
+                      return null;
+                    });
+                  })()}
                 </AccordionContent>
               </AccordionItem>
             );
@@ -237,7 +344,7 @@ export const Facets = ({ facets, pageType }: Props) => {
                 </AccordionTrigger>
                 <AccordionContent className="overflow-visible">
                   {facet.ratings
-                    .filter((rating) => rating.value !== '5')
+                    //.filter((rating) => rating.value !== '5')
                     .sort((a, b) => parseInt(b.value, 10) - parseInt(a.value, 10))
                     .map((rating) => {
                       const key = `${facet.name}-${rating.value}-${rating.isSelected.toString()}`;
@@ -263,6 +370,7 @@ export const Facets = ({ facets, pageType }: Props) => {
                             <span className="sr-only">
                               {t('rating', { currentRating: rating.value })}
                             </span>
+                            {rating.value !== '5' && <>&nbsp;& up</>}
                           </span>
                           <ProductCount count={rating.productCount} shouldDisplay={true} />
                         </Link>

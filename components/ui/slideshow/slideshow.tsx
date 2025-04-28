@@ -279,14 +279,14 @@ SlideshowPreviousIndicator.displayName = 'SlideshowPreviousIndicator';
 
 interface SlideshowPaginationProps extends Omit<ComponentPropsWithRef<'div'>, 'children'> {
   children?:
-    | (({
-        activeSlide,
-        totalSlides,
-      }: {
-        activeSlide: number;
-        totalSlides: number;
-      }) => React.ReactNode)
-    | React.ReactNode;
+  | (({
+    activeSlide,
+    totalSlides,
+  }: {
+    activeSlide: number;
+    totalSlides: number;
+  }) => React.ReactNode)
+  | React.ReactNode;
 }
 
 const SlideshowPagination = forwardRef<ElementRef<'span'>, SlideshowPaginationProps>(

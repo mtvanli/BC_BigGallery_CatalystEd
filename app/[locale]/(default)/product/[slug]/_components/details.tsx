@@ -225,7 +225,12 @@ export const Details = ({ product }: Props) => {
                   <div key={customField.entityId}>
                     <div className="flex items-center gap-2">
                       <div className="h-1.5 w-1.5 rounded-full bg-slate-400" />
-                      <h3 className="font-semibold">{customField.name}</h3>
+                      <h3 className="font-semibold">{customField.name === 'Presentation'
+                        ? 'Build'
+                        : customField.name === 'HealthScore'
+                          ? 'Account Health Score'
+                          :
+                          customField.name}</h3>
                     </div>
                     <p className="ml-3.5">{customField.value}</p>
                   </div>

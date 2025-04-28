@@ -183,7 +183,7 @@ export const QuickSearch = ({ children, initialTerm = '' }: SearchProps) => {
               </section>
               <section>
                 <h3 className="mb-6 border-b border-gray-200 pb-3 text-xl font-bold lg:text-2xl">
-                  Products
+                  Stores
                 </h3>
                 <ul id="products" role="listbox">
                   {searchResults.products.map((product) => {

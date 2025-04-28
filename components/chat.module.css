@@ -17,10 +17,37 @@
   flex-grow: 1;
   padding: 8px 24px;
   margin-right: 10px;
-  border-radius: 60px;
+  border-radius: 15px;
   border: 2px solid transparent;
   font-size: 1em;
   background-color: #efefef;
+  line-height: 1.4;
+  resize: none;
+  overflow-y: auto;
+  min-height: 40px;
+  max-height: 200px;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  transition: height 0.2s ease;
+}
+
+@media (max-width: 1350px) {
+  .input {
+    min-height: 65px; /* or whatever fits the placeholder */
+  }
+}
+
+@media (max-width: 1060px) {
+  .input {
+    min-height: 85px; /* or whatever fits the placeholder */
+  }
+}
+
+@media (max-width: 975px) {
+  .input {
+    min-height: 150px; /* or whatever fits the placeholder */
+  }
 }
 
 .input:focus {

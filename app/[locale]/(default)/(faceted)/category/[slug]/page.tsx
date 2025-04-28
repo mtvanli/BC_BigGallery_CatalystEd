@@ -62,7 +62,7 @@ export default async function Category({ params: { locale, slug }, searchParams 
 
   return (
     <div className="group">
-      <div className="md:mb-8 "/>
+      <div className="md:mb-8 " />
       {/* <Breadcrumbs category={category} /> */}
       <NextIntlClientProvider
         locale={locale}
@@ -88,7 +88,8 @@ export default async function Category({ params: { locale, slug }, searchParams 
             <div className="flex w-full flex-col items-start gap-4 md:flex-row md:items-center md:justify-end md:gap-6">
               <SortBy />
               <div className="order-3 py-4 text-base font-semibold md:order-2 md:py-0">
-                {t('sortBy', { items: productsCollection.collectionInfo?.totalItems ?? 0 })}
+                {/* {t('sortBy', { items: productsCollection.collectionInfo?.totalItems ?? 0 })} */}
+                {`${productsCollection.collectionInfo?.totalItems ?? 0} stores`}
               </div>
             </div>
           </div>

@@ -46,7 +46,7 @@ export const ProductCardFragment = graphql(
       }
       ...AddToCartFragment
       ...PricingFragment
-      customFields(names: ["Store","Segment", "Presentation","Channel","Region","Misc"]) {
+      customFields(names: ["Store","Segment", "Presentation","Channel","Region","Misc","HealthScore"]) {
       edges {
         node {
           entityId
@@ -88,9 +88,66 @@ export const ProductCard = ({
   );
   const storeUrl = storeField?.node.value;
 
+  // Find the region custom field if it exists
+  const regionField = product.customFields?.edges?.find(
+    edge => edge?.node.name === "Region"
+  );
+  const regionValue = regionField?.node.value;
+
   if (!product.entityId) {
     return null;
   }
+
+  // Function to render region flag or label
+  const renderRegionIndicator = () => {
+    if (!regionValue) return null;
+
+    // First we'll add a white strip that runs along the bottom of the image
+    return (
+      <>
+        {/* White strip along the bottom */}
+
+
+        {regionValue.length === 2 ? (
+          <>
+            <div className="absolute bottom-0 left-0 z-1 w-[34px] h-[30px] md:w-[39px] md:h-[33px] bg-white border-1 rounded-tr-lg bg-opacity-95"></div>
+            <div className="absolute bottom-1 left-1 z-2 w-[25px] h-[22px] md:w-[27px] md:h-[23px] lg:w-[29px] lg:h-[24px] overflow-hidden border-1 rounded-full border-white shadow-lg">
+              <img
+                src={`https://flagcdn.com/${regionValue === 'UK' ? 'gb' : regionValue.toLowerCase()}.svg`}
+                alt={`${regionValue} flag`}
+                width={100}
+                className="h-full w-full object-cover object-center"
+              />
+            </div>
+          </>
+        ) : (
+          <div className="absolute bottom-1 left-1 z-2 px-3 py-1 border-2 border-white rounded-full bg-violet-100 text-xs font-medium shadow-lg">
+            {regionValue === 'APAC - Other' ? 'APAC' : regionValue === 'EMEA - Other' ? 'EMEA' : regionValue}
+          </div>
+        )}
+      </>
+    );
+  };
+
+  // Function to get the appropriate background color class based on health score
+  const getHealthScoreBackgroundColor = (value) => {
+    switch (value) {
+      case 'Excellent':
+        return 'bg-lime-100';
+      case 'Very Good':
+        return 'bg-lime-50';
+      case 'Good':
+        return 'bg-lime-50';
+      case 'Bad':
+        return 'bg-red-50';
+      case 'Churn Risk':
+        return 'bg-red-50';
+      case 'Churning':
+        return 'bg-red-100';
+      default:
+        return 'bg-gray-50';
+    }
+  };
 
   return (
     <ComponentsProductCard key={product.entityId}>
@@ -103,15 +160,17 @@ export const ProductCard = ({
           })}
         >
           {product.defaultImage ? (
-            <BcImage
-              alt={product.defaultImage.altText || product.name}
-              className="object-fill rounded-t-lg"
-              fill
-              priority={imagePriority}
-              sizes="(max-width: 768px) 50vw, (max-width: 1536px) 25vw, 500px"
-              src={product.defaultImage.url}
-
-            />
+            <>
+              <BcImage
+                alt={product.defaultImage.altText || product.name}
+                className="object-fill rounded-t-lg"
+                fill
+                priority={imagePriority}
+                sizes="(max-width: 768px) 50vw, (max-width: 1536px) 25vw, 500px"
+                src={product.defaultImage.url}
+              />
+              {/* {renderRegionIndicator()} */}
+            </>
           ) : (
             <div className="h-full w-full bg-gray-200" />
           )}
@@ -135,7 +194,7 @@ export const ProductCard = ({
             )}
           </ProductCardInfoProductName>
 
-          <div className='pt-3.5 px-3 relative'>
+          <div className='pt-3.5 pr-2 md:px-3 relative'>
             {
               product.customFields?.edges?.map((edge) =>
                 edge && (
@@ -152,14 +211,15 @@ export const ProductCard = ({
 
         </div>
 
-        <div className='flex flex-row flex-wrap gap-1 justify-center items-center lg:text-sm  text-xs mb-4 mx-3'>
+        <div className='flex flex-row flex-wrap gap-1 justify-center items-center lg:text-sm  text-xs mt-0.5 xl:mt-2 mb-3 md:mb-4 xl:mb-6 mx-1 md:mx-2'>
           {product.customFields?.edges?.sort((a, b) => {
             const order = {
               'Region': 1,
               'Segment': 2,
               'Presentation': 3,
-              'Channel': 5,
-              'Misc': 4
+              'Misc': 4,
+              'HealthScore': 6,
+              'Channel': 5
             };
             return (order[a.node.name] || 99) - (order[b.node.name] || 99);
           }).map((edge) => {
@@ -170,7 +230,7 @@ export const ProductCard = ({
                 return (
                   <div key={edge.node.value}>
                     {edge.node.value.length === 2 ? (
-                      <div className="w-[25px] h-[22px] lg:w-[30px] lg:h-[25px] overflow-hidden shadow rounded-full">
+                      <div className="w-[25px] h-[22px] md:w-[27px] md:h-[23px] lg:w-[30px] lg:h-[25px] xl:w-[31px] xl:h-[26px] overflow-hidden border rounded-full border-gray-100">
                         <img
                           src={`https://flagcdn.com/${edge.node.value === 'UK' ? 'gb' : edge.node.value.toLowerCase()}.svg`}
                           alt={`${edge.node.value} flag`}
@@ -188,22 +248,62 @@ export const ProductCard = ({
 
               case "Segment":
                 return (
-                  <p key={edge.node.value} className='px-2 py-1 border-transparent rounded-full bg-sky-100'>
+                  <p key={edge.node.value} className='px-[6px] py-0.5 md:px-2 md:py-1 border-transparent rounded-full bg-sky-100'>
                     {edge.node.value}
                   </p>
                 );
 
               case "Presentation":
                 return (
-                  <p key={edge.node.value} className='px-2 py-1 border-transparent rounded-full bg-slate-100'>
-                    {edge.node.value}
+                  <p key={edge.node.value} className='px-[6px] py-0.5 md:px-2 md:py-1 border-transparent rounded-full bg-slate-100'>
+                    {edge.node.value === "Headless - Catalyst" ? (
+                      <>
+                        <span className="block xl:hidden">Catalyst</span>
+                        <span className="hidden xl:block">{edge.node.value}</span>
+                      </>) : edge.node.value}
                   </p>
                 );
 
               case "Channel":
                 return edge.node.value !== "Marketplaces" && edge.node.value !== "na" ? (
-                  <p key={edge.node.value} className='px-2 py-1 border-transparent rounded-full bg-lime-100'>
-                    {edge.node.value}
+                  <p key={edge.node.value} className='px-[6px] py-0.5 md:px-2 md:py-1 border-transparent rounded-full bg-purple-50'>
+                    {edge.node.value === "Multi Storefront" ? (
+                      <>
+                        <span className="block xl:hidden">MSF</span>
+                        <span className="hidden xl:block">{edge.node.value}</span>
+                      </>
+                    ) : edge.node.value === "Multiple Stores" ? (
+                      <>
+                        <span className="block xl:hidden">Multi. Stores</span>
+                        <span className="hidden xl:block">{edge.node.value}</span>
+                      </>
+                    ) : (
+                      edge.node.value
+                    )}
+                  </p>
+                ) : null;
+
+              case "HealthScore":
+                // Function to get emoji for HealthScore values
+                const getHealthScoreEmoji = (value) => {
+                  const emojis = {
+                    'Unmanaged': ' 🤷‍♂️',
+                    'Churning': ' 🚨',
+                    'Churn Risk': ' ⚠️',
+                    'Bad': ' ☹️',
+                    'Good': ' 😊',
+                    'Very Good': ' 😀',
+                    'Excellent': ' 🏆'
+                  };
+                  return emojis[value] || value; // Fallback to text if no emoji mapping exists
+                };
+                return edge.node.value !== "Unmanaged" ? (
+                  <p
+                    key={edge.node.value}
+                    className={`px-2 py-1 text-md border-transparent rounded-full ${getHealthScoreBackgroundColor(edge.node.value)}`}
+                    title={`Health Score: ${edge.node.value}`}
+                  >
+                    {`Health: ${getHealthScoreEmoji(edge.node.value)}`}
                   </p>
                 ) : null;
 
@@ -218,7 +318,7 @@ export const ProductCard = ({
                         src={imageManagerImageUrl("b2b-ed.jpg")}
                         width={10}
                         height={10}
-                        className="w-4 h-4  md:w-4.5 md:h-4 lg:w-4.5 lg:h-4.5"
+                        className="w-3 h-3 md:w-3 md:h-[13px] lg:w-[17px] lg:h-[16px]"
                         alt="B2B Edition"
                         style={{
                           objectFit: "cover",

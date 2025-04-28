@@ -335,11 +335,6 @@ type AssignCartToCustomerResult {
 
 """Scope which describes how to cache the query"""
 enum CacheControlScope {
-  """
-  Private means that query result is available only for the particular user.
-  """
-  PRIVATE
-
   """Public means that query result is available for all users."""
   PUBLIC
 }
@@ -4024,6 +4019,9 @@ type CheckoutSelectedShippingOption {
 type CheckoutSettings {
   """Indicates whether ReCaptcha is enabled on checkout."""
   reCaptchaEnabled: Boolean!
+
+  """Indicates whether Persistent Cart is enabled."""
+  persistentCartEnabled: Boolean!
 }
 
 """Checkout shipping consignment."""
@@ -7269,6 +7267,9 @@ type PublicWishlist {
     When set to True, hides products which are out of stock. Defaults to False. This filter will do nothing unless your store has the Product Filtering feature available on your plan and enabled. If it is supplied when your store does not have the feature enabled, it will be silently ignored.
     """
     hideOutOfStock: Boolean
+
+    """Filters for querying public wishlist items."""
+    filters: WishlistItemsFiltersInput
     before: String
     after: String
     first: Int
@@ -8560,6 +8561,9 @@ type Wishlist {
     When set to True, hides products which are out of stock. Defaults to False. This filter will do nothing unless your store has the Product Filtering feature available on your plan and enabled. If it is supplied when your store does not have the feature enabled, it will be silently ignored.
     """
     hideOutOfStock: Boolean
+
+    """Filters for querying the wishlist items."""
+    filters: WishlistItemsFiltersInput
     before: String
     after: String
     first: Int
@@ -8631,6 +8635,15 @@ type WishlistItemEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+"""Wishlist items filters input object."""
+input WishlistItemsFiltersInput {
+  """Filter wishlist items by product ids."""
+  productEntityIds: [Int!]
+
+  """Filter wishlist items by variant ids."""
+  variantEntityIds: [Int!]
 }
 
 """Country Code"""

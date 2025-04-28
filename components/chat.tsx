@@ -8,11 +8,11 @@ import Markdown from "react-markdown";
 import { AssistantStreamEvent } from "openai/resources/beta/assistants/assistants";
 import { RequiredActionFunctionToolCall } from "openai/resources/beta/threads/runs/runs";
 
-import {Trash} from '~/components/custom-icons/trash';
-import { Trash2 } from 'lucide-react';
+import { Trash } from '~/components/custom-icons/trash';
+import { Trash2, Loader } from 'lucide-react';
 
 type MessageProps = {
-  role: "user" | "assistant" | "code";
+  role: "user" | "assistant" | "code" | "thinking";
   text: string;
 };
 
@@ -82,6 +82,15 @@ const CodeMessage = ({ text }: { text: string }) => {
   );
 };
 
+const ThinkingMessage = ({ text }: { text: string }) => {
+  return (
+    <div className={styles.assistantMessage} style={{ fontStyle: 'italic', opacity: 0.7, display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <Loader size={16} className="animate-spin" />
+      {text}
+    </div>
+  );
+};
+
 const Message = ({ role, text }: MessageProps) => {
   switch (role) {
     case "user":
@@ -90,6 +99,8 @@ const Message = ({ role, text }: MessageProps) => {
       return <AssistantMessage text={text} />;
     case "code":
       return <CodeMessage text={text} />;
+    case "thinking":
+      return <ThinkingMessage text={text} />;
     default:
       return null;
   }
@@ -108,6 +119,7 @@ const Chat = ({
   const [messages, setMessages] = useState<MessageProps[]>([]);
   const [inputDisabled, setInputDisabled] = useState(false);
   const [threadId, setThreadId] = useState<string | null>(null);
+  const [isThinking, setIsThinking] = useState(false);
 
   // Automatically scroll to the bottom of the chat
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -181,7 +193,9 @@ const Chat = ({
   useEffect(() => {
     // Save chat messages to localStorage whenever they change
     if (messages.length > 0) {
-      localStorage.setItem("chatMessages", JSON.stringify(messages));
+      // Filter out thinking messages before saving to localStorage
+      const messagesToSave = messages.filter(msg => msg.role !== "thinking");
+      localStorage.setItem("chatMessages", JSON.stringify(messagesToSave));
     }
   }, [messages]);
 
@@ -230,16 +244,30 @@ const Chat = ({
     e.preventDefault();
     if (!userInput.trim()) return;
 
-    // Send the user input with the appended text
-    sendMessage(userInput);
-
     // Display the original user input in the chat UI
     setMessages((prevMessages) => [
       ...prevMessages,
       { role: "user", text: userInput },
+      { role: "thinking", text: "Thinking..." } // Add thinking message right after user message
     ]);
-    setUserInput("");
+
+    // Set thinking state and disable input
+    setIsThinking(true);
     setInputDisabled(true);
+
+    // Send the user input with the appended text
+    sendMessage(userInput);
+
+    setUserInput("");
+
+    // Reset textarea height manually
+    const textarea = document.querySelector(`.${styles.input}`) as HTMLTextAreaElement;
+    if (textarea) {
+      textarea.value = '';
+      textarea.style.height = 'auto';
+      textarea.scrollTop = 0;
+    }
+
     scrollToBottom();
   };
 
@@ -247,7 +275,12 @@ const Chat = ({
 
   // textCreated - create new assistant message
   const handleTextCreated = () => {
-    appendMessage("assistant", "");
+    // Remove the "Thinking..." message and add assistant message
+    setIsThinking(false);
+    setMessages((prevMessages) => {
+      const filteredMessages = prevMessages.filter(msg => msg.role !== "thinking");
+      return [...filteredMessages, { role: "assistant", text: "" }];
+    });
   };
 
   // textDelta - append text to last assistant message
@@ -268,7 +301,12 @@ const Chat = ({
   // toolCallCreated - log new tool call
   const toolCallCreated = (toolCall: any) => {
     if (toolCall.type != "code_interpreter") return;
-    appendMessage("code", "");
+    // Remove thinking message if it exists
+    setIsThinking(false);
+    setMessages((prevMessages) => {
+      const filteredMessages = prevMessages.filter(msg => msg.role !== "thinking");
+      return [...filteredMessages, { role: "code", text: "" }];
+    });
   };
 
   // toolCallDelta - log delta and snapshot for the tool call
@@ -297,6 +335,13 @@ const Chat = ({
   // handleRunCompleted - re-enable the input form
   const handleRunCompleted = () => {
     setInputDisabled(false);
+    // Ensure thinking message is removed if for some reason it's still there
+    if (isThinking) {
+      setIsThinking(false);
+      setMessages((prevMessages) =>
+        prevMessages.filter(msg => msg.role !== "thinking")
+      );
+    }
   };
 
   const handleReadableStream = (stream: AssistantStream) => {
@@ -311,90 +356,107 @@ const Chat = ({
     stream.on("toolCallCreated", toolCallCreated);
     stream.on("toolCallDelta", toolCallDelta);
 
- // events without helpers yet (e.g. requires_action and run.done)
- stream.on("event", (event: any) => {
-  if (event.event === "thread.run.requires_action")
-    handleRequiresAction(event);
-  if (event.event === "thread.run.completed") handleRunCompleted();
-});
-};
-
-/*
-=======================
-=== Utility Helpers ===
-=======================
-*/
-
-const appendToLastMessage = (text: string) => {
-setMessages((prevMessages) => {
-  const lastMessage = prevMessages[prevMessages.length - 1];
-  const updatedLastMessage = {
-    ...lastMessage,
-    text: lastMessage.text + text,
+    // events without helpers yet (e.g. requires_action and run.done)
+    stream.on("event", (event: any) => {
+      if (event.event === "thread.run.requires_action")
+        handleRequiresAction(event);
+      if (event.event === "thread.run.completed") handleRunCompleted();
+    });
   };
-  return [...prevMessages.slice(0, -1), updatedLastMessage];
-});
-};
 
-const appendMessage = (role: "user" | "assistant" | "code", text: string) => {
-setMessages((prevMessages) => [...prevMessages, { role, text }]);
-};
+  /*
+  =======================
+  === Utility Helpers ===
+  =======================
+  */
 
-const annotateLastMessage = (annotations: any[]) => {
-setMessages((prevMessages) => {
-  const lastMessage = prevMessages[prevMessages.length - 1];
-  const updatedLastMessage = {
-    ...lastMessage,
+  const appendToLastMessage = (text: string) => {
+    setMessages((prevMessages) => {
+      const lastMessage = prevMessages[prevMessages.length - 1];
+      const updatedLastMessage = {
+        ...lastMessage,
+        text: lastMessage.text + text,
+      };
+      return [...prevMessages.slice(0, -1), updatedLastMessage];
+    });
   };
-  annotations.forEach((annotation) => {
-    if (annotation.type === "file_path") {
-      updatedLastMessage.text = updatedLastMessage.text.replaceAll(
-        annotation.text,
-        `/api/files/${annotation.file_path.file_id}`
-      );
-    }
-  });
-  return [...prevMessages.slice(0, -1), updatedLastMessage];
-});
-};
 
-const clearMessages = () => {
-setMessages([]);
-localStorage.removeItem("chatMessages");
-};
+  const appendMessage = (role: "user" | "assistant" | "code" | "thinking", text: string) => {
+    setMessages((prevMessages) => [...prevMessages, { role, text }]);
+  };
 
-return (
-<div className={styles.chatContainer}>
-  <div className={styles.messages}>
-    {messages.map((msg, index) => (
-      <Message key={index} role={msg.role} text={msg.text} />
-    ))}
-    <div ref={messagesEndRef} />
-  </div>
-  <form
-    onSubmit={handleSubmit}
-    className={`${styles.inputForm} ${styles.clearfix}`}
-  >
-    <input
-      type="text"
-      className={styles.input}
-      value={userInput}
-      onChange={(e) => setUserInput(e.target.value)}
-      placeholder="Search BC Stores, case studies, insights…"
-    />
-    <button
-      type="submit"
-      className={styles.button}
-      disabled={inputDisabled}
-    >
-      Send
-    </button>
-    <button type="button" className={styles.button} onClick={clearMessages}>
-    <Trash2 />
-    </button>
-  </form>
-</div>
-);
+  const annotateLastMessage = (annotations: any[]) => {
+    setMessages((prevMessages) => {
+      const lastMessage = prevMessages[prevMessages.length - 1];
+      const updatedLastMessage = {
+        ...lastMessage,
+      };
+      annotations.forEach((annotation) => {
+        if (annotation.type === "file_path") {
+          updatedLastMessage.text = updatedLastMessage.text.replaceAll(
+            annotation.text,
+            `/api/files/${annotation.file_path.file_id}`
+          );
+        }
+      });
+      return [...prevMessages.slice(0, -1), updatedLastMessage];
+    });
+  };
+
+  const clearMessages = () => {
+    setMessages([]);
+    localStorage.removeItem("chatMessages");
+  };
+
+  return (
+    <div className={styles.chatContainer}>
+      <div className={styles.messages}>
+        {messages.map((msg, index) => (
+          <Message key={index} role={msg.role} text={msg.text} />
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+      <form
+        onSubmit={handleSubmit}
+        className={`${styles.inputForm} ${styles.clearfix}`}
+        style={{ display: 'flex', width: '100%', alignItems: 'flex-start', gap: '8px' }}
+      >
+        <textarea
+          className={styles.input}
+          value={userInput}
+          onChange={(e) => {
+            setUserInput(e.target.value);
+
+            const textarea = e.target;
+            textarea.style.height = 'auto';
+
+            const maxHeight = 200;
+            const buffer = 4;
+            textarea.style.height = Math.min(textarea.scrollHeight + buffer, maxHeight) + 'px';
+          }}
+
+          placeholder="Search BC Stores, case studies, insights…"
+          rows={1}
+        />
+        <div className={styles.buttonContainer} style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+          <button
+            type="submit"
+            className={styles.button}
+            disabled={inputDisabled}
+          >
+            Send
+          </button>
+          <button
+            type="button"
+            className={styles.button}
+            onClick={clearMessages}
+          >
+            <Trash2 />
+          </button>
+        </div>
+      </form>
+    </div>
+  );
 };
 
 export default Chat;
