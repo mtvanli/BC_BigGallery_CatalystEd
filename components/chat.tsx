@@ -21,10 +21,64 @@ const UserMessage = ({ text }: { text: string }) => {
 };
 
 const AssistantMessage = ({ text }: { text: string }) => {
+  // --- Helper function ---
+  const formatAssistantText = (rawText: string): string => {
+    const lines = rawText.split("\n");
+
+    const formattedLines = lines.map((line) => {
+      const trimmed = line.trim();
+
+      // Detect bolded lines ending with colon, e.g., "**Complex Product Management** :"
+      const boldColonMatch = trimmed.match(/^\*\*(.+)\*\*\s*:?$/);
+
+      if (boldColonMatch) {
+        const title = boldColonMatch[1].trim(); // Extract the bold title inside **
+        return `#### ${title}`; // Promote it to a heading
+      }
+
+      // Detect plain text lines ending with colon
+      if (trimmed.length > 0 && trimmed.endsWith(":")) {
+        const withoutColon = trimmed.slice(0, -1);
+        return `#### ${withoutColon}`;
+      }
+
+      return line;
+    });
+
+    return formattedLines.join("\n");
+  };
+
+
+  const formattedText = formatAssistantText(text);
+
   return (
     <div className={styles.assistantMessage}>
       <Markdown
         components={{
+          h1: ({ node, ...props }) => (
+            <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "8px" }} {...props} />
+          ),
+          h2: ({ node, ...props }) => (
+            <h2 style={{ fontSize: "1.25rem", fontWeight: "bold", marginBottom: "8px" }} {...props} />
+          ),
+          h3: ({ node, ...props }) => (
+            <h3 style={{ fontSize: "1.15rem", fontWeight: "bold", marginBottom: "8px" }} {...props} />
+          ),
+          h4: ({ node, ...props }) => (
+            <h4 style={{ fontSize: "1rem", fontWeight: "bold", marginBottom: "6px" }} {...props} />
+          ),
+          p: ({ node, ...props }) => (
+            <p
+              style={{
+                display: "grid",
+                alignItems: "start",
+                lineHeight: "1.5",
+                marginTop: "4px",
+                marginBottom: "8px",
+              }}
+              {...props}
+            />
+          ),
           a: ({ node, ...props }) => (
             <a
               target="_blank"
@@ -44,30 +98,20 @@ const AssistantMessage = ({ text }: { text: string }) => {
           ),
           li: ({ node, ...props }) => (
             <li
-              style={{ display: "grid", alignItems: "start", lineHeight: "auto", marginBottom: "4px" }}
-              {...props}
-            />
-          ),
-          p: ({ node, ...props }) => (
-            <p
-              style={{
-                display: "grid",
-                alignItems: "start",
-                lineHeight: "auto",
-                marginTop: "4px",
-                marginBottom: "8px",
-              }}
+              style={{ display: "grid", alignItems: "start", lineHeight: "1.5", marginBottom: "4px" }}
               {...props}
             />
           ),
           br: () => <></>,
         }}
       >
-        {text}
+        {formattedText}
       </Markdown>
     </div>
   );
 };
+
+
 
 const CodeMessage = ({ text }: { text: string }) => {
   return (
