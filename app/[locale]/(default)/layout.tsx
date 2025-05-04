@@ -69,6 +69,7 @@ export default async function DefaultLayout({ children, params: { locale } }: Pr
       <Script
         id="microsoft-clarity"
         strategy="afterInteractive"
+        defer
       >
         {`
             (function(c,l,a,r,i,t,y){
