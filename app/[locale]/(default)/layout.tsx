@@ -47,18 +47,6 @@ export default async function DefaultLayout({ children, params: { locale } }: Pr
   return (
     <>
 
-      <Script
-        id="microsoft-clarity"
-        strategy="afterInteractive"
-      >
-        {`
-            (function(c,l,a,r,i,t,y){
-              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-            })(window, document, "clarity", "script", "nu9pyk7mrw");
-          `}
-      </Script>
 
       <Header cart={<Cart />} data={data.site} />
 
@@ -76,6 +64,22 @@ export default async function DefaultLayout({ children, params: { locale } }: Pr
       </Suspense>
 
       <Footer data={data.site} />
+
+      {/* Microsoft Clarity - Placed at the end to minimize impact on initial page load */}
+      <Script
+        id="microsoft-clarity"
+        strategy="afterInteractive"
+      >
+        {`
+            (function(c,l,a,r,i,t,y){
+              c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+              t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+              y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "nu9pyk7mrw");
+          `}
+      </Script>
+
+
     </>
   );
 }
