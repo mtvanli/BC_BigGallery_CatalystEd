@@ -7826,6 +7826,15 @@ type Settings {
 
   """Inactivity settings from control panel"""
   inactivity: InactivitySettings
+
+  """Store shipping settings."""
+  shipping: Shipping
+}
+
+"""Store shipping settings."""
+type Shipping {
+  """Store supported shipping destinations."""
+  supportedShippingDestinations: SupportedShippingDestinations!
 }
 
 """A connection to a list of items."""
@@ -8163,6 +8172,12 @@ type SubCategorySearchFilterItemEdge {
 
   """A cursor for use in pagination."""
   cursor: String!
+}
+
+"""Store supported shipping destinations."""
+type SupportedShippingDestinations {
+  """List of supported shipping countries."""
+  countries: [Country!]
 }
 
 """
