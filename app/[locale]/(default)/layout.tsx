@@ -66,7 +66,7 @@ export default async function DefaultLayout({ children, params: { locale } }: Pr
       <Footer data={data.site} />
 
       {/* Microsoft Clarity - Placed at the end to minimize impact on initial page load */}
-      <Script
+      {/*  <Script
         id="microsoft-clarity"
         strategy="lazyOnload"
       >
@@ -77,7 +77,7 @@ export default async function DefaultLayout({ children, params: { locale } }: Pr
               y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
             })(window, document, "clarity", "script", "nu9pyk7mrw");
           `}
-      </Script>
+      </Script> */}
 
 
     </>
