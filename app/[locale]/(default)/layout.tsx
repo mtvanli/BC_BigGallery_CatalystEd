@@ -68,8 +68,7 @@ export default async function DefaultLayout({ children, params: { locale } }: Pr
       {/* Microsoft Clarity - Placed at the end to minimize impact on initial page load */}
       <Script
         id="microsoft-clarity"
-        strategy="afterInteractive"
-        defer
+        strategy="lazyOnload"
       >
         {`
             (function(c,l,a,r,i,t,y){
