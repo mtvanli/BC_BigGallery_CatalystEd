@@ -34,8 +34,10 @@ export const Hero = () => (
             fill
             placeholder="blur"
             priority
+            loading="eager"
             sizes="(max-width: 1536px) 100vw, 1536px"
             src={SlideshowBG3}
+
 
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
@@ -60,9 +62,11 @@ export const Hero = () => (
             className="absolute -z-10 object-cover sm:object-center"
             fill
             placeholder="blur"
-            priority
+            //priority
+            loading="lazy"
             sizes="(max-width: 1536px) 100vw, 1536px"
             src={SlideshowBG4}
+
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
           <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36 ">
@@ -88,9 +92,11 @@ export const Hero = () => (
             className="absolute -z-10 object-cover  sm:object-center"
             fill
             placeholder="blur"
-            priority
+            //priority
+            loading="lazy"
             sizes="(max-width: 1536px) 100vw, 1536px"
             src={SlideshowBG}
+
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
           <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36 ">
