@@ -1,4 +1,4 @@
-import { ShoppingCart, User,LogOut } from 'lucide-react';
+import { ShoppingCart, User, LogOut } from 'lucide-react';
 import { ReactNode, Suspense } from 'react';
 
 import { getSessionCustomerId } from '~/auth';
@@ -39,7 +39,7 @@ export const HeaderFragment = graphql(
 );
 
 interface Props {
-  cart: ReactNode;
+  cart?: ReactNode;
   data: FragmentOf<typeof HeaderFragment>;
 }
 
@@ -74,7 +74,7 @@ export const Header = async ({ cart, data }: Props) => {
                 </QuickSearch>
               </NavigationMenuItem>
             )}
-          {/*   <NavigationMenuItem className={`hidden xl:flex ${customerId ? 'self-stretch' : ''}`}>
+            {/*   <NavigationMenuItem className={`hidden xl:flex ${customerId ? 'self-stretch' : ''}`}>
               {customerId ? (
                 <div className="group/account flex cursor-pointer items-center">
                   <Link
@@ -163,9 +163,9 @@ export const Header = async ({ cart, data }: Props) => {
                 </NavigationMenuLink>
               )}
             </NavigationMenuItem> */}
-         
-            
-    {/*      <NavigationMenuItem>
+
+
+            {/*      <NavigationMenuItem>
               <p role="status">
                 <Suspense
                   fallback={
@@ -183,39 +183,39 @@ export const Header = async ({ cart, data }: Props) => {
               <Slider /> 
             </Link>
             </NavigationMenuItem> */}
-           {/*  <NavigationMenuItem className="hidden xl:block">
+            {/*  <NavigationMenuItem className="hidden xl:block">
            
            </NavigationMenuItem> */}
-{/*            <NavigationMenuItem className="hidden lg:block">
+            {/*            <NavigationMenuItem className="hidden lg:block">
             <Link  href="/about">
             <Info /> 
                   </Link>
             </NavigationMenuItem> */}
             <NavigationMenuItem className="hidden lg:block">
-            
-            <BG_Assistant />
-                  
+
+              <BG_Assistant />
+
             </NavigationMenuItem>
             <NavigationMenuItem className="hidden xl:block">
-          
-           </NavigationMenuItem>
+
+            </NavigationMenuItem>
             <NavigationMenuItem className="hidden xl:block">
-              
-            <form action={logout}>
+
+              <form action={logout}>
                 <Button
                   className="justify-start p-0 font-normal text-black hover:bg-transparent hover:text-black"
                   type="submit"
                   variant="subtle"
                 >
-                  <LogOut /> 
+                  <LogOut />
                 </Button>
-            </form>
+              </form>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuToggle className="xl:hidden" />
             </NavigationMenuItem>
 
-        
+
           </NavigationMenuList>
         </div>
 
