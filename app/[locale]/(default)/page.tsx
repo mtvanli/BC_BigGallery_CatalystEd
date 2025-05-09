@@ -12,6 +12,7 @@ import {
   ProductCardCarouselFragment,
 } from '~/components/product-card-carousel';
 import { LocaleType } from '~/i18n';
+import { Suspense } from "react"
 
 interface Props {
   params: {
@@ -23,7 +24,7 @@ const HomePageQuery = graphql(
   `
     query HomePageQuery {
       site {
-        newestProducts(first: 50) {
+        newestProducts(first: 35) {
           edges {
             node {
               ...ProductCardCarouselFragment
@@ -90,20 +91,24 @@ export default async function Home({ params: { locale } }: Props) {
 
       <div className="my-10">
         <NextIntlClientProvider locale={locale} messages={{ Product: messages.Product ?? {} }}>
-          <ProductCardCarousel
-            products={featuredProducts}
-            showCart={false}
-            showCompare={false}
-            showReviews={false}
-            title={t('Carousel.featuredProducts')}
-          />
-          <ProductCardCarousel
-            products={newestProducts}
-            showCart={false}
-            showCompare={false}
-            showReviews={false}
-            title={t('Carousel.newestProducts')}
-          />
+          <Suspense fallback={<div className="h-64 w-full animate-pulse bg-gray-100 rounded-md"></div>}>
+            <ProductCardCarousel
+              products={featuredProducts}
+              showCart={false}
+              showCompare={false}
+              showReviews={false}
+              title={t("Carousel.featuredProducts")}
+            />
+          </Suspense>
+          <Suspense fallback={<div className="h-64 w-full animate-pulse bg-gray-100 rounded-md mt-8"></div>}>
+            <ProductCardCarousel
+              products={newestProducts}
+              showCart={false}
+              showCompare={false}
+              showReviews={false}
+              title={t("Carousel.newestProducts")}
+            />
+          </Suspense>
         </NextIntlClientProvider>
       </div>
     </>

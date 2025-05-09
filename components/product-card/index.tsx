@@ -163,7 +163,7 @@ export const ProductCard = ({
             <>
               <BcImage
                 alt={product.defaultImage.altText || product.name}
-                className="object-fill rounded-t-lg"
+                className="object-cover object-top rounded-t-lg"
                 fill
                 priority={imagePriority}
                 sizes="(max-width: 768px) 50vw, (max-width: 1536px) 25vw, 500px"

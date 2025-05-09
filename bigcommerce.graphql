@@ -3445,6 +3445,19 @@ type CategoryEdge {
   cursor: String!
 }
 
+"""
+Filter input for a list of integer IDs, that supports various matching behaviors.
+"""
+input CategoryEntityIdsFilterInput {
+  """List of integer IDs."""
+  entityIds: [Int!]!
+
+  """
+  Match behavior for the list of IDs. OR - match any of the IDs in the list. AND - match all the IDs in the list.
+  """
+  matchBehavior: ListMatchBehavior! = OR
+}
+
 """A connection to a list of items."""
 type CategoryPageBannerConnection {
   """Information to aid in pagination."""
@@ -5111,6 +5124,14 @@ enum LimitInputBy {
   LOWEST_VALUE
   NO_LIMIT
   RANGE
+}
+
+"""
+Match behavior for search filters, where a list of values is provided. OR - match any of the values in the list. AND - match all the values in the list.
+"""
+enum ListMatchBehavior {
+  AND
+  OR
 }
 
 """A store locale."""
@@ -7676,6 +7697,11 @@ input SearchProductsFiltersInput {
   When set to True, hides products which are out of stock. Defaults to False. This filter will do nothing unless your store has the Product Filtering feature available on your plan and enabled. If it is supplied when your store does not have the feature enabled, it will be silently ignored.
   """
   hideOutOfStock: Boolean
+
+  """
+  Filter by products belonging to any or all of the specified Categories. Intended for Advanced Search and Faceted Search/Product Filtering use cases, not for a page for a specific Category.
+  """
+  categoryIdsFilter: CategoryEntityIdsFilterInput
 }
 
 """

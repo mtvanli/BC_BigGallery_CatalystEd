@@ -13,9 +13,9 @@ import {
 } from '~/components/ui/slideshow';
 
 
-import SlideshowBG3 from './Oroton.jpg';
-import SlideshowBG from './linz.jpg';
-import SlideshowBG4 from './Karava.jpeg';
+import SlideshowBG1 from './Oroton.webp';
+import SlideshowBG2 from './linz.webp';
+import SlideshowBG3 from './Karava.webp';
 
 
 const SlideshowBlurDataURL =
@@ -36,7 +36,7 @@ export const Hero = () => (
             priority
             loading="eager"
             sizes="(max-width: 1536px) 100vw, 1536px"
-            src={SlideshowBG3}
+            src={SlideshowBG1}
 
 
           />
@@ -65,7 +65,7 @@ export const Hero = () => (
             //priority
             loading="lazy"
             sizes="(max-width: 1536px) 100vw, 1536px"
-            src={SlideshowBG4}
+            src={SlideshowBG2}
 
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
@@ -95,7 +95,7 @@ export const Hero = () => (
             //priority
             loading="lazy"
             sizes="(max-width: 1536px) 100vw, 1536px"
-            src={SlideshowBG}
+            src={SlideshowBG3}
 
           />
           <div className="absolute inset-0 bg-black opacity-30 -z-10" />
