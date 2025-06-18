@@ -84,16 +84,16 @@ export default async function Login({ params: { locale }, searchParams }: Props)
   }
 
   return (
-    <div className="lg:my-28 my-5 px-8 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-2xl ring-1 ring-black/5 shadow-md  md:max-w-2xl lg:max-w-3xl md:mx-auto mx-3 md:w-full  "> 
-     <Logo className="mt-20 mb-8 mx-auto" width="250" height="100" />
-     {/* <h1 className="text-h2 mb-8  my-24 text-center lg:mx-20 text-4xl font-bold lg:text-5xl">Big Gallery</h1>
+    <div className="lg:my-28 my-5 px-8 bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-2xl ring-1 ring-black/5 shadow-md  md:max-w-2xl lg:max-w-3xl md:mx-auto mx-3 md:w-full  ">
+      <Logo className="mt-20 mb-8 mx-auto" width="250" height="100" />
+      {/* <h1 className="text-h2 mb-8  my-24 text-center lg:mx-20 text-4xl font-bold lg:text-5xl">Big Gallery</h1>
       <h3 className="text-h2 mb-8  text-center lg:mx-20 text-2xl font-bold lg:text-3xl">{t('heading')} </h3>
       */} <div className="mb-14 lg:mx-20 grid grid-cols-1  lg:gap-x-8">
         <NextIntlClientProvider locale={locale} messages={{ Account }}>
           <LoginForm />
-        
+
         </NextIntlClientProvider>
-    {/*<div className="flex flex-col gap-4 bg-gray-100 p-8">
+        {/*<div className="flex flex-col gap-4 bg-gray-100 p-8">
           <h3 className="text-h5 mb-3">{t('CreateAccount.heading')}</h3>
           <p className="text-base font-semibold">{t('CreateAccount.accountBenefits')}</p>
           <ul className="list-disc ps-4">
@@ -108,7 +108,7 @@ export default async function Login({ params: { locale }, searchParams }: Props)
           </Button>
         </div> */}
       </div>
-    </div>    
+    </div>
   );
 }
 

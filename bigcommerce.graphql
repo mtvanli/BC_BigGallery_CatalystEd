@@ -1798,9 +1798,6 @@ input TextFormFieldInput {
 """Scalar type representing a valid URL."""
 scalar URL
 
-"""Scalar type representing a universally unique identifier (UUID)."""
-scalar UUID
-
 """Unapply checkout coupon data object"""
 input UnapplyCheckoutCouponDataInput {
   """The checkout coupon code"""
@@ -4194,6 +4191,9 @@ type Content {
 
   """Banners details."""
   banners: Banners
+
+  """Collection of scripts"""
+  scripts(before: String, after: String, first: Int, last: Int, filters: ScriptsFilters): ScriptTypeConnection!
 }
 
 """A country representation."""
@@ -4899,6 +4899,31 @@ type InactivitySettings {
   Duration in seconds indicating how long a control panel user can be inactive before being logged out.
   """
   controlPanelInactivityDurationSeconds: Long
+}
+
+"""Represents a script that contains inline JavaScript code"""
+type InlineScript implements Script {
+  """The HTML script tag containing the inline JavaScript code"""
+  scriptTag: String!
+
+  """Unique identifier for the script"""
+  entityId: UUID!
+
+  """
+  The consent category this script belongs to (e.g., Essential, Analytics)
+  """
+  consentCategory: ScriptConsentCategory!
+
+  """Where this script should be displayed in the storefront"""
+  visibility: ScriptVisibility!
+
+  """List of integrity hash values for security verification"""
+  integrityHashes: [ScriptHash!]!
+
+  """
+  Location in the page where the script should be placed (e.g., Head, Footer)
+  """
+  location: ScriptLocation!
 }
 
 """An inventory"""
@@ -5890,7 +5915,9 @@ input OrderFilterInput {
   """Order id."""
   entityId: Int!
 
-  """Card id."""
+  """
+  Cart id. Only guest orders can be fetched by cart id. Customer orders will not be returned.
+  """
   cartEntityId: String
 }
 
@@ -7597,6 +7624,106 @@ enum RouteRedirectBehavior {
   IGNORE
 }
 
+"""Interface representing scripts that can be added to a storefront"""
+interface Script {
+  """Unique identifier for the script"""
+  entityId: UUID!
+
+  """
+  The consent category this script belongs to (e.g., Essential, Analytics)
+  """
+  consentCategory: ScriptConsentCategory!
+
+  """Where this script should be displayed in the storefront"""
+  visibility: ScriptVisibility!
+
+  """List of integrity hash values for security verification"""
+  integrityHashes: [ScriptHash!]!
+
+  """
+  Location in the page where the script should be placed (e.g., Head, Footer)
+  """
+  location: ScriptLocation!
+}
+
+"""Categorizes scripts according to privacy and consent requirements"""
+enum ScriptConsentCategory {
+  """Scripts used for analytics"""
+  ANALYTICS
+
+  """Scripts that are essential for core website functionality"""
+  ESSENTIAL
+
+  """Scripts that enhance website functionality"""
+  FUNCTIONAL
+
+  """Scripts used for advertising and marketing purposes"""
+  TARGETING
+
+  """Scripts with an unspecified or unknown consent category"""
+  UNKNOWN
+}
+
+"""Represents a security hash for a script"""
+type ScriptHash {
+  """The integrity hash value"""
+  hash: String!
+}
+
+"""Defines where in the HTML document a script should be placed"""
+enum ScriptLocation {
+  """Script will be placed in the footer section of the page"""
+  FOOTER
+
+  """Script will be placed in the head section of the page"""
+  HEAD
+}
+
+"""Connection for paginated script results"""
+type ScriptTypeConnection {
+  """Information about the current page of results"""
+  pageInfo: PageInfo!
+
+  """List of script edges containing script nodes"""
+  edges: [ScriptTypeEdge!]
+}
+
+"""Edge containing a script node in a paginated response"""
+type ScriptTypeEdge {
+  """The script object"""
+  node: Script!
+
+  """Cursor used for pagination"""
+  cursor: String!
+}
+
+"""Defines which pages a script should be visible on"""
+enum ScriptVisibility {
+  """Script appears on all store pages"""
+  ALL_PAGES
+
+  """Script appears only on checkout pages"""
+  CHECKOUT
+
+  """Script appears only on order confirmation pages"""
+  ORDER_CONFIRMATION
+
+  """Script appears only on storefront pages"""
+  STOREFRONT
+}
+
+"""Filters for querying scripts"""
+input ScriptsFilters {
+  """Filter scripts by their visibility settings"""
+  visibilities: [ScriptVisibility!]
+
+  """Filter scripts by their consent categories"""
+  consentCategories: [ScriptConsentCategory!]
+
+  """Filter scripts by their location on the page"""
+  location: ScriptLocation
+}
+
 """Store search settings."""
 type Search {
   """Product filtering enabled."""
@@ -8097,6 +8224,31 @@ type SpecialHour {
   closing: DateTime
 }
 
+"""Represents a script loaded from an external source URL"""
+type SrcScript implements Script {
+  """The source URL where the script is located"""
+  src: String!
+
+  """Unique identifier for the script"""
+  entityId: UUID!
+
+  """
+  The consent category this script belongs to (e.g., Essential, Analytics)
+  """
+  consentCategory: ScriptConsentCategory!
+
+  """Where this script should be displayed in the storefront"""
+  visibility: ScriptVisibility!
+
+  """List of integrity hash values for security verification"""
+  integrityHashes: [ScriptHash!]!
+
+  """
+  Location in the page where the script should be placed (e.g., Head, Footer)
+  """
+  location: ScriptLocation!
+}
+
 """A state or province representation."""
 type StateOrProvince {
   """An ID of a state or province."""
@@ -8321,6 +8473,9 @@ type TextFormFieldValue implements CustomerFormFieldValue {
   """The name of the form field that the value is for."""
   name: String!
 }
+
+"""Scalar type representing a universally unique identifier (UUID)."""
+scalar UUID
 
 """The behavior type for updating stock levels."""
 enum UpdateStockBehavior {
