@@ -4442,14 +4442,30 @@ type CustomerAddress {
   """Second line for the street address."""
   address2: String
 
+  """Address type (Residential or Commercial)."""
+  addressType: DestinationAddressType
+
   """City."""
   city: String!
+
+  """Country name."""
+  country: String
+
+  """
+  Country ID as available in BigCommerce Geography (https://developer.bigcommerce.com/docs/rest-management/geography/countries#get-all-countries).
+  """
+  countryId: Int
 
   """2-letter country code."""
   countryCode: String!
 
   """Name of State or Province."""
   stateOrProvince: String
+
+  """
+  State Id as available in BigCommerce Geography (https://developer.bigcommerce.com/docs/rest-management/geography/states#get-all-states).
+  """
+  stateId: Int
 
   """Phone number."""
   phone: String
@@ -4579,6 +4595,12 @@ scalar DateTime
 type DateTimeExtended {
   """ISO-8601 formatted date in UTC. (e.g. 2024-01-01T00:00:00Z)"""
   utc: DateTime!
+}
+
+"""Destination address type (Residential or Commercial)."""
+enum DestinationAddressType {
+  COMMERCIAL
+  RESIDENTIAL
 }
 
 """Display field"""
@@ -5261,6 +5283,9 @@ type Money {
 
   """The formatted currency string for the current money."""
   formatted: String @deprecated(reason: "Deprecated. Don't use - it will be removed soon.")
+
+  """The formatted currency string for the current money."""
+  formattedV2: String
 }
 
 """A min and max pair of money objects"""

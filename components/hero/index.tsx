@@ -13,7 +13,6 @@ import {
 } from '~/components/ui/slideshow';
 
 import SlideshowBG from './Toolden.webp';
-import SlideshowBG1 from './Oroton.webp';
 import SlideshowBG2 from './linz.webp';
 import SlideshowBG3 from './Karava.webp';
 
@@ -52,34 +51,6 @@ export const Hero = () => (
         </div>
       </SlideshowSlide>
 
-      <SlideshowSlide>
-        <div className="relative ">
-          <Image
-            alt="Oroton slide image"
-            blurDataURL={SlideshowBlurDataURL}
-            className="absolute -z-10 object-cover sm:object-right"
-            fill
-            placeholder="blur"
-            priority
-            loading="eager"
-            sizes="(max-width: 1536px) 100vw, 1536px"
-            src={SlideshowBG1}
-
-
-          />
-          <div className="absolute inset-0 bg-black opacity-30 -z-10" />
-          <div className="flex flex-col h-[548px] gap-4 px-12 pb-48 pt-56 lg:pt-36">
-            <a href="https://oroton.com/" target="_blank" rel="noopener noreferrer">
-              <h2 className="text-4xl text-neutral-50 font-black lg:text-6xl mt-10">Oroton</h2>
-            </a>
-            <p className="text-md lg:text-lg max-w-xl text-neutral-50">Scales Omnichannel Customer Experiences with BigCommerce
-            </p>
-            <Button asChild className="w-fit mt-4">
-              <a href="https://www.bigcommerce.com/case-study/oroton/" target="_blank" rel="noopener noreferrer">Case Study</a>
-            </Button>
-          </div>
-        </div>
-      </SlideshowSlide>
 
       <SlideshowSlide>
         <div className="relative ">
