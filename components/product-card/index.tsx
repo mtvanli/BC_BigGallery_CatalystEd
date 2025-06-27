@@ -99,15 +99,13 @@ export const ProductCard = ({
   }
 
   // Function to render region flag or label
+  {/* 
   const renderRegionIndicator = () => {
     if (!regionValue) return null;
 
     // First we'll add a white strip that runs along the bottom of the image
     return (
       <>
-        {/* White strip along the bottom */}
-
-
         {regionValue.length === 2 ? (
           <>
             <div className="absolute bottom-0 left-0 z-1 w-[34px] h-[30px] md:w-[39px] md:h-[33px] bg-white border-1 rounded-tr-lg bg-opacity-95"></div>
@@ -128,6 +126,7 @@ export const ProductCard = ({
       </>
     );
   };
+  */}
 
   // Function to get the appropriate background color class based on health score
   const getHealthScoreBackgroundColor = (value) => {
@@ -226,7 +225,7 @@ export const ProductCard = ({
             if (!edge) return null;
 
             switch (edge.node.name) {
-              case "Region":
+              /* case "Region":
                 return (
                   <div key={edge.node.value}>
                     {edge.node.value.length === 2 ? (
@@ -244,7 +243,7 @@ export const ProductCard = ({
                       </p>
                     )}
                   </div>
-                );
+                ); */
 
               case "Segment":
                 return (

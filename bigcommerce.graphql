@@ -1,5 +1,5 @@
 """Directive that allows overriding shopper preferences."""
-directive @shopperPreferences(locale: String) on QUERY
+directive @shopperPreferences(locale: String, displayCurrencyCode: String) on MUTATION | QUERY
 
 directive @cacheControl(maxAge: Int, scope: CacheControlScope, inheritMaxAge: Boolean) on FIELD | FIELD_DEFINITION | OBJECT
 
@@ -2862,6 +2862,9 @@ type Cart implements Node {
   """ISO-4217 currency code."""
   currencyCode: String!
 
+  """ISO-4217 currency code. Applied DisplayCurrencyCode for the cart."""
+  displayCurrencyCode: String!
+
   """Whether this item is taxable."""
   isTaxIncluded: Boolean!
 
@@ -2875,6 +2878,9 @@ type Cart implements Node {
   Sum of line-items amounts, minus cart-level discounts and coupons. This amount includes taxes (where applicable).
   """
   amount: Money!
+
+  """Amount in display currency."""
+  amountInDisplayCurrency: Money!
 
   """List of discounts applied to this cart."""
   discounts: [CartDiscount!]!
@@ -3701,6 +3707,9 @@ type Checkout implements Node {
   Subtotal of the checkout before applying item-level discounts. Tax inclusive based on the store settings.
   """
   subtotal: Money
+
+  """Subtotal in display currency."""
+  subtotalInDisplayCurrency: Money
 
   """
   The total payable amount, before applying any store credit or gift certificate.
