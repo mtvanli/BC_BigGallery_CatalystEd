@@ -1,20 +1,7 @@
 /* eslint-disable */
 /* prettier-ignore */
 
-/** An IntrospectionQuery representation of your schema.
- *
- * @remarks
- * This is an introspection of your schema saved as a file by GraphQLSP.
- * It will automatically be used by `gql.tada` to infer the types of your GraphQL documents.
- * If you need to reuse this data or update your `scalars`, update `tadaOutputLocation` to
- * instead save to a .ts instead of a .d.ts file.
- */
-export type introspection = {
-  name: 'bigcommerce';
-  query: 'Query';
-  mutation: 'Mutation';
-  subscription: never;
-  types: {
+export type introspection_types = {
     'AccountCreationDisabledError': { kind: 'OBJECT'; name: 'AccountCreationDisabledError'; fields: { 'message': { name: 'message'; type: { kind: 'NON_NULL'; name: never; ofType: { kind: 'SCALAR'; name: 'String'; ofType: null; }; } }; }; };
     'AddCartLineItemsDataInput': { kind: 'INPUT_OBJECT'; name: 'AddCartLineItemsDataInput'; isOneOf: false; inputFields: [{ name: 'lineItems'; type: { kind: 'LIST'; name: never; ofType: { kind: 'NON_NULL'; name: never; ofType: { kind: 'INPUT_OBJECT'; name: 'CartLineItemInput'; ofType: null; }; }; }; defaultValue: null }, { name: 'giftCertificates'; type: { kind: 'LIST'; name: never; ofType: { kind: 'NON_NULL'; name: never; ofType: { kind: 'INPUT_OBJECT'; name: 'CartGiftCertificateInput'; ofType: null; }; }; }; defaultValue: null }]; };
     'AddCartLineItemsInput': { kind: 'INPUT_OBJECT'; name: 'AddCartLineItemsInput'; isOneOf: false; inputFields: [{ name: 'cartEntityId'; type: { kind: 'NON_NULL'; name: never; ofType: { kind: 'SCALAR'; name: 'String'; ofType: null; }; }; defaultValue: null }, { name: 'data'; type: { kind: 'NON_NULL'; name: never; ofType: { kind: 'INPUT_OBJECT'; name: 'AddCartLineItemsDataInput'; ofType: null; }; }; defaultValue: null }, { name: 'version'; type: { kind: 'SCALAR'; name: 'Int'; ofType: null; }; defaultValue: null }]; };
@@ -604,7 +591,22 @@ export type introspection = {
     'countryCode': { name: 'countryCode'; enumValues: 'AD' | 'AE' | 'AF' | 'AG' | 'AI' | 'AL' | 'AM' | 'AO' | 'AQ' | 'AR' | 'AS' | 'AT' | 'AU' | 'AW' | 'AX' | 'AZ' | 'BA' | 'BB' | 'BD' | 'BE' | 'BF' | 'BG' | 'BH' | 'BI' | 'BJ' | 'BL' | 'BM' | 'BN' | 'BO' | 'BQ' | 'BR' | 'BS' | 'BT' | 'BV' | 'BW' | 'BY' | 'BZ' | 'CA' | 'CC' | 'CD' | 'CF' | 'CG' | 'CH' | 'CI' | 'CK' | 'CL' | 'CM' | 'CN' | 'CO' | 'CR' | 'CU' | 'CV' | 'CW' | 'CX' | 'CY' | 'CZ' | 'DE' | 'DJ' | 'DK' | 'DM' | 'DO' | 'DZ' | 'EC' | 'EE' | 'EG' | 'EH' | 'ER' | 'ES' | 'ET' | 'FI' | 'FJ' | 'FK' | 'FM' | 'FO' | 'FR' | 'GA' | 'GB' | 'GD' | 'GE' | 'GF' | 'GG' | 'GH' | 'GI' | 'GL' | 'GM' | 'GN' | 'GP' | 'GQ' | 'GR' | 'GS' | 'GT' | 'GU' | 'GW' | 'GY' | 'HK' | 'HM' | 'HN' | 'HR' | 'HT' | 'HU' | 'ID' | 'IE' | 'IL' | 'IM' | 'IN' | 'IO' | 'IQ' | 'IR' | 'IS' | 'IT' | 'JE' | 'JM' | 'JO' | 'JP' | 'KE' | 'KG' | 'KH' | 'KI' | 'KM' | 'KN' | 'KP' | 'KR' | 'KW' | 'KY' | 'KZ' | 'LA' | 'LB' | 'LC' | 'LI' | 'LK' | 'LR' | 'LS' | 'LT' | 'LU' | 'LV' | 'LY' | 'MA' | 'MC' | 'MD' | 'ME' | 'MF' | 'MG' | 'MH' | 'MK' | 'ML' | 'MM' | 'MN' | 'MO' | 'MP' | 'MQ' | 'MR' | 'MS' | 'MT' | 'MU' | 'MV' | 'MW' | 'MX' | 'MY' | 'MZ' | 'NA' | 'NC' | 'NE' | 'NF' | 'NG' | 'NI' | 'NL' | 'NO' | 'NP' | 'NR' | 'NU' | 'NZ' | 'OM' | 'PA' | 'PE' | 'PF' | 'PG' | 'PH' | 'PK' | 'PL' | 'PM' | 'PN' | 'PR' | 'PS' | 'PT' | 'PW' | 'PY' | 'QA' | 'RE' | 'RO' | 'RS' | 'RU' | 'RW' | 'SA' | 'SB' | 'SC' | 'SD' | 'SE' | 'SG' | 'SH' | 'SI' | 'SJ' | 'SK' | 'SL' | 'SM' | 'SN' | 'SO' | 'SR' | 'SS' | 'ST' | 'SV' | 'SX' | 'SY' | 'SZ' | 'TC' | 'TD' | 'TF' | 'TG' | 'TH' | 'TJ' | 'TK' | 'TL' | 'TM' | 'TN' | 'TO' | 'TR' | 'TT' | 'TV' | 'TW' | 'TZ' | 'UA' | 'UG' | 'UM' | 'US' | 'UY' | 'UZ' | 'VA' | 'VC' | 'VE' | 'VG' | 'VI' | 'VN' | 'VU' | 'WF' | 'WS' | 'YE' | 'YT' | 'ZA' | 'ZM' | 'ZW'; };
     'currencyCode': { name: 'currencyCode'; enumValues: 'ADP' | 'AED' | 'AFA' | 'AFN' | 'ALK' | 'ALL' | 'AMD' | 'ANG' | 'AOA' | 'AOK' | 'AON' | 'AOR' | 'ARA' | 'ARL' | 'ARM' | 'ARP' | 'ARS' | 'ATS' | 'AUD' | 'AWG' | 'AZM' | 'AZN' | 'BAD' | 'BAM' | 'BAN' | 'BBD' | 'BDT' | 'BEC' | 'BEF' | 'BEL' | 'BGL' | 'BGM' | 'BGN' | 'BGO' | 'BHD' | 'BIF' | 'BMD' | 'BND' | 'BOB' | 'BOL' | 'BOP' | 'BOV' | 'BRB' | 'BRC' | 'BRE' | 'BRL' | 'BRN' | 'BRR' | 'BRZ' | 'BSD' | 'BTN' | 'BUK' | 'BWP' | 'BYB' | 'BYN' | 'BYR' | 'BZD' | 'CAD' | 'CDF' | 'CHE' | 'CHF' | 'CHW' | 'CLE' | 'CLF' | 'CLP' | 'CNX' | 'CNY' | 'COP' | 'COU' | 'CRC' | 'CSD' | 'CSK' | 'CUC' | 'CUP' | 'CVE' | 'CYP' | 'CZK' | 'DDM' | 'DEM' | 'DJF' | 'DKK' | 'DOP' | 'DZD' | 'ECS' | 'ECV' | 'EEK' | 'EGP' | 'ERN' | 'ESA' | 'ESB' | 'ESP' | 'ETB' | 'EUR' | 'FIM' | 'FJD' | 'FKP' | 'FRF' | 'GBP' | 'GEK' | 'GEL' | 'GHC' | 'GHS' | 'GIP' | 'GMD' | 'GNF' | 'GNS' | 'GQE' | 'GRD' | 'GTQ' | 'GWE' | 'GWP' | 'GYD' | 'HKD' | 'HNL' | 'HRD' | 'HRK' | 'HTG' | 'HUF' | 'IDR' | 'IEP' | 'ILP' | 'ILR' | 'ILS' | 'INR' | 'IQD' | 'IRR' | 'ISJ' | 'ISK' | 'ITL' | 'JMD' | 'JOD' | 'JPY' | 'KES' | 'KGS' | 'KHR' | 'KMF' | 'KPW' | 'KRH' | 'KRO' | 'KRW' | 'KWD' | 'KYD' | 'KZT' | 'LAK' | 'LBP' | 'LKR' | 'LRD' | 'LSL' | 'LTL' | 'LTT' | 'LUC' | 'LUF' | 'LUL' | 'LVL' | 'LVR' | 'LYD' | 'MAD' | 'MAF' | 'MCF' | 'MDC' | 'MDL' | 'MGA' | 'MGF' | 'MKD' | 'MKN' | 'MLF' | 'MMK' | 'MNT' | 'MOP' | 'MRO' | 'MTL' | 'MTP' | 'MUR' | 'MVP' | 'MVR' | 'MWK' | 'MXN' | 'MXP' | 'MXV' | 'MYR' | 'MZE' | 'MZM' | 'MZN' | 'NAD' | 'NGN' | 'NIC' | 'NIO' | 'NLG' | 'NOK' | 'NPR' | 'NZD' | 'OMR' | 'PAB' | 'PEI' | 'PEN' | 'PES' | 'PGK' | 'PHP' | 'PKR' | 'PLN' | 'PLZ' | 'PTE' | 'PYG' | 'QAR' | 'RHD' | 'ROL' | 'RON' | 'RSD' | 'RUB' | 'RUR' | 'RWF' | 'SAR' | 'SBD' | 'SCR' | 'SDD' | 'SDG' | 'SDP' | 'SEK' | 'SGD' | 'SHP' | 'SIT' | 'SKK' | 'SLL' | 'SOS' | 'SRD' | 'SRG' | 'SSP' | 'STD' | 'SUR' | 'SVC' | 'SYP' | 'SZL' | 'THB' | 'TJR' | 'TJS' | 'TMM' | 'TMT' | 'TND' | 'TOP' | 'TPE' | 'TRL' | 'TRY' | 'TTD' | 'TWD' | 'TZS' | 'UAH' | 'UAK' | 'UGS' | 'UGX' | 'USD' | 'USN' | 'USS' | 'UYI' | 'UYP' | 'UYU' | 'UZS' | 'VEB' | 'VEF' | 'VND' | 'VNN' | 'VUV' | 'WST' | 'XAF' | 'XCD' | 'XEU' | 'XFO' | 'XFU' | 'XOF' | 'XPF' | 'XRE' | 'YDD' | 'YER' | 'YUD' | 'YUM' | 'YUN' | 'YUR' | 'ZAL' | 'ZAR' | 'ZMK' | 'ZMW' | 'ZRN' | 'ZRZ' | 'ZWD' | 'ZWL' | 'ZWR'; };
     'sortBy': { name: 'sortBy'; enumValues: 'NEWEST' | 'OLDEST'; };
-  };
+};
+
+/** An IntrospectionQuery representation of your schema.
+ *
+ * @remarks
+ * This is an introspection of your schema saved as a file by GraphQLSP.
+ * It will automatically be used by `gql.tada` to infer the types of your GraphQL documents.
+ * If you need to reuse this data or update your `scalars`, update `tadaOutputLocation` to
+ * instead save to a .ts instead of a .d.ts file.
+ */
+export type introspection = {
+  name: 'bigcommerce';
+  query: 'Query';
+  mutation: 'Mutation';
+  subscription: never;
+  types: introspection_types;
 };
 
 import * as gqlTada from 'gql.tada';
