@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+/* import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 const s3Client = new S3Client({
     region: process.env.NEXT_PUBLIC_AWS_REGION,
@@ -33,3 +33,4 @@ export async function uploadToS3(file: File): Promise<string> {
     throw new Error("Failed to upload file to S3");
   }
 }
+ */
