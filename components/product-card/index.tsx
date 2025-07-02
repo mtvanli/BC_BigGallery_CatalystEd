@@ -99,7 +99,7 @@ export const ProductCard = ({
   }
 
   // Function to render region flag or label
-  {/* 
+
   const renderRegionIndicator = () => {
     if (!regionValue) return null;
 
@@ -126,7 +126,7 @@ export const ProductCard = ({
       </>
     );
   };
-  */}
+
 
   // Function to get the appropriate background color class based on health score
   const getHealthScoreBackgroundColor = (value) => {
@@ -225,7 +225,7 @@ export const ProductCard = ({
             if (!edge) return null;
 
             switch (edge.node.name) {
-              /* case "Region":
+              case "Region":
                 return (
                   <div key={edge.node.value}>
                     {edge.node.value.length === 2 ? (
@@ -243,7 +243,7 @@ export const ProductCard = ({
                       </p>
                     )}
                   </div>
-                ); */
+                );
 
               case "Segment":
                 return (

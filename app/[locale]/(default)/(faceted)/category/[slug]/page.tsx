@@ -1,64 +1,113 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations, unstable_setRequestLocale } from 'next-intl/server';
+import type { Metadata } from "next"
+import { notFound } from "next/navigation"
+import { NextIntlClientProvider } from "next-intl"
+import { getMessages, getTranslations, unstable_setRequestLocale } from "next-intl/server"
+import dynamic from "next/dynamic"
+import { ProductCard } from "~/components/product-card"
+import type { LocaleType } from "~/i18n"
 
-import { Breadcrumbs } from '~/components/breadcrumbs';
-import { ProductCard } from '~/components/product-card';
-import { LocaleType } from '~/i18n';
+import { fetchFacetedSearch } from "../../fetch-faceted-search"
+import { getCategoryPageData } from "./page-data"
 
-import { FacetedSearch } from '../../_components/faceted-search';
-import { MobileSideNav } from '../../_components/mobile-side-nav';
-import { Pagination } from '../../_components/pagination';
-import { SortBy } from '../../_components/sort-by';
-import { fetchFacetedSearch } from '../../fetch-faceted-search';
+// DYNAMIC IMPORTS - These load only when needed
+const FacetedSearch = dynamic(
+  () => import("../../_components/faceted-search").then((mod) => ({ default: mod.FacetedSearch })),
+  {
+    loading: () => (
+      <div className="space-y-4">
+        <div className="h-8 w-32 bg-gray-200 animate-pulse rounded" />
+        <div className="space-y-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-10 bg-gray-100 animate-pulse rounded" />
+          ))}
+        </div>
+      </div>
+    ),
+    ssr: true,
+  },
+)
 
-import { SubCategories } from './_components/sub-categories';
-import { getCategoryPageData } from './page-data';
+const MobileSideNav = dynamic(
+  () => import("../../_components/mobile-side-nav").then((mod) => ({ default: mod.MobileSideNav })),
+  {
+    loading: () => <div className="h-10 w-20 bg-gray-200 animate-pulse rounded md:hidden" />,
+    ssr: false, // Mobile-only, no need for SSR
+  },
+)
+
+const SortBy = dynamic(() => import("../../_components/sort-by").then((mod) => ({ default: mod.SortBy })), {
+  loading: () => <div className="h-10 w-32 bg-gray-200 animate-pulse rounded" />,
+  ssr: true,
+})
+
+const Pagination = dynamic(() => import("../../_components/pagination").then((mod) => ({ default: mod.Pagination })), {
+  loading: () => (
+    <div className="flex justify-center gap-2 mt-8">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div key={i} className="h-10 w-10 bg-gray-200 animate-pulse rounded" />
+      ))}
+    </div>
+  ),
+  ssr: true,
+})
+
+const SubCategories = dynamic(
+  () => import("./_components/sub-categories").then((mod) => ({ default: mod.SubCategories })),
+  {
+    loading: () => (
+      <div className="space-y-2">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-8 bg-gray-100 animate-pulse rounded" />
+        ))}
+      </div>
+    ),
+    ssr: true,
+  },
+)
 
 interface Props {
   params: {
-    slug: string;
-    locale: LocaleType;
-  };
-  searchParams: Record<string, string | string[] | undefined>;
+    slug: string
+    locale: LocaleType
+  }
+  searchParams: Record<string, string | string[] | undefined>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const categoryId = Number(params.slug);
+  const categoryId = Number(params.slug)
 
   const data = await getCategoryPageData({
     categoryId,
-  });
+  })
 
-  const title = data.category?.name;
+  const title = data.category?.name
 
   return {
     title,
-  };
+  }
 }
 
 export default async function Category({ params: { locale, slug }, searchParams }: Props) {
-  unstable_setRequestLocale(locale);
+  unstable_setRequestLocale(locale)
 
-  const t = await getTranslations({ locale, namespace: 'Category' });
-  const tPagination = await getTranslations({ locale, namespace: 'Pagination' });
-  const messages = await getMessages({ locale });
+  const categoryId = Number(slug)
 
-  const categoryId = Number(slug);
-
-  const [{ category, categoryTree }, search] = await Promise.all([
+  // PARALLEL DATA FETCHING 
+  const [t, tPagination, messages, { category, categoryTree }, search] = await Promise.all([
+    getTranslations({ locale, namespace: "Category" }),
+    getTranslations({ locale, namespace: "Pagination" }),
+    getMessages({ locale }),
     getCategoryPageData({ categoryId }),
     fetchFacetedSearch({ ...searchParams, category: categoryId }),
-  ]);
+  ])
 
   if (!category) {
-    return notFound();
+    return notFound()
   }
 
-  const productsCollection = search.products;
-  const products = productsCollection.items;
-  const { hasNextPage, hasPreviousPage, endCursor, startCursor } = productsCollection.pageInfo;
+  const productsCollection = search.products
+  const products = productsCollection.items
+  const { hasNextPage, hasPreviousPage, endCursor, startCursor } = productsCollection.pageInfo
 
   return (
     <div className="group">
@@ -77,11 +126,7 @@ export default async function Category({ params: { locale, slug }, searchParams 
 
           <div className="flex flex-col items-center gap-3 whitespace-nowrap md:flex-row">
             <MobileSideNav>
-              <FacetedSearch
-                facets={search.facets.items}
-                headingId="mobile-filter-heading"
-                pageType="category"
-              >
+              <FacetedSearch facets={search.facets.items} headingId="mobile-filter-heading" pageType="category">
                 <SubCategories categoryTree={categoryTree} />
               </FacetedSearch>
             </MobileSideNav>
@@ -110,17 +155,12 @@ export default async function Category({ params: { locale, slug }, searchParams 
             className="col-span-4 group-has-[[data-pending]]:animate-pulse lg:col-span-3"
           >
             <h2 className="sr-only" id="product-heading">
-              {t('products')}
+              {t("products")}
             </h2>
 
             <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 sm:gap-8">
               {products.map((product, index) => (
-                <ProductCard
-                  imagePriority={index <= 3}
-                  imageSize="tall"
-                  key={product.entityId}
-                  product={product}
-                />
+                <ProductCard imagePriority={index <= 3} imageSize="tall" key={product.entityId} product={product} />
               ))}
             </div>
 
@@ -128,15 +168,15 @@ export default async function Category({ params: { locale, slug }, searchParams 
               endCursor={endCursor}
               hasNextPage={hasNextPage}
               hasPreviousPage={hasPreviousPage}
-              nextLabel={tPagination('next')}
-              prevLabel={tPagination('prev')}
+              nextLabel={tPagination("next")}
+              prevLabel={tPagination("prev")}
               startCursor={startCursor}
             />
           </section>
         </div>
       </NextIntlClientProvider>
     </div>
-  );
+  )
 }
 
-export const runtime = 'edge';
+export const runtime = "edge"
