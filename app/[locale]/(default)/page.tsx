@@ -1,18 +1,39 @@
 import { removeEdgesAndNodes } from '@bigcommerce/catalyst-client';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, unstable_setRequestLocale } from 'next-intl/server';
-
+import dynamic from "next/dynamic"
 import { getSessionCustomerId } from '~/auth';
 import { client } from '~/client';
 import { graphql } from '~/client/graphql';
 import { revalidate } from '~/client/revalidate-target';
 import { Hero } from '~/components/hero';
 import {
-  ProductCardCarousel,
+
   ProductCardCarouselFragment,
 } from '~/components/product-card-carousel';
 import { LocaleType } from '~/i18n';
 import { Suspense } from "react"
+
+const ProductCardCarousel = dynamic(
+  () =>
+    import("~/components/product-card-carousel").then((mod) => ({
+      default: mod.ProductCardCarousel,
+    })),
+  {
+    loading: () => (
+      <div className="space-y-4">
+        <div className="h-8 w-48 bg-gray-200 animate-pulse rounded" />
+        <div className="flex gap-4 overflow-hidden">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex-shrink-0 w-64 h-80 bg-gray-100 animate-pulse rounded-md" />
+          ))}
+        </div>
+      </div>
+    ),
+    ssr: true,
+  },
+)
+
 
 interface Props {
   params: {
