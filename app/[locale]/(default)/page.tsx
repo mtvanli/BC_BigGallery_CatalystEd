@@ -76,35 +76,46 @@ const HomePageQuery = graphql(
   [ProductCardCarouselFragment],
 );
 
-export default async function Home({ params: { locale } }: Props) {
-  const customerId = await getSessionCustomerId();
+// Separate data fetching functions for better caching and organization
+async function fetchTranslationData(locale: LocaleType) {
+  return Promise.all([getTranslations({ locale, namespace: "Home" }), getMessages({ locale })])
+}
 
-  unstable_setRequestLocale(locale);
-
-  const t = await getTranslations({ locale, namespace: 'Home' });
-  const messages = await getMessages({ locale });
-
+async function fetchProductData(customerId: string | undefined) {
   const { data } = await client.fetch({
     document: HomePageQuery,
     customerId,
-    fetchOptions: customerId ? { cache: 'no-store' } : { next: { revalidate } },
-  });
+    fetchOptions: customerId ? { cache: "no-store" } : { next: { revalidate } },
+  })
 
-  const featuredProducts = removeEdgesAndNodes(data.site.featuredProducts);
+  const featuredProducts = removeEdgesAndNodes(data.site.featuredProducts)
+  const newestProductsRaw = removeEdgesAndNodes(data.site.newestProducts)
 
-  // Remove edges and nodes from newestProducts
-  const newestProductsRaw = removeEdgesAndNodes(data.site.newestProducts);
-
-  // Filter out products where the metafield 'display' is 'No'
+  // Filter products efficiently
   const filteredNewestProducts = newestProductsRaw.filter((product: any) => {
     const displayMetafield = product.metafields.edges.find(
-      (metafieldEdge: any) => metafieldEdge.node.key === 'newLaunch'
-    );
-    return !displayMetafield || displayMetafield.node.value !== 'No';
-  });
+      (metafieldEdge: any) => metafieldEdge.node.key === "newLaunch",
+    )
+    return !displayMetafield || displayMetafield.node.value !== "No"
+  })
 
-  // Get the first 12 filtered products
-  const newestProducts = filteredNewestProducts.slice(0, 12);
+  return {
+    featuredProducts,
+    newestProducts: filteredNewestProducts.slice(0, 12),
+  }
+}
+
+export default async function Home({ params: { locale } }: Props) {
+  unstable_setRequestLocale(locale)
+
+  // Get customerId first
+  const customerId = await getSessionCustomerId()
+
+  // Run translation and product data fetching in parallel
+  const [[t, messages], { featuredProducts, newestProducts }] = await Promise.all([
+    fetchTranslationData(locale),
+    fetchProductData(customerId),
+  ])
 
   return (
     <>
@@ -133,7 +144,7 @@ export default async function Home({ params: { locale } }: Props) {
         </NextIntlClientProvider>
       </div>
     </>
-  );
+  )
 }
 
-export const runtime = 'edge';
+export const runtime = "edge"
