@@ -1273,7 +1273,7 @@ interface Error {
 }
 
 """
-Error that occured as a result of generateSessionSyncJwtToken mutation when cartId is provided and not found.
+Error that occurred as a result of generateSessionSyncJwtToken mutation when cartId is provided and not found.
 """
 type GenerateSessionSyncTokenCartNotFound implements Error {
   """A description of the error in user language."""
@@ -1290,7 +1290,7 @@ type GenerateSessionSyncTokenData {
 }
 
 """
-Error that occured as a result of generateSessionSyncJwtToken mutation.
+Error that occurred as a result of generateSessionSyncJwtToken mutation.
 """
 union GenerateSessionSyncTokenError = GenerateSessionSyncTokenCartNotFound
 
@@ -2871,8 +2871,14 @@ type Cart implements Node {
   """Cost of cart's contents, before applying discounts."""
   baseAmount: Money!
 
+  """Base amount in display currency."""
+  baseAmountInDisplayCurrency: Money!
+
   """Discounted amount."""
   discountedAmount: Money!
+
+  """Discounted amount in display currency."""
+  discountedAmountInDisplayCurrency: Money!
 
   """
   Sum of line-items amounts, minus cart-level discounts and coupons. This amount includes taxes (where applicable).
@@ -2933,8 +2939,14 @@ type CartCustomItem {
   """
   listPrice: Money!
 
+  """List price in display currency."""
+  listPriceInDisplayCurrency: Money!
+
   """Item's list price multiplied by the quantity."""
   extendedListPrice: Money!
+
+  """Extended list price in display currency."""
+  extendedListPriceInDisplayCurrency: Money!
 }
 
 """Cart digital item."""
@@ -2982,29 +2994,50 @@ type CartDigitalItem {
   """
   discountedAmount: Money!
 
+  """Discounted amount in display currency."""
+  discountedAmountInDisplayCurrency: Money!
+
   """The total value of all coupons applied to this item."""
   couponAmount: Money!
+
+  """Coupon amount in display currency."""
+  couponAmountInDisplayCurrency: Money!
 
   """
   The net item price before discounts and coupons. It is based on the product default price or sale price (if set) configured in BigCommerce Admin.
   """
   listPrice: Money!
 
+  """List price in display currency."""
+  listPriceInDisplayCurrency: Money!
+
   """
   An item’s original price is the same as the product default price in the admin panel.
   """
   originalPrice: Money!
+
+  """Original price in display currency."""
+  originalPriceInDisplayCurrency: Money!
 
   """
   Item's price after all discounts are applied. (The final price before tax calculation).
   """
   salePrice: Money!
 
+  """Sale price in display currency."""
+  salePriceInDisplayCurrency: Money!
+
   """Item's list price multiplied by the quantity."""
   extendedListPrice: Money!
 
+  """Extended list price in display currency."""
+  extendedListPriceInDisplayCurrency: Money!
+
   """Item's sale price multiplied by the quantity."""
   extendedSalePrice: Money!
+
+  """Extended sale price in display currency."""
+  extendedSalePriceInDisplayCurrency: Money!
 
   """The list of selected options for this product."""
   selectedOptions: [CartSelectedOption!]!
@@ -3029,6 +3062,9 @@ type CartDiscount {
 
   """The discounted amount applied within a given context."""
   discountedAmount: Money!
+
+  """Discounted amount in display currency."""
+  discountedAmountInDisplayCurrency: Money!
 }
 
 """Cart gift certificate"""
@@ -3048,6 +3084,9 @@ type CartGiftCertificate {
   Value must be between 1.00 and 1,000.00 in the store's default currency.
   """
   amount: Money!
+
+  """Amount in display currency."""
+  amountInDisplayCurrency: Money!
 
   """Whether or not the gift certificate is taxable."""
   isTaxable: Boolean!
@@ -3100,6 +3139,9 @@ type CartGiftWrapping {
 
   """Gift-wrapping price per product."""
   amount: Money!
+
+  """Amount in display currency."""
+  amountInDisplayCurrency: Money!
 
   """Custom gift message along with items wrapped in this wrapping option."""
   message: String
@@ -3168,29 +3210,50 @@ type CartPhysicalItem {
   """
   discountedAmount: Money!
 
+  """Discounted amount in display currency."""
+  discountedAmountInDisplayCurrency: Money!
+
   """The total value of all coupons applied to this item."""
   couponAmount: Money!
+
+  """Coupon amount in display currency."""
+  couponAmountInDisplayCurrency: Money!
 
   """
   The net item price before discounts and coupons. It is based on the product default price or sale price (if set) configured in BigCommerce Admin.
   """
   listPrice: Money!
 
+  """List price in display currency."""
+  listPriceInDisplayCurrency: Money!
+
   """
   An item’s original price is the same as the product default price in the admin panel.
   """
   originalPrice: Money!
+
+  """Original price in display currency."""
+  originalPriceInDisplayCurrency: Money!
 
   """
   Item's price after all discounts are applied. (The final price before tax calculation).
   """
   salePrice: Money!
 
+  """Sale price in display currency."""
+  salePriceInDisplayCurrency: Money!
+
   """Item's list price multiplied by the quantity."""
   extendedListPrice: Money!
 
+  """Extended list price in display currency."""
+  extendedListPriceInDisplayCurrency: Money!
+
   """Item's sale price multiplied by the quantity."""
   extendedSalePrice: Money!
+
+  """Extended sale price in display currency."""
+  extendedSalePriceInDisplayCurrency: Money!
 
   """Whether this item requires shipping to a physical address."""
   isShippingRequired: Boolean!
@@ -3676,6 +3739,12 @@ type Checkout implements Node {
   """Checkout ID."""
   entityId: String!
 
+  """ISO-4217 currency code of the checkout."""
+  currencyCode: String!
+
+  """ISO-4217 currency code. Applied DisplayCurrencyCode for the checkout."""
+  displayCurrencyCode: String!
+
   """Billing address information."""
   billingAddress: CheckoutBillingAddress
 
@@ -3691,14 +3760,26 @@ type Checkout implements Node {
   """Total shipping cost before any discounts are applied."""
   shippingCostTotal: Money
 
+  """Total shipping cost in display currency."""
+  shippingCostTotalInDisplayCurrency: Money
+
   """Gift wrapping cost for all items, including or excluding tax."""
   giftWrappingCostTotal: Money
+
+  """Gift wrapping cost in display currency."""
+  giftWrappingCostTotalInDisplayCurrency: Money
 
   """Handling cost for all consignments including or excluding tax."""
   handlingCostTotal: Money
 
+  """Handling cost in display currency."""
+  handlingCostTotalInDisplayCurrency: Money
+
   """Total amount of taxes applied."""
   taxTotal: Money
+
+  """Total amount of taxes in display currency."""
+  taxTotalInDisplayCurrency: Money
 
   """List of taxes applied."""
   taxes: [CheckoutTax!]
@@ -3716,6 +3797,9 @@ type Checkout implements Node {
   """
   grandTotal: Money
 
+  """Grand total in display currency."""
+  grandTotalInDisplayCurrency: Money
+
   """Time when the checkout was created."""
   createdAt: DateTimeExtended!
 
@@ -3729,6 +3813,9 @@ type Checkout implements Node {
 
   """GrandTotal subtract the store-credit amount."""
   outstandingBalance: Money
+
+  """Outstanding balance in display currency."""
+  outstandingBalanceInDisplayCurrency: Money
 
   """Coupons applied at checkout level."""
   coupons: [CheckoutCoupon!]!
@@ -3861,6 +3948,9 @@ type CheckoutAvailableShippingOption {
   """Shipping option cost."""
   cost: Money!
 
+  """Shipping option cost in display currency."""
+  costInDisplayCurrency: Money!
+
   """An estimate of the arrival time."""
   transitTime: String
 
@@ -3971,6 +4061,9 @@ type CheckoutCoupon {
 
   """The discounted amount applied within a given context."""
   discountedAmount: Money!
+
+  """Discounted amount in display currency."""
+  discountedAmountInDisplayCurrency: Money!
 }
 
 """The checkout promotion"""
@@ -4027,6 +4120,9 @@ type CheckoutSelectedShippingOption {
   """Shipping option cost."""
   cost: Money!
 
+  """Shipping option cost in display currency."""
+  costInDisplayCurrency: Money!
+
   """An estimate of the arrival time."""
   transitTime: String
 
@@ -4063,8 +4159,14 @@ type CheckoutShippingConsignment {
   """The shipping cost for the consignment."""
   shippingCost: Money
 
+  """Shipping cost in display currency."""
+  shippingCostInDisplayCurrency: Money
+
   """The handling cost of shipping for the consignment."""
   handlingCost: Money
+
+  """Handling cost in display currency."""
+  handlingCostInDisplayCurrency: Money
 
   """List of line item IDs for the consignment."""
   lineItemIds: [String!]!
@@ -4077,6 +4179,9 @@ type CheckoutTax {
 
   """Tax amount."""
   amount: Money!
+
+  """Tax amount in display currency."""
+  amountInDisplayCurrency: Money!
 }
 
 """Additional information about the collection."""
