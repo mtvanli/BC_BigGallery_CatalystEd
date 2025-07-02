@@ -179,4 +179,4 @@ export default async function Category({ params: { locale, slug }, searchParams 
   )
 }
 
-export const runtime = "edge"
+//export const runtime = "edge"
