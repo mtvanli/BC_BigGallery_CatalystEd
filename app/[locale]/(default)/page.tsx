@@ -24,7 +24,7 @@ const HomePageQuery = graphql(
   `
     query HomePageQuery {
       site {
-        newestProducts(first: 35) {
+        newestProducts(first: 20) {
           edges {
             node {
               ...ProductCardCarouselFragment
