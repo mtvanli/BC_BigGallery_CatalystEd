@@ -1,39 +1,18 @@
 import { removeEdgesAndNodes } from '@bigcommerce/catalyst-client';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations, unstable_setRequestLocale } from 'next-intl/server';
-import dynamic from "next/dynamic"
+
 import { getSessionCustomerId } from '~/auth';
 import { client } from '~/client';
 import { graphql } from '~/client/graphql';
 import { revalidate } from '~/client/revalidate-target';
 import { Hero } from '~/components/hero';
 import {
-
+  ProductCardCarousel,
   ProductCardCarouselFragment,
 } from '~/components/product-card-carousel';
 import { LocaleType } from '~/i18n';
 import { Suspense } from "react"
-
-const ProductCardCarousel = dynamic(
-  () =>
-    import("~/components/product-card-carousel").then((mod) => ({
-      default: mod.ProductCardCarousel,
-    })),
-  {
-    loading: () => (
-      <div className="space-y-4">
-        <div className="h-8 w-48 bg-gray-200 animate-pulse rounded" />
-        <div className="flex gap-4 overflow-hidden">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-64 h-80 bg-gray-100 animate-pulse rounded-md" />
-          ))}
-        </div>
-      </div>
-    ),
-    ssr: true,
-  },
-)
-
 
 interface Props {
   params: {
@@ -45,7 +24,7 @@ const HomePageQuery = graphql(
   `
     query HomePageQuery {
       site {
-        newestProducts(first: 35) {
+        newestProducts(first: 20) {
           edges {
             node {
               ...ProductCardCarouselFragment
@@ -76,46 +55,35 @@ const HomePageQuery = graphql(
   [ProductCardCarouselFragment],
 );
 
-// Separate data fetching functions for better caching and organization
-async function fetchTranslationData(locale: LocaleType) {
-  return Promise.all([getTranslations({ locale, namespace: "Home" }), getMessages({ locale })])
-}
+export default async function Home({ params: { locale } }: Props) {
+  const customerId = await getSessionCustomerId();
 
-async function fetchProductData(customerId: string | undefined) {
+  unstable_setRequestLocale(locale);
+
+  const t = await getTranslations({ locale, namespace: 'Home' });
+  const messages = await getMessages({ locale });
+
   const { data } = await client.fetch({
     document: HomePageQuery,
     customerId,
-    fetchOptions: customerId ? { cache: "no-store" } : { next: { revalidate } },
-  })
+    fetchOptions: customerId ? { cache: 'no-store' } : { next: { revalidate } },
+  });
 
-  const featuredProducts = removeEdgesAndNodes(data.site.featuredProducts)
-  const newestProductsRaw = removeEdgesAndNodes(data.site.newestProducts)
+  const featuredProducts = removeEdgesAndNodes(data.site.featuredProducts);
 
-  // Filter products efficiently
+  // Remove edges and nodes from newestProducts
+  const newestProductsRaw = removeEdgesAndNodes(data.site.newestProducts);
+
+  // Filter out products where the metafield 'display' is 'No'
   const filteredNewestProducts = newestProductsRaw.filter((product: any) => {
     const displayMetafield = product.metafields.edges.find(
-      (metafieldEdge: any) => metafieldEdge.node.key === "newLaunch",
-    )
-    return !displayMetafield || displayMetafield.node.value !== "No"
-  })
+      (metafieldEdge: any) => metafieldEdge.node.key === 'newLaunch'
+    );
+    return !displayMetafield || displayMetafield.node.value !== 'No';
+  });
 
-  return {
-    featuredProducts,
-    newestProducts: filteredNewestProducts.slice(0, 12),
-  }
-}
-
-export default async function Home({ params: { locale } }: Props) {
-  unstable_setRequestLocale(locale)
-
-  // Get customerId first
-  const customerId = await getSessionCustomerId()
-
-  // Run translation and product data fetching in parallel
-  const [[t, messages], { featuredProducts, newestProducts }] = await Promise.all([
-    fetchTranslationData(locale),
-    fetchProductData(customerId),
-  ])
+  // Get the first 12 filtered products
+  const newestProducts = filteredNewestProducts.slice(0, 12);
 
   return (
     <>
@@ -144,7 +112,7 @@ export default async function Home({ params: { locale } }: Props) {
         </NextIntlClientProvider>
       </div>
     </>
-  )
+  );
 }
 
-// export const runtime = "edge"
+export const runtime = 'edge';

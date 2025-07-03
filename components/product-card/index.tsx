@@ -100,32 +100,31 @@ export const ProductCard = ({
 
   // Function to render region flag or label
 
-  const renderRegionIndicator = () => {
-    if (!regionValue) return null;
-
-    // First we'll add a white strip that runs along the bottom of the image
-    return (
-      <>
-        {regionValue.length === 2 ? (
-          <>
-            <div className="absolute bottom-0 left-0 z-1 w-[34px] h-[30px] md:w-[39px] md:h-[33px] bg-white border-1 rounded-tr-lg bg-opacity-95"></div>
-            <div className="absolute bottom-1 left-1 z-2 w-[25px] h-[22px] md:w-[27px] md:h-[23px] lg:w-[29px] lg:h-[24px] overflow-hidden border-1 rounded-full border-white shadow-lg">
-              <img
-                src={`https://flagcdn.com/${regionValue === 'UK' ? 'gb' : regionValue.toLowerCase()}.svg`}
-                alt={`${regionValue} flag`}
-                width={100}
-                className="h-full w-full object-cover object-center"
-              />
+  /*   const renderRegionIndicator = () => {
+      if (!regionValue) return null;
+  
+      return (
+        <>
+          {regionValue.length === 2 ? (
+            <>
+              <div className="absolute bottom-0 left-0 z-1 w-[34px] h-[30px] md:w-[39px] md:h-[33px] bg-white border-1 rounded-tr-lg bg-opacity-95"></div>
+              <div className="absolute bottom-1 left-1 z-2 w-[25px] h-[22px] md:w-[27px] md:h-[23px] lg:w-[29px] lg:h-[24px] overflow-hidden border-1 rounded-full border-white shadow-lg">
+                <img
+                  src={`https://flagcdn.com/${regionValue === 'UK' ? 'gb' : regionValue.toLowerCase()}.svg`}
+                  alt={`${regionValue} flag`}
+                  width={100}
+                  className="h-full w-full object-cover object-center"
+                />
+              </div>
+            </>
+          ) : (
+            <div className="absolute bottom-1 left-1 z-2 px-3 py-1 border-2 border-white rounded-full bg-violet-100 text-xs font-medium shadow-lg">
+              {regionValue === 'APAC - Other' ? 'APAC' : regionValue === 'EMEA - Other' ? 'EMEA' : regionValue}
             </div>
-          </>
-        ) : (
-          <div className="absolute bottom-1 left-1 z-2 px-3 py-1 border-2 border-white rounded-full bg-violet-100 text-xs font-medium shadow-lg">
-            {regionValue === 'APAC - Other' ? 'APAC' : regionValue === 'EMEA - Other' ? 'EMEA' : regionValue}
-          </div>
-        )}
-      </>
-    );
-  };
+          )}
+        </>
+      );
+    }; */
 
 
   // Function to get the appropriate background color class based on health score
