@@ -147,17 +147,17 @@ const PublicToPrivateParams = PublicSearchParamsSchema.catchall(SearchParamToArr
         price:
           minPrice || maxPrice
             ? {
-                maxPrice,
-                minPrice,
-              }
+              maxPrice,
+              minPrice,
+            }
             : undefined,
         productAttributes,
         rating:
           minRating || maxRating
             ? {
-                maxRating,
-                minRating,
-              }
+              maxRating,
+              minRating,
+            }
             : undefined,
         searchTerm: term,
       },
@@ -169,7 +169,7 @@ export const fetchFacetedSearch = cache(
   // We need to make sure the reference passed into this function is the same if we want it to be memoized.
   async (params: z.input<typeof PublicSearchParamsSchema>) => {
     // increased the limit to get more thumbnails listed on the category page
-    const { after, before, limit = 50, sort, filters } = PublicToPrivateParams.parse(params);
+    const { after, before, limit = 30, sort, filters } = PublicToPrivateParams.parse(params);
 
     return getProductSearchResults({
       after,
