@@ -140,3 +140,4 @@ export default async function Category({ params: { locale, slug }, searchParams 
 }
 
 export const runtime = 'edge';
+export const revalidate = 60; // Regenerate the page every 60 seconds

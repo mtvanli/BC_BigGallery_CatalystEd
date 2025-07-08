@@ -5,7 +5,7 @@ import { getMessages, getTranslations, unstable_setRequestLocale } from 'next-in
 import { getSessionCustomerId } from '~/auth';
 import { client } from '~/client';
 import { graphql } from '~/client/graphql';
-import { revalidate } from '~/client/revalidate-target';
+//import { revalidate } from '~/client/revalidate-target';
 import { Hero } from '~/components/hero';
 import {
   ProductCardCarousel,
@@ -63,10 +63,16 @@ export default async function Home({ params: { locale } }: Props) {
   const t = await getTranslations({ locale, namespace: 'Home' });
   const messages = await getMessages({ locale });
 
-  const { data } = await client.fetch({
+  /* const { data } = await client.fetch({
     document: HomePageQuery,
     customerId,
     fetchOptions: customerId ? { cache: 'no-store' } : { next: { revalidate } },
+  }); */
+
+  const { data } = await client.fetch({
+    document: HomePageQuery,
+    // Do NOT use 'no-store' here!
+    fetchOptions: { next: { revalidate: 60 } },
   });
 
   const featuredProducts = removeEdgesAndNodes(data.site.featuredProducts);
@@ -115,4 +121,5 @@ export default async function Home({ params: { locale } }: Props) {
   );
 }
 
+export const revalidate = 60; // Regenerate the page every 60 seconds
 export const runtime = 'edge';
